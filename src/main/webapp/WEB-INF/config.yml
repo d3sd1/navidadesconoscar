@@ -1,0 +1,12 @@
+## YAML Template.
+---
+driverDB: com.mysql.jdbc.Driver
+urlDB: jdbc:mysql://db4free.net:3307/proyecto_navidades?useSSL=false
+userDB: navidadconoscar
+passDB: navidadconoscar
+mailFrom: alumno1@iesquevedo.es
+smtpServer: smtp.gmail.com
+smtpPort: 587
+mailPass: alumnodam2
+minutosParaValidar: 1
+longitudCodigo: 50
