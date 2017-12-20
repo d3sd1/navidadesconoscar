@@ -6,7 +6,6 @@ import config.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -14,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import servicios.LoginServicios;
 
 @WebServlet(name = "Login", urlPatterns = {"/login"})
 public class Login extends HttpServlet {
@@ -37,19 +37,24 @@ public class Login extends HttpServlet {
         LoginServicios ls = new LoginServicios();
         AjaxMaker ajax = new AjaxMaker(); //asistente para ayudar
         switch (accion) {
-            case "login"://AJAX
+            case "login":
 
                 String mail = request.getParameter("mail");
-                String pass = request.getParameter("pass");
-                AjaxResponse ME_DEVUELVE_EL_SERVICE = ls.login(mail, pass); //objeto
-                String RESPUESTA_FINAL = ajax.parseResponse(ME_DEVUELVE_EL_SERVICE); //JSON
-                /* para cuando enviamos json */
-                response.getWriter().print(RESPUESTA_FINAL);
+                String pass = request.getParameter("password");
+                AjaxResponse login = ls.login(mail, pass);
+                if (login.isSuccess()) {
+                    request.getSession().setAttribute("nombreUsuario", ls.getNombre(mail));
+                    
+                } else {
+                    String objeto_json = ajax.parseResponse(login);
+                    response.getWriter().print(objeto_json);
+                }
                 break;
+
             default: //CARGAR VISTA LOGIN
                 /* estas de abajo son para cuando cargamos plantillas. el JSON no necesita plantillas */
                 Template temp = Configuration.getInstance().getFreeMarker().getTemplate("login.ftl");
-                 
+
                 try {
                     temp.process(null, response.getWriter());
                 } catch (TemplateException ex) {
