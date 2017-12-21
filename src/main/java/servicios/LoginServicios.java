@@ -36,9 +36,10 @@ public class LoginServicios {
         return returnme;
     }
 
-    public User getUser(String mail) {
+    public String getNombre(String mail) {
         LoginDAO dao = new LoginDAO();
         User u = dao.getUserByMail(mail);
-        return u;
+        String nombre = dao.getNombre(u.getEmail(), u.getId());
+        return nombre;
     }
 }
