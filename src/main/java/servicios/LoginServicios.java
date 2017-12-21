@@ -8,7 +8,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.User;
-import utils.Constantes;
 import utils.PasswordHash;
 
 public class LoginServicios
