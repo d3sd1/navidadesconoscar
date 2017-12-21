@@ -28,7 +28,7 @@
                     <form id="formLogin">
                         <div class="row">
                             <div class="input-field col s12">
-                                <input id="email" type="email" class="validate">
+                                <input name="mail" type="email" class="validate">
                                 <label for="email">Email</label>
                                 </div>
                             </div>
