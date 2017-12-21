@@ -1,18 +1,60 @@
-/**
- * jquery.snow - jQuery Snow Effect Plugin
- *
- * Available under MIT licence
- *
- * @version 1 (21. Jan 2012)
- * @author Ivan Lazarevic
- * @requires jQuery
- * @see http://workshop.rs
- *
- * @params minSize - min size of snowflake, 10 by default
- * @params maxSize - max size of snowflake, 20 by default
- * @params newOn - frequency in ms of appearing of new snowflake, 500 by default
- * @params flakeColor - color of snowflake, #FFFFFF by default
- * @example $.fn.snow({ maxSize: 200, newOn: 1000 });
- */
+// https://codepen.io/otsukatomoya/pen/gbDxF/
 
-(function($){$.fn.snow=function(options){var $flake=$('<div id="flake" />').css({'position':'absolute','top':'-50px'}).html('&#10052;'),documentHeight=$(document).height(),documentWidth=$(document).width(),defaults={minSize:10,maxSize:20,newOn:500,flakeColor:"#FFFFFF"},options=$.extend({},defaults,options);var interval=setInterval(function(){var startPositionLeft=Math.random()*documentWidth-100,startOpacity=0.5+Math.random(),sizeFlake=options.minSize+Math.random()*options.maxSize,endPositionTop=documentHeight-40,endPositionLeft=startPositionLeft-100+Math.random()*200,durationFall=documentHeight*10+Math.random()*5000;$flake.clone().appendTo('body').css({left:startPositionLeft,opacity:startOpacity,'font-size':sizeFlake,color:options.flakeColor}).animate({top:endPositionTop,left:endPositionLeft,opacity:0.2},durationFall,'linear',function(){$(this).remove()});},options.newOn);};})(jQuery);
+var w = window.innerWidth-50,
+    h = window.innerHeight,
+    canvas = document.getElementById('snow'),
+    ctx = canvas.getContext('2d'),
+    rate = 50,
+    arc = 500,
+    time,
+    count,
+    size = 2,
+    speed = 10,
+    lights = new Array,
+    colors = ['#eee'];
+
+canvas.setAttribute('width',w);
+canvas.setAttribute('height',h);
+
+function init() {
+  time = 0;
+  count = 0;
+
+  for(var i = 0; i < arc; i++) {
+    lights[i] = {
+      x: Math.ceil(Math.random() * w),
+      y: Math.ceil(Math.random() * h),
+      toX: Math.random() * 5 + 1,
+      toY: Math.random() * 5 + 1,
+      c: colors[Math.floor(Math.random()*colors.length)],
+      size: Math.random() * size
+    }
+  }
+}
+
+function bubble() {
+  ctx.clearRect(0,0,w,h);
+
+  for(var i = 0; i < arc; i++) {
+    var li = lights[i];
+
+    ctx.beginPath();
+    ctx.arc(li.x,li.y,li.size,0,Math.PI*2,false);
+    ctx.fillStyle = li.c;
+    ctx.fill();
+
+    li.x = li.x + li.toX * (time * 0.05);
+    li.y = li.y + li.toY * (time * 0.05);
+
+    if(li.x > w) { li.x = 0; }
+    if(li.y > h) { li.y = 0; }
+    if(li.x < 0) { li.x = w; }
+    if(li.y < 0) { li.y = h; }
+  }
+  if(time < speed) {
+    time++;
+  }
+  timerID = setTimeout(bubble,1000/rate);
+}
+init();
+bubble();

@@ -3,6 +3,7 @@ package config;
 
 import freemarker.template.TemplateExceptionHandler;
 import java.io.InputStream;
+import java.util.Locale;
 import javax.servlet.ServletContext;
 import org.yaml.snakeyaml.Yaml;
 
@@ -34,8 +35,7 @@ public class Configuration {
 
 // Set the preferred charset template files are stored in. UTF-8 is
 // a good choice in most applications:
-            config.getFreeMarker().setDefaultEncoding("UTF-8");
-
+            config.getFreeMarker().setDefaultEncoding("ISO-8859-1");
 // Sets how errors will appear.
 // During web page *development* TemplateExceptionHandler.HTML_DEBUG_HANDLER is better.
             config.getFreeMarker().setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
