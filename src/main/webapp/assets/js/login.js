@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $('.parallax').parallax();
     $('.modal').modal({
-        dismissible: true
+        dismissible: false
     });
 });
 $("#loginTrigger").click(function () {
@@ -13,9 +13,15 @@ $("#loginTrigger").click(function () {
             $('#loadingLogin').modal('open');
         },
         success: function (response) {
-            console.log(response);
             var info = JSON.parse(response);
             Materialize.toast(info.reason, 4000);
+        },
+        error: function()
+        {
+            Materialize.toast("Ha ocurrido un error al procesar la petición", 4000);
+        },
+        complete: function()
+        {
             $('#loadingLogin').modal('close');
         }
     });
