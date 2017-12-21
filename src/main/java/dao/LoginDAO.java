@@ -11,7 +11,7 @@ public class LoginDAO {
 
     private final String queryGetUserByMail = "SELECT * FROM users WHERE email = ?";
     private final String queryTabla = "SELECT permiso FROM permisos p JOIN users_permisos up ON p.id=up.id_permiso JOIN users u ON up.id_user=u.id WHERE email=?";
-    private final String queryGetNombre = "SELECT nombre FROM ? WHERE id_user = ?";
+    //private final String queryGetNombre = "SELECT nombre FROM ? WHERE id_user = ?";
     
     public User getUserByMail(String mail) {
         User u;
@@ -30,7 +30,10 @@ public class LoginDAO {
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
             String tabla = jtm.queryForObject(queryTabla, String.class, mail);
-            nombre = jtm.queryForObject(queryGetNombre, String.class, tabla, id);
+            
+            String queryGetNombre = "SELECT nombre FROM "+tabla+" WHERE id_user = ?";
+            
+            nombre = jtm.queryForObject(queryGetNombre, String.class, id);
         } catch (DataAccessException ex) {
             Logger.getLogger(LoginDAO.class.getName()).log(Level.SEVERE, null, ex);
             nombre = null;
