@@ -8,7 +8,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.User;
-import utils.Constantes;
 import utils.PasswordHash;
 
 public class LoginServicios
@@ -24,7 +23,11 @@ public class LoginServicios
         
         try
         {
-            if (u != null && PasswordHash.getInstance().validatePassword(pass, u.getClave()))
+            if(u == null)
+            {
+                returnme = ajax.errorResponse(1);
+            }
+            else if (PasswordHash.getInstance().validatePassword(pass, u.getClave()))
             {
                 if (u.getActivo())
                 {
@@ -42,7 +45,6 @@ public class LoginServicios
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException ex)
         {
-            ex.printStackTrace();
             Logger.getLogger(LoginServicios.class.getName()).log(Level.SEVERE, null, ex);
             returnme = ajax.errorResponse(0);
         }

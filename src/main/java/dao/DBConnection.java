@@ -44,7 +44,7 @@ public class DBConnection {
         config.setUsername(Configuration.getInstance().getUserDB());
         config.setPassword( Configuration.getInstance().getPassDB());
         config.setDriverClassName(Configuration.getInstance().getDriverDB());
-        config.setMaximumPoolSize(10);
+        config.setMaximumPoolSize(1);
         
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");

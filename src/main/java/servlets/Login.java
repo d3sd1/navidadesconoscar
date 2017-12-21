@@ -65,7 +65,7 @@ public class Login extends HttpServlet
 
             default: //CARGAR VISTA LOGIN
                 /* estas de abajo son para cuando cargamos plantillas. el JSON no necesita plantillas */
-                Template temp = Configuration.getInstance().getFreeMarker().getTemplate("login.ftl");
+                Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/login.ftl");
 
                 try
                 {
