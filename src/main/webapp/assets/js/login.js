@@ -14,3 +14,6 @@ $("#loginTrigger").click(function () {
         }
     });
 });
+$(document).ready( function(){
+    $.fn.snow({ minSize: 5, maxSize: 50, newOn: 50, flakeColor: '#FFFFFF' });
+});
