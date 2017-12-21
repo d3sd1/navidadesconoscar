@@ -44,8 +44,8 @@ public class Login extends HttpServlet {
                 String pass = request.getParameter("password");
                 AjaxResponse login = ls.login(mail, pass);
                 if (login.isSuccess()) {
-                    //User u = ls.getUser(mail);
-                    request.getSession().setAttribute("nombreUsuario", mail);
+                    String nombre = ls.getNombre(mail);
+                    request.getSession().setAttribute("nombreUsuario", nombre);
 
                 } else {
                     String objeto_json = ajax.parseResponse(login);

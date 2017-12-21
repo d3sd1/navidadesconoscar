@@ -5,8 +5,8 @@ public class User {
     private int id;
     private String email;
     private String clave;
-    private String codigo_activacion;
     private boolean activo;
+    private String codigo_activacion;
 
     public User() {
     }
@@ -35,14 +35,6 @@ public class User {
         this.clave = clave;
     }
 
-    public String getCodigo_activacion() {
-        return codigo_activacion;
-    }
-
-    public void setCodigo_activacion(String codigo_activacion) {
-        this.codigo_activacion = codigo_activacion;
-    }
-
     public boolean getActivo() {
         return activo;
     }
@@ -50,5 +42,12 @@ public class User {
     public void setActivo(boolean activo) {
         this.activo = activo;
     }
-    
+
+    public String getCodigo_activacion() {
+        return codigo_activacion;
+    }
+
+    public void setCodigo_activacion(String codigo_activacion) {
+        this.codigo_activacion = codigo_activacion;
+    }
 }

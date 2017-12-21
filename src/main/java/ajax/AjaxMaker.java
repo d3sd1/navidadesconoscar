@@ -18,6 +18,7 @@ public class AjaxMaker
             break;
             case 1:
                 errorMsg = Language.ERROR_USER_PASS;
+            break;
             case 2:
                 errorMsg = Language.ERROR_CUENTA_ACTIVA;
             break;
