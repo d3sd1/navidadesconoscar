@@ -2,21 +2,46 @@ package ajax;
 
 import com.google.gson.Gson;
 import java.util.HashMap;
+import utils.Language;
 
 public class AjaxMaker
 {
+    
+    /* MÉTODOS GLOBALES */
+    public String transformCodeToError(int errorCode)
+    {
+        String errorMsg;
+        switch(errorCode)
+        {
+            case 0:
+                errorMsg = Language.ERROR_GENERIC;
+            break;
+            case 1:
+                errorMsg = Language.ERROR_USER_PASS;
+            case 2:
+                errorMsg = Language.ERROR_CUENTA_ACTIVA;
+            break;
+            default:
+                errorMsg = Language.ERROR_GENERIC;
+        }
+        return errorMsg;
+    }
     public String parseResponse(AjaxResponse resp)
     {
         return new Gson().toJson(resp);
     }
-    public AjaxResponse errorResponse(String ex)
+    
+    /* MENSAJES DE ERROR */
+    public AjaxResponse errorResponse()
     {
-        return errorResponse(ex,0);
+        return errorResponse(0);
     }
-    public AjaxResponse errorResponse(String ex, int code)
+    public AjaxResponse errorResponse(int code)
     {
-        return new AjaxResponse(false,ex,code);
+        return new AjaxResponse(false,transformCodeToError(code),code);
     }
+    
+    /* MENSAJES DE ACIERTO */
     public AjaxResponse successResponse()
     {
         return successResponse(new HashMap<String, String>());

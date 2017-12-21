@@ -1,4 +1,3 @@
-
 package servicios;
 
 import ajax.AjaxMaker;
@@ -12,33 +11,47 @@ import model.User;
 import utils.Constantes;
 import utils.PasswordHash;
 
-public class LoginServicios {
-    
+public class LoginServicios
+{
+
     private final AjaxMaker ajax = new AjaxMaker();
-    private final LoginDAO dao = new LoginDAO();
-    private AjaxResponse returnme;
-    
-    public AjaxResponse login(String mail, String pass){
+
+    public AjaxResponse login(String mail, String pass)
+    {
+        LoginDAO dao = new LoginDAO();
         User u = dao.getUserByMail(mail);
+        AjaxResponse returnme;
         
-        try {
-            if(u!=null && PasswordHash.getInstance().validatePassword(pass, u.getPassword())){
-                if(u.getActivo()){
+        try
+        {
+            if (u != null && PasswordHash.getInstance().validatePassword(pass, u.getClave()))
+            {
+                if (u.getActivo())
+                {
                     returnme = ajax.successResponse();
-                }else{
-                    returnme = ajax.errorResponse(Constantes.ERROR_CUENTA_ACTIVA);
                 }
-            }else{
-                returnme = ajax.errorResponse(Constantes.ERROR_USER_PASS);
+                else
+                {
+                    returnme = ajax.errorResponse(2);
+                }
             }
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+            else
+            {
+                returnme = ajax.errorResponse(1);
+            }
+        }
+        catch (NoSuchAlgorithmException | InvalidKeySpecException ex)
+        {
+            ex.printStackTrace();
             Logger.getLogger(LoginServicios.class.getName()).log(Level.SEVERE, null, ex);
-            returnme = ajax.errorResponse(Constantes.ERROR_LOGIN);
+            returnme = ajax.errorResponse(0);
         }
         return returnme;
     }
-    
-    public User getUser(String mail){
+
+    public User getUser(String mail)
+    {
+        LoginDAO dao = new LoginDAO();
         User u = dao.getUserByMail(mail);
         return u;
     }

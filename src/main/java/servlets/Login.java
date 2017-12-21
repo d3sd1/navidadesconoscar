@@ -16,8 +16,12 @@ import javax.servlet.http.HttpServletResponse;
 import model.User;
 import servicios.LoginServicios;
 
-@WebServlet(name = "Login", urlPatterns = {"/login"})
-public class Login extends HttpServlet {
+@WebServlet(name = "Login", urlPatterns =
+{
+    "/login"
+})
+public class Login extends HttpServlet
+{
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -29,25 +33,31 @@ public class Login extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
 
         String accion = request.getParameter("accion");
-        if (accion == null) {
+        if (accion == null)
+        {
             accion = "";
         }
         LoginServicios ls = new LoginServicios();
         AjaxMaker ajax = new AjaxMaker(); //asistente para ayudar
-        switch (accion) {
+        switch (accion)
+        {
             case "login":
 
                 String mail = request.getParameter("mail");
                 String pass = request.getParameter("password");
                 AjaxResponse login = ls.login(mail, pass);
-                if (login.isSuccess()) {
+                if (login.isSuccess())
+                {
                     User u = ls.getUser(mail);
-                    request.getSession().setAttribute("nombreUsuario", u.getNombre());
-                    
-                } else {
+                    request.getSession().setAttribute("nombreUsuario", mail);
+
+                }
+                else
+                {
                     String objeto_json = ajax.parseResponse(login);
                     response.getWriter().print(objeto_json);
                 }
@@ -57,9 +67,12 @@ public class Login extends HttpServlet {
                 /* estas de abajo son para cuando cargamos plantillas. el JSON no necesita plantillas */
                 Template temp = Configuration.getInstance().getFreeMarker().getTemplate("login.ftl");
 
-                try {
+                try
+                {
                     temp.process(null, response.getWriter());
-                } catch (TemplateException ex) {
+                }
+                catch (TemplateException ex)
+                {
                     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
                 }
         }
@@ -76,7 +89,8 @@ public class Login extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         processRequest(request, response);
     }
 
@@ -90,7 +104,8 @@ public class Login extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         processRequest(request, response);
     }
 
@@ -100,7 +115,8 @@ public class Login extends HttpServlet {
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo() {
+    public String getServletInfo()
+    {
         return "Short description";
     }// </editor-fold>
 
