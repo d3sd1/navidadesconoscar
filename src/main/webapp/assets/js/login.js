@@ -1,16 +1,22 @@
 $(document).ready(function () {
     $('.parallax').parallax();
+    $('.modal').modal({
+        dismissible: true
+    });
 });
 $("#loginTrigger").click(function () {
     $.ajax({
-        data: $("#formLogin").serialize(),
-        url: 'ejemplo_ajax_proceso.php',
+        data: "accion=login&" + $("#formLogin").serialize(),
+        url: '/login',
         type: 'post',
         beforeSend: function () {
-            $("#resultado").html("Procesando, espere por favor...");
+            $('#loadingLogin').modal('open');
         },
         success: function (response) {
-            $("#resultado").html(response);
+            console.log(response);
+            var info = JSON.parse(response);
+            Materialize.toast(info.reason, 4000);
+            $('#loadingLogin').modal('close');
         }
     });
 });

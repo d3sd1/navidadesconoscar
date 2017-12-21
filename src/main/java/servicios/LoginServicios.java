@@ -10,33 +10,45 @@ import java.util.logging.Logger;
 import model.User;
 import utils.PasswordHash;
 
-public class LoginServicios {
+public class LoginServicios
+{
 
     private final AjaxMaker ajax = new AjaxMaker();
 
-    public AjaxResponse login(String mail, String pass) {
+    public AjaxResponse login(String mail, String pass)
+    {
         LoginDAO dao = new LoginDAO();
         User u = dao.getUserByMail(mail);
         AjaxResponse returnme;
 
-        try {
-            if (u != null && PasswordHash.getInstance().validatePassword(pass, u.getClave())) {
-                if (u.getActivo()) {
+        try
+        {
+            if (u != null && PasswordHash.getInstance().validatePassword(pass, u.getClave()))
+            {
+                if (u.getActivo())
+                {
                     returnme = ajax.successResponse();
-                } else {
+                }
+                else
+                {
                     returnme = ajax.errorResponse(2);
                 }
-            } else {
+            }
+            else
+            {
                 returnme = ajax.errorResponse(1);
             }
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+        }
+        catch (NoSuchAlgorithmException | InvalidKeySpecException ex)
+        {
             Logger.getLogger(LoginServicios.class.getName()).log(Level.SEVERE, null, ex);
             returnme = ajax.errorResponse(0);
         }
         return returnme;
     }
 
-    public String getNombre(String mail) {
+    public String getNombre(String mail)
+    {
         LoginDAO dao = new LoginDAO();
         User u = dao.getUserByMail(mail);
         String nombre = dao.getNombre(u.getEmail(), u.getId());
