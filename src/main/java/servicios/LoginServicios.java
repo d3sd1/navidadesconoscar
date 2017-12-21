@@ -38,7 +38,8 @@ public class LoginServicios {
         return returnme;
     }
     
-    public String getNombre(){
-        return dao.getNombre();
+    public User getUser(String mail){
+        User u = dao.getUserByMail(mail);
+        return u;
     }
 }

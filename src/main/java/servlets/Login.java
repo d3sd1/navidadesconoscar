@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.User;
 import servicios.LoginServicios;
 
 @WebServlet(name = "Login", urlPatterns = {"/login"})
@@ -43,7 +44,8 @@ public class Login extends HttpServlet {
                 String pass = request.getParameter("password");
                 AjaxResponse login = ls.login(mail, pass);
                 if (login.isSuccess()) {
-                    request.getSession().setAttribute("nombreUsuario", ls.getNombre(mail));
+                    User u = ls.getUser(mail);
+                    request.getSession().setAttribute("nombreUsuario", u.getNombre());
                     
                 } else {
                     String objeto_json = ajax.parseResponse(login);
