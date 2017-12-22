@@ -28,26 +28,23 @@ public class LoginDAO {
     }
 
     public String getNombre(int id) {
-        String nombre;
+        String nombre = null;
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
             int permiso = jtm.queryForObject(queryGetPermiso, int.class, id);
             
-            String queryGetNombre = "";
             switch (permiso) {
                 case 1:
-                    queryGetNombre = queryGetNombreAdmin;
+                    nombre = jtm.queryForObject(queryGetNombreAdmin, String.class, id);
                     break;
                 case 2:
-                    queryGetNombre = queryGetNombreProfe;
+                    nombre = jtm.queryForObject(queryGetNombreProfe, String.class, id);
                     break;
                 case 3:
-                    queryGetNombre = queryGetNombreAlumno;
+                    nombre = jtm.queryForObject(queryGetNombreAlumno, String.class, id);
                     break;
             }
             
-            nombre = jtm.queryForObject(queryGetNombre, String.class, id);
-
         } catch (DataAccessException ex) {
             Logger.getLogger(LoginDAO.class.getName()).log(Level.SEVERE, null, ex);
             nombre = null;
