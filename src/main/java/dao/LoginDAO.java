@@ -10,9 +10,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class LoginDAO {
 
     private final String queryGetUserByMail = "SELECT * FROM users WHERE email = ?";
-    private final String queryTabla = "SELECT permiso FROM permisos p JOIN users_permisos up ON p.id=up.id_permiso JOIN users u ON up.id_user=u.id WHERE email=?";
-    //private final String queryGetNombre = "SELECT nombre FROM ? WHERE id_user = ?";
-    
+    private final String queryGetPermiso = "SELECT id_permiso FROM users_permisos WHERE id_user = ?";
+    private final String queryGetNombreAdmin = "SELECT nombre FROM users_administradores WHERE id_user = ?";
+    private final String queryGetNombreProfe = "SELECT nombre FROM users_profesores WHERE id_user = ?";
+    private final String queryGetNombreAlumno = "SELECT nombre FROM users_alumnos WHERE id_user = ?";
+
     public User getUserByMail(String mail) {
         User u;
         try {
@@ -25,15 +27,27 @@ public class LoginDAO {
         return u;
     }
 
-    public String getNombre(String mail, int id) {
+    public String getNombre(int id) {
         String nombre;
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            String tabla = jtm.queryForObject(queryTabla, String.class, mail);
+            int permiso = jtm.queryForObject(queryGetPermiso, int.class, id);
             
-            String queryGetNombre = "SELECT nombre FROM "+tabla+" WHERE id_user = ?";
+            String queryGetNombre = "";
+            switch (permiso) {
+                case 1:
+                    queryGetNombre = queryGetNombreAdmin;
+                    break;
+                case 2:
+                    queryGetNombre = queryGetNombreProfe;
+                    break;
+                case 3:
+                    queryGetNombre = queryGetNombreAlumno;
+                    break;
+            }
             
             nombre = jtm.queryForObject(queryGetNombre, String.class, id);
+
         } catch (DataAccessException ex) {
             Logger.getLogger(LoginDAO.class.getName()).log(Level.SEVERE, null, ex);
             nombre = null;
