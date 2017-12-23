@@ -13,7 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import servicios.LoginServicios;
+import servicios.UsersServicios;
 
 @WebServlet(name = "Login", urlPatterns = {"/login"})
 public class Login extends HttpServlet {
@@ -34,16 +34,16 @@ public class Login extends HttpServlet {
         if (accion == null) {
             accion = "";
         }
-        LoginServicios ls = new LoginServicios();
+        UsersServicios us = new UsersServicios();
         AjaxMaker ajax = new AjaxMaker();
         switch (accion) {
             case "login":
 
                 String mail = request.getParameter("mail");
                 String pass = request.getParameter("pass");
-                AjaxResponse login = ls.login(mail, pass);
+                AjaxResponse login = us.login(mail, pass);
                 if (login.isSuccess()) {
-                    String nombre = ls.getNombre(mail);
+                    String nombre = us.getNombre(mail);
                     request.getSession().setAttribute("nombreUsuario", nombre);
                 }
                 String objeto_json = ajax.parseResponse(login);

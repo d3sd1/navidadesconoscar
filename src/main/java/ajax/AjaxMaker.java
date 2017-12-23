@@ -22,6 +22,9 @@ public class AjaxMaker
             case 2:
                 errorMsg = Language.ERROR_CUENTA_ACTIVA;
             break;
+            case 3:
+                errorMsg = Language.ERROR_EMAIL_EXISTE;
+            break;
             default:
                 errorMsg = Language.ERROR_GENERIC;
         }
