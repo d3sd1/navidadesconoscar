@@ -6,6 +6,7 @@ import config.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import servicios.UsersServicios;
+import utils.Language;
 
 @WebServlet(name = "Login", urlPatterns = {"/login"})
 public class Login extends HttpServlet {
@@ -34,8 +36,11 @@ public class Login extends HttpServlet {
         if (accion == null) {
             accion = "";
         }
+
         UsersServicios us = new UsersServicios();
         AjaxMaker ajax = new AjaxMaker();
+        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/login.ftl");
+
         switch (accion) {
             case "login":
 
@@ -50,9 +55,34 @@ public class Login extends HttpServlet {
                 response.getWriter().print(objeto_json);
                 break;
 
-            default:
-                Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/login.ftl");
+            case "activarUsuario":
+                String codigo = request.getParameter("codigo");
+                int userActivado = us.activar(codigo);
+                HashMap root = new HashMap();
 
+                switch (userActivado) {
+                    case 1:
+                        root.put("mensaje", Language.CUENTA_ACTIVADA);
+                        root.put("mensaje2", Language.CUENTA_ACTIVADA_2);
+                        break;
+                    case 2:
+                        root.put("mensaje", Language.YA_ACTIVADA);
+                        root.put("mensaje2", Language.CUENTA_ACTIVADA_2);
+                        break;
+                    case -1:
+                        root.put("mensaje", Language.ERROR_ACTIVAR);
+                        root.put("mensaje2", Language.ERROR_ACTIVAR_2);
+                        break;
+                }
+
+                try {
+                    temp.process(root, response.getWriter());
+                } catch (TemplateException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                break;
+            default:
                 try {
                     temp.process(null, response.getWriter());
                 } catch (TemplateException ex) {

@@ -24,6 +24,8 @@ public class UsersDAO {
     private final String queryRegistrarAdmin = "INSERT INTO users_administradores (id_user,nombre) VALUES (?,?)";
     private final String queryRegistrarProfe = "INSERT INTO users_profesores (id_user,nombre) VALUES (?,?)";
     private final String queryRegistrarAlumno = "INSERT INTO users_alumnos (id_user,nombre) VALUES (?,?)";
+    private final String queryUserByCodigoActivacion = "SELECT * FROM users WHERE codigo_activacion = ?";
+    private final String queryActivar = "UPDATE users SET activo = TRUE WHERE codigo_activacion = ?";
 
     public User getUserByMail(String mail) {
         User u;
@@ -120,5 +122,28 @@ public class UsersDAO {
         }
         
         return registroCorrecto;
+    }
+    
+    public User getUserByCodigoActivacion(String codigoActivacion) {
+        User u;
+        try {
+            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+            u =(User) jtm.queryForObject(queryUserByCodigoActivacion, new Object[]{codigoActivacion}, new BeanPropertyRowMapper(User.class));
+        } catch (Exception ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            u = null;
+        }
+        return u;
+    }
+    
+    public int activarUser(User user)
+    {
+        int valido = -1;
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        if(jtm.update(queryActivar, user.getCodigo_activacion())>0){
+             valido = 1;
+        }
+        
+        return valido;
     }
 }

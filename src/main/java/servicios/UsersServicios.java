@@ -76,4 +76,20 @@ public class UsersServicios {
         }
         return returnme;
     }
+    
+    public int activar(String codigo) {
+        UsersDAO dao = new UsersDAO();
+        User u = dao.getUserByCodigoActivacion(codigo);
+
+        int activar;
+        
+        if(u == null){
+            activar = -1;
+        }else if (u.getActivo() == false) {
+            activar = dao.activarUser(u);
+        } else {
+            activar = 2;
+        }
+        return activar;
+    }
 }
