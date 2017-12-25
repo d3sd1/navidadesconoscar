@@ -13,8 +13,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import utils.Constantes;
 
-@WebFilter(filterName = "FiltroLogin", urlPatterns = {"/*"})
+@WebFilter(filterName = "FiltroLogin", urlPatterns = {
+    "/login",
+    "/registro"
+})
 public class FiltroLogin implements Filter {
     
     private static final boolean debug = true;
@@ -96,12 +101,18 @@ public class FiltroLogin implements Filter {
         if (debug) {
             log("FiltroLogin:doFilter()");
         }
-        
         doBeforeProcessing(request, response);
         
         Throwable problem = null;
         try {
-            chain.doFilter(request, response);
+            if (((HttpServletRequest) request).getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO) == null)
+            {
+                chain.doFilter(request, response);
+            }
+            else
+            {
+                ((HttpServletResponse) response).sendRedirect("/panel");
+            }
         } catch (Throwable t) {
             // If an exception is thrown somewhere down the filter chain,
             // we still want to execute our after processing, and then

@@ -8,7 +8,7 @@ public class Language {
     public static final String YA_ACTIVADA = "No necesitas volver a activar tu cuenta.";
     public static final String ERROR_GENERIC = "Ha ocurrido un error inesperado.";
     public static final String ERROR_USER_PASS = "Usuario y contraseña incorrectos.";
-    public static final String ERROR_CUENTA_ACTIVA = "Tu cuenta no está activada.";
+    public static final String ERROR_CUENTA_INACTIVA = "Tu cuenta no está activada.";
     public static final String ERROR_EMAIL_EXISTE = "El email ya existe.";
     public static final String ERROR_ACTIVAR = "Ha ocurrido un error al activar tu cuenta.";
     public static final String ERROR_ACTIVAR_2 = "Inténtalo de nuevo más tarde.";

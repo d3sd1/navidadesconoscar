@@ -20,7 +20,7 @@ public class AjaxMaker
                 errorMsg = Language.ERROR_USER_PASS;
             break;
             case 2:
-                errorMsg = Language.ERROR_CUENTA_ACTIVA;
+                errorMsg = Language.ERROR_CUENTA_INACTIVA;
             break;
             case 3:
                 errorMsg = Language.ERROR_EMAIL_EXISTE;

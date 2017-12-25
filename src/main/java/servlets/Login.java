@@ -15,10 +15,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import servicios.UsersServicios;
+import utils.Constantes;
 import utils.Language;
 
-@WebServlet(name = "Login", urlPatterns = {"/login"})
-public class Login extends HttpServlet {
+@WebServlet(name = "Login", urlPatterns =
+{
+    "/login"
+})
+public class Login extends HttpServlet
+{
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -30,10 +35,12 @@ public class Login extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
 
         String accion = request.getParameter("accion");
-        if (accion == null) {
+        if (accion == null)
+        {
             accion = "";
         }
 
@@ -41,15 +48,15 @@ public class Login extends HttpServlet {
         AjaxMaker ajax = new AjaxMaker();
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/login.ftl");
 
-        switch (accion) {
+        switch (accion)
+        {
             case "login":
-
                 String mail = request.getParameter("mail");
                 String pass = request.getParameter("pass");
                 AjaxResponse login = us.login(mail, pass);
-                if (login.isSuccess()) {
-                    String nombre = us.getNombre(mail);
-                    request.getSession().setAttribute("nombreUsuario", nombre);
+                if (login.isSuccess())
+                {
+                    request.getSession().setAttribute(Constantes.SESSION_NOMBRE_USUARIO, mail);
                 }
                 String objeto_json = ajax.parseResponse(login);
                 response.getWriter().print(objeto_json);
@@ -60,7 +67,8 @@ public class Login extends HttpServlet {
                 int userActivado = us.activar(codigo);
                 HashMap root = new HashMap();
 
-                switch (userActivado) {
+                switch (userActivado)
+                {
                     case 1:
                         root.put("mensaje", Language.CUENTA_ACTIVADA);
                         root.put("mensaje2", Language.CUENTA_ACTIVADA_2);
@@ -75,17 +83,23 @@ public class Login extends HttpServlet {
                         break;
                 }
 
-                try {
+                try
+                {
                     temp.process(root, response.getWriter());
-                } catch (TemplateException ex) {
+                }
+                catch (TemplateException ex)
+                {
                     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
                 break;
             default:
-                try {
+                try
+                {
                     temp.process(null, response.getWriter());
-                } catch (TemplateException ex) {
+                }
+                catch (TemplateException ex)
+                {
                     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
                 }
         }
@@ -102,7 +116,8 @@ public class Login extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         processRequest(request, response);
     }
 
@@ -116,7 +131,8 @@ public class Login extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         processRequest(request, response);
     }
 
@@ -126,7 +142,8 @@ public class Login extends HttpServlet {
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo() {
+    public String getServletInfo()
+    {
         return "Short description";
     }// </editor-fold>
 
