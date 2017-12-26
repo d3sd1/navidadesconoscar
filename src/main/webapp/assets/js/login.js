@@ -12,15 +12,25 @@ $("#loginTrigger").click(function () {
         beforeSend: function () {
             $('#loadingLogin').modal('open');
         },
-        success: function (response) {
-            var info = JSON.parse(response);
-            Materialize.toast(info.reason, 4000);
+        success: function (data) {
+            var info = JSON.parse(data);
+            if (info['success'])
+            {
+                Materialize.toast('<span>Te has conectado correctamente. Estás siendo redireccionado...</span>', 5000, 'rounded');
+                window.setTimeout(function () {
+                    window.location.href = "/panel";
+                }, 3000);
+            }
+            else
+            {
+                Materialize.toast('<span>Ha ocurrido un error al conectar: ' + info["reason"] + '</span>', 5000, 'rounded');
+            }
         },
-        error: function()
+        error: function(e)
         {
             Materialize.toast("Ha ocurrido un error al procesar la petición", 4000);
         },
-        complete: function()
+        complete: function(c)
         {
             $('#loadingLogin').modal('close');
         }
