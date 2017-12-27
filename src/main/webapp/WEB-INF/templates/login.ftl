@@ -66,15 +66,15 @@
         <div id="loadingLogin" class="modal">
             <div class="modal-content">
                 <h1 class="center-align">Cargando...</h1>
-                 <div class="progress">
+                <div class="progress">
                     <div class="indeterminate"></div>
+                    </div>
                 </div>
             </div>
-        </div>
-                      <!--Import jQuery before materialize.js-->
-        <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript" src="assets/js/jquery.snow.min.1.0.js"></script>
-        <script type="text/javascript" src="assets/js/materialize.min.js"></script>
+                          <!--Import jQuery before materialize.js-->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="assets/js/snow.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
         <script type="text/javascript" src="assets/js/login.js"></script>
         </body>
     </html>
