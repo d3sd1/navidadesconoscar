@@ -41,6 +41,7 @@ public class Logout extends HttpServlet
         
         HttpSession session = request.getSession();
         session.setAttribute(Constantes.SESSION_NOMBRE_USUARIO, null);
+        session.setAttribute(Constantes.SESSION_RANGO_USUARIO, null);
         response.sendRedirect("/login");
     }
 

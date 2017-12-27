@@ -21,7 +21,10 @@
                         <li><a href="asignaturas">(PROFE) Notas de alumnos</a></li>
                         <li><a href="notas">(SUPERADMIN) Profesores (CRUD)</a></li>
                         <li><a href="notas">(SUPERADMIN) Asignaturas + cursos (CRUD)</a></li>-->
-                        <li><a href="panel/users">Control de usuarios</a></li>
+                        <#if rango == "administrador">
+                        <li><a href="panel/administrador/usuarios">Control de usuarios</a></li>
+                        </#if>
+                        
                         <li><a href="logout">Desconectar</a></li>
                         </ul>
                     </div>
@@ -29,7 +32,7 @@
             </header>
         <div class="parallax-container">
             <div class="parallax"><img src="http://www.pressdigital.es/multimedia/images/Alumnos_en_clase.jpg"></div>
-        </div>
+            </div>
         <div class="container">
             <div class="carousel">
                 <a class="carousel-item" href="#one!"><img height="200" height="290" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Miguel_hernandez.jpg/220px-Miguel_hernandez.jpg"></a>

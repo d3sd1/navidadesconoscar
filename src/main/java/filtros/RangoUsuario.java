@@ -123,11 +123,12 @@ public class RangoUsuario implements Filter
         Throwable problem = null;
         try
         {
-            if (((HttpServletRequest) request).getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO) == "usuario")
+            Object rango = ((HttpServletRequest) request).getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO);
+            if (rango != null && rango.toString().equals("usuario"))
             {
                 chain.doFilter(request, response);
             }
-            else
+            else if(rango == null)
             {
                 ((HttpServletResponse) response).sendRedirect("/panel");
             }

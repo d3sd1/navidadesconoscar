@@ -28,17 +28,17 @@ import utils.Constantes;
 {
     "/panel/administrador/*"
 })
-public class RangoAdministrador implements Filter
+public class RangoSuperadministrador implements Filter
 {
     
-    private static final boolean debug = true;
+    private static final boolean debug = false;
 
     // The filter configuration object we are associated with.  If
     // this value is null, this filter instance is not currently
     // configured. 
     private FilterConfig filterConfig = null;
     
-    public RangoAdministrador()
+    public RangoSuperadministrador()
     {
     }    
     
@@ -123,12 +123,12 @@ public class RangoAdministrador implements Filter
         Throwable problem = null;
         try
         {
-            
-            if (((HttpServletRequest) request).getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO) == "administrador")
+            Object rango = ((HttpServletRequest) request).getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO);
+            if (rango != null && rango.toString().equals("administrador"))
             {
                 chain.doFilter(request, response);
             }
-            else
+            else if(rango == null)
             {
                 ((HttpServletResponse) response).sendRedirect("/panel");
             }

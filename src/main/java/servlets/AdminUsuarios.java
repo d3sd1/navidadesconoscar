@@ -9,6 +9,7 @@ import config.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,16 +19,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import utils.Constantes;
+import utils.Language;
 
 /**
  *
  * @author Jause
  */
-@WebServlet(name = "Panel", urlPatterns =
+@WebServlet(name = "AdminUsers", urlPatterns =
 {
-    "/panel"
+    "/panel/administrador/usuarios"
 })
-public class Panel extends HttpServlet
+public class AdminUsuarios extends HttpServlet
 {
 
     /**
@@ -42,9 +44,8 @@ public class Panel extends HttpServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel_start.ftl");
+        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/admpanel_users.ftl");
         HashMap root = new HashMap();
-        System.out.println(request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
         root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
         try
         {

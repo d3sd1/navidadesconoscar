@@ -24,7 +24,7 @@ import utils.Constantes;
  *
  * @author Jause
  */
-@WebFilter(filterName = "RangoAdministrador", urlPatterns =
+@WebFilter(filterName = "RangoProfesor", urlPatterns =
 {
     "/panel/profesor/*"
 })
@@ -47,7 +47,7 @@ public class RangoProfesor implements Filter
     {
         if (debug)
         {
-            log("RangoAdministrador:DoBeforeProcessing");
+            log("RangoProfesor:DoBeforeProcessing");
         }
 
         // Write code here to process the request and/or response before
@@ -77,7 +77,7 @@ public class RangoProfesor implements Filter
     {
         if (debug)
         {
-            log("RangoAdministrador:DoAfterProcessing");
+            log("RangoProfesor:DoAfterProcessing");
         }
 
         // Write code here to process the request and/or response after
@@ -115,7 +115,7 @@ public class RangoProfesor implements Filter
         
         if (debug)
         {
-            log("RangoAdministrador:doFilter()");
+            log("RangoProfesor:doFilter()");
         }
         
         doBeforeProcessing(request, response);
@@ -123,12 +123,12 @@ public class RangoProfesor implements Filter
         Throwable problem = null;
         try
         {
-            
-            if (((HttpServletRequest) request).getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO) == "profesor")
+            Object rango = ((HttpServletRequest) request).getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO);
+            if (rango != null && rango.toString().equals("profesor"))
             {
                 chain.doFilter(request, response);
             }
-            else
+            else if(rango == null)
             {
                 ((HttpServletResponse) response).sendRedirect("/panel");
             }
@@ -195,7 +195,7 @@ public class RangoProfesor implements Filter
         {
             if (debug)
             {                
-                log("RangoAdministrador:Initializing filter");
+                log("RangoProfesor:Initializing filter");
             }
         }
     }
@@ -208,9 +208,9 @@ public class RangoProfesor implements Filter
     {
         if (filterConfig == null)
         {
-            return ("RangoAdministrador()");
+            return ("RangoProfesor()");
         }
-        StringBuffer sb = new StringBuffer("RangoAdministrador(");
+        StringBuffer sb = new StringBuffer("RangoProfesor(");
         sb.append(filterConfig);
         sb.append(")");
         return (sb.toString());
