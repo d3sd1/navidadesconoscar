@@ -15,10 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class UsersDAO {
 
     private final String queryGetUserByMail = "SELECT * FROM users WHERE email = ?";
-    private final String queryGetPermiso = "SELECT id_permiso FROM users_permisos WHERE id_user = ?";
-    private final String queryGetNombreAdmin = "SELECT nombre FROM users_administradores WHERE id_user = ?";
-    private final String queryGetNombreProfe = "SELECT nombre FROM users_profesores WHERE id_user = ?";
-    private final String queryGetNombreAlumno = "SELECT nombre FROM users_alumnos WHERE id_user = ?";
+    private final String queryGetPermiso = "SELECT up.id_permiso FROM users_permisos up JOIN users u ON up.id_user = u.id WHERE u.email = ?";
     private final String queryRegistrarUser = "INSERT INTO users (email,clave,activo,codigo_activacion) VALUES (?,?,0,?)";
     private final String queryRegistrarUserPermisos = "INSERT INTO users_permisos (id_user,id_permiso) VALUES (?,?)";
     private final String queryRegistrarAdmin = "INSERT INTO users_administradores (id_user,nombre) VALUES (?,?)";
@@ -39,31 +36,6 @@ public class UsersDAO {
             foundUsr = null;
         }
         return foundUsr;
-    }
-
-    public String getNombre(int id) {
-        String nombre = null;
-        try {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            int permiso = jtm.queryForObject(queryGetPermiso, int.class, id);
-
-            switch (permiso) {
-                case 1:
-                    nombre = jtm.queryForObject(queryGetNombreAdmin, String.class, id);
-                    break;
-                case 2:
-                    nombre = jtm.queryForObject(queryGetNombreProfe, String.class, id);
-                    break;
-                case 3:
-                    nombre = jtm.queryForObject(queryGetNombreAlumno, String.class, id);
-                    break;
-            }
-
-        } catch (DataAccessException ex) {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
-            nombre = null;
-        }
-        return nombre;
     }
 
     public boolean registro(User u, String nombre, int tipo) {
@@ -184,5 +156,17 @@ public class UsersDAO {
         }
 
         return valido;
+    }
+    
+    public int getPermiso(String email){
+        int permiso = 0;
+        try {
+            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+            permiso = jtm.queryForObject(queryGetPermiso, int.class, email);
+            
+        } catch (DataAccessException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return permiso;
     }
 }

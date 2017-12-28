@@ -6,7 +6,6 @@ import config.Configuration;
 import dao.UsersDAO;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.User;
@@ -144,5 +143,24 @@ public class UsersServicios {
             returnme = ajax.errorResponse(0);
         }
         return returnme;
+    }
+
+    public String getRango(String email) {
+        UsersDAO dao = new UsersDAO();
+        int idPermiso = dao.getPermiso(email);
+        
+        String rango = "";
+        switch (idPermiso) {
+            case 1:
+                rango = "administrador";
+                break;
+            case 2:
+                rango = "profesor";
+                break;
+            case 3:
+                rango = "usuario";
+                break;
+        }
+        return rango;
     }
 }

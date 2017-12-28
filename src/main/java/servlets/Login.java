@@ -56,14 +56,10 @@ public class Login extends HttpServlet
                 AjaxResponse login = us.login(mail, pass);
                 if (login.isSuccess())
                 {
-                    /*
-                    * Crea dos sesiones: una con el mail del usuario, y otra con 
-                    * el rango del usuario, para no saturar la db con consultas cada vez
-                    * que cargue una página.
-                    */
                     request.getSession().setAttribute(Constantes.SESSION_NOMBRE_USUARIO, mail);
-                    // HACER AQUI: SERVICIO QUE DEVUELVA EL RANGO DEL USUARIO PARA METERLO EN LA SESIÓN
-                    request.getSession().setAttribute(Constantes.SESSION_RANGO_USUARIO, "administrador"); //administrador, profesor, usuario
+                    
+                    String rango = us.getRango(mail);
+                    request.getSession().setAttribute(Constantes.SESSION_RANGO_USUARIO, rango);
                 }
                 String objeto_json = ajax.parseResponse(login);
                 response.getWriter().print(objeto_json);
