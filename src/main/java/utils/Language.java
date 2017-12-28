@@ -1,7 +1,8 @@
 package utils;
 
 public class Language {
-    public static final String ASUNTO_EMAIL = "Activa tu cuenta";
+    public static final String ASUNTO_EMAIL_ACTIVAR = "Activa tu cuenta";
+    public static final String ASUNTO_EMAIL_NUEVA_PASS = "Cambio de contraseña";
     public static final String USUARIO_REGISTRADO = "Usuario registrado con éxito.";
     public static final String CUENTA_ACTIVADA = "Tu cuenta ha sido activada.";
     public static final String CUENTA_ACTIVADA_2 = "Ahora puedes iniciar sesión.";
