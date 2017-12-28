@@ -6,6 +6,7 @@ import config.Configuration;
 import dao.UsersDAO;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.User;
@@ -113,7 +114,11 @@ public class UsersServicios {
                                 + u.getCodigo_activacion() 
                                 + Constantes.EMAIL_CONTENT_NUEVA_PASS_2,
                                 Language.ASUNTO_EMAIL_NUEVA_PASS);
-                returnme = ajax.successResponse();
+                
+                HashMap <String, String> datos = new HashMap();
+                datos.put("mensaje",Language.EMAIL_ENVIADO);
+                
+                returnme = ajax.successResponse(datos);
             }else{
                 returnme = ajax.errorResponse(0);
             }

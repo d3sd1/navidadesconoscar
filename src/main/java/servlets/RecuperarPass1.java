@@ -51,9 +51,6 @@ public class RecuperarPass1 extends HttpServlet {
         switch (accion) {
             case "mandarmail":
                 AjaxResponse mandarMail = us.mandarMail(request.getParameter("email"));
-                if(mandarMail.isSuccess()){
-                    //Mensaje mail enviado
-                }
                 String objeto_json = ajax.parseResponse(mandarMail);
                 response.getWriter().print(objeto_json);
                 break;
