@@ -115,10 +115,7 @@ public class UsersServicios {
                         + Constantes.EMAIL_CONTENT_NUEVA_PASS_2,
                         Language.ASUNTO_EMAIL_NUEVA_PASS);
 
-                HashMap<String, String> datos = new HashMap();
-                datos.put("mensaje", Language.EMAIL_ENVIADO);
-
-                returnme = ajax.successResponse(datos);
+                returnme = ajax.successResponse();
             } else {
                 returnme = ajax.errorResponse(0);
             }
@@ -138,10 +135,7 @@ public class UsersServicios {
             u.setCodigo_activacion(codigo);
 
             if (dao.updatePass(u)) {
-                HashMap<String, String> datos = new HashMap();
-                datos.put("mensaje", Language.PASS_CAMBIADA);
-
-                returnme = ajax.successResponse(datos);
+                returnme = ajax.successResponse();
             } else {
                 returnme = ajax.errorResponse(0);
             }

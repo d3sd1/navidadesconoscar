@@ -13,6 +13,4 @@ public class Language {
     public static final String ERROR_EMAIL_EXISTE = "El email ya existe.";
     public static final String ERROR_ACTIVAR = "Ha ocurrido un error al activar tu cuenta.";
     public static final String ERROR_ACTIVAR_2 = "Inténtalo de nuevo más tarde.";
-    public static final String EMAIL_ENVIADO = "Te hemos enviado un correo para que puedas cambiar tu contraseña.";
-    public static final String PASS_CAMBIADA = "Se ha cambiado tu contraseña correctamente.";
 }
