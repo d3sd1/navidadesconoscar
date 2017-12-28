@@ -102,11 +102,13 @@ public class UsersServicios {
         u = dao.getUserByEmail(u);
 
         if (u != null) {
-            String codigo = Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo());
-            dao.updateCodigo(email, codigo);
-            MailServicios nuevoMail = new MailServicios();
-            nuevoMail.mandarMail(email, Constantes.EMAIL_CONTENT_NUEVA_PASS_1 + Constantes.LINK_EMAIL_NUEVA_PASS + codigo + Constantes.EMAIL_CONTENT_NUEVA_PASS_2, Language.ASUNTO_EMAIL_NUEVA_PASS);
             returnme = ajax.successResponse();
+            u.setCodigo_activacion(Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
+            if(!dao.updateCodigo(u)){
+                returnme = ajax.errorResponse(0);
+            }
+            MailServicios nuevoMail = new MailServicios();
+            nuevoMail.mandarMail(email, Constantes.EMAIL_CONTENT_NUEVA_PASS_1 + Constantes.LINK_EMAIL_NUEVA_PASS + u.getCodigo_activacion() + Constantes.EMAIL_CONTENT_NUEVA_PASS_2, Language.ASUNTO_EMAIL_NUEVA_PASS);           
         } else {
             returnme = ajax.errorResponse(0);
         }
