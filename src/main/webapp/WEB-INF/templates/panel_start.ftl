@@ -23,6 +23,7 @@
                         <li><a href="notas">(SUPERADMIN) Asignaturas + cursos (CRUD)</a></li>-->
                         <#if rango == "administrador">
                         <li><a href="panel/administrador/usuarios">Control de usuarios</a></li>
+                        <li><a href="panel/administrador/asignaturas">Control de asignaturas</a></li>
                         </#if>
                         
                         <li><a href="logout">Desconectar</a></li>
