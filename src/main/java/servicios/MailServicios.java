@@ -21,14 +21,7 @@ public class MailServicios {
             email.setStartTLSEnabled(true);
             email.setFrom(Configuration.getInstance().getMailFrom());
             email.setSubject(subject);
-            email.setContent("<html>"
-                    + "<body>"
-                    + "<h1>Registro <strong>completado</strong></h1>"
-                    + "<p>Muchas gracias por registrarte.</p>"
-                    + "<p>Haz click en el siguiente enlace para activar tu cuenta.</p>"
-                    + "<a href='" + msg + "'>Activar</a>"
-                    + "</body>"
-                    + "</html>", "text/html");
+            email.setContent(msg, "text/html");
             email.addTo(to);
             email.send();
         } catch (EmailException ex) {
