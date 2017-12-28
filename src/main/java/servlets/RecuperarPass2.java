@@ -51,9 +51,6 @@ public class RecuperarPass2 extends HttpServlet {
         switch(accion){
             case "restaurar":
                 AjaxResponse restaurarPass = us.restaurarPass(request.getParameter("nuevacontra"), request.getParameter("codigo"));
-                if(restaurarPass.isSuccess()){
-                    //Mensaje contraseña cambiada con exito
-                }
                 String objeto_json = ajax.parseResponse(restaurarPass);
                 response.getWriter().print(objeto_json);
                 break;
