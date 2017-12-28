@@ -64,7 +64,10 @@ public class UsersServicios {
                 if (userRegistrado == true) {
                     returnme = ajax.successResponse();
                     MailServicios nuevoMail = new MailServicios();
-                    nuevoMail.mandarMail(u.getEmail(), Constantes.EMAIL_CONTENT_ACTIVAR_1 + Constantes.LINK_EMAIL_ACTIVAR + u.getCodigo_activacion() + Constantes.EMAIL_CONTENT_ACTIVAR_2, Language.ASUNTO_EMAIL_ACTIVAR);
+                    nuevoMail.mandarMail(u.getEmail(), Constantes.EMAIL_CONTENT_ACTIVAR_1 
+                                    + Constantes.LINK_EMAIL_ACTIVAR + u.getCodigo_activacion() 
+                                    + Constantes.EMAIL_CONTENT_ACTIVAR_2,
+                                    Language.ASUNTO_EMAIL_ACTIVAR);
                 } else {
                     returnme = ajax.errorResponse(0);
                 }
@@ -102,14 +105,40 @@ public class UsersServicios {
         u = dao.getUserByEmail(u);
 
         if (u != null) {
-            returnme = ajax.successResponse();
             u.setCodigo_activacion(Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
-            if(!dao.updateCodigo(u)){
+            if (dao.updateCodigo(u)) {
+                MailServicios nuevoMail = new MailServicios();
+                nuevoMail.mandarMail(email, Constantes.EMAIL_CONTENT_NUEVA_PASS_1 
+                                + Constantes.LINK_EMAIL_NUEVA_PASS 
+                                + u.getCodigo_activacion() 
+                                + Constantes.EMAIL_CONTENT_NUEVA_PASS_2,
+                                Language.ASUNTO_EMAIL_NUEVA_PASS);
+                returnme = ajax.successResponse();
+            }else{
                 returnme = ajax.errorResponse(0);
             }
-            MailServicios nuevoMail = new MailServicios();
-            nuevoMail.mandarMail(email, Constantes.EMAIL_CONTENT_NUEVA_PASS_1 + Constantes.LINK_EMAIL_NUEVA_PASS + u.getCodigo_activacion() + Constantes.EMAIL_CONTENT_NUEVA_PASS_2, Language.ASUNTO_EMAIL_NUEVA_PASS);           
         } else {
+            returnme = ajax.errorResponse(0);
+        }
+        return returnme;
+    }
+
+    public AjaxResponse restaurarPass(String pass, String codigo) {
+        AjaxResponse returnme;
+        
+        try {
+            UsersDAO dao = new UsersDAO();
+            User u = new User();
+            u.setClave(PasswordHash.getInstance().createHash(pass));
+            u.setCodigo_activacion(codigo);
+            
+            if (dao.updatePass(u)) {
+                returnme = ajax.successResponse();
+            }else{
+                returnme = ajax.errorResponse(0);
+            }
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+            Logger.getLogger(UsersServicios.class.getName()).log(Level.SEVERE, null, ex);
             returnme = ajax.errorResponse(0);
         }
         return returnme;
