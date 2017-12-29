@@ -25,6 +25,14 @@ public class AjaxMaker
             case 3:
                 errorMsg = Language.ERROR_EMAIL_EXISTE;
             break;
+            case 4:
+                errorMsg = Language.ERROR_EMAIL_NOEXISTE;
+            break;
+            case 5:
+                errorMsg = Language.ERROR_PASSOLVIDADA_GENERICO;
+            case 6:
+                errorMsg = Language.ERROR_PASSOLVIDADA_CODIGOINVALIDO;
+            break;
             default:
                 errorMsg = Language.ERROR_GENERIC;
         }

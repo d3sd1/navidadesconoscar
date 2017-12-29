@@ -11,6 +11,9 @@ public class Language {
     public static final String ERROR_USER_PASS = "Usuario y contraseña incorrectos.";
     public static final String ERROR_CUENTA_INACTIVA = "Tu cuenta no está activada.";
     public static final String ERROR_EMAIL_EXISTE = "El email ya existe.";
+    public static final String ERROR_EMAIL_NOEXISTE = "El email no existe.";
+    public static final String ERROR_PASSOLVIDADA_GENERICO = "Se produjo un error al enviar el email de recuperación de cuenta.";
     public static final String ERROR_ACTIVAR = "Ha ocurrido un error al activar tu cuenta.";
     public static final String ERROR_ACTIVAR_2 = "Inténtalo de nuevo más tarde.";
+    public static final String ERROR_PASSOLVIDADA_CODIGOINVALIDO = "El código introducido es inválido.";
 }

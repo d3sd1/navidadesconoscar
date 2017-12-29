@@ -35,15 +35,28 @@
         <div class="parallax-container">
             <div class="parallax"><img src="http://www.pressdigital.es/multimedia/images/Alumnos_en_clase.jpg"></div>
             </div>
-        <div class="container">
-            <div class="carousel">
-                <a class="carousel-item" href="#one!"><img height="200" height="290" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Miguel_hernandez.jpg/220px-Miguel_hernandez.jpg"></a>
-                <a class="carousel-item" href="#two!"><img height="200" height="290" src="http://blogs.publico.es/memoria-publica/files/2016/06/Lorca.jpg"></a>
-                <a class="carousel-item" href="#three!"><img height="200" height="290" src="https://www.buscabiografias.com/img/people/Juan_Ramon_Jimenez.jpg"></a>
-                <a class="carousel-item" href="#four!"><img height="200" height="290" src="http://s.libertaddigital.com/2015/09/18/quevedo.jpg"></a>
-                <a class="carousel-item" href="#five!"><img height="200" height="290" src="http://ambitocultural.es/wp-content/uploads/2016/09/allende.jpg"></a>
+        <div class="container" style="margin-top: 2em">
+            <div class="row">
+                <form class="col s12 center-align">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input placeholder="**********" id="first_name" type="text" class="validate">
+                            <label for="first_name">Contraseña actual</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input placeholder="**********" id="first_name" type="text" class="validate">
+                            <label for="first_name">Contraseña nueva</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input placeholder="**********" id="first_name" type="text" class="validate">
+                            <label for="first_name">Repite la nueva contraseña</label>
+                        </div>
+                        <a class="waves-effect waves-light btn"><i class="material-icons right">arrow_forward</i>Cambiar contraseña</a>
+                    </form>
                 </div>
+
             </div>
+        </div>
         <footer class="page-footer cyan accent-4">
             <div class="container">
                 <div class="row">

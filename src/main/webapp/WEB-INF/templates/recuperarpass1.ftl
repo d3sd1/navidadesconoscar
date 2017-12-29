@@ -26,23 +26,17 @@
             <div class="parallax"><img alt="Fondo" src="assets/images/bg.jpg"/></div>
             <div class="row center-align" style="width: 50%; z-index: 2">
                 <div class="col s12 card-panel blue-grey lighten-5" style="padding: 20px; ">
-                    <form id="formLogin">
+                    <form id="formRecover">
                         <div class="row">
                             <div class="input-field col s12">
-                                <input name="mail" type="email" class="validate">
+                                <input name="email" placeholder="Email de la cuenta a recuperar" type="email" class="validate">
                                 <label for="email">Email</label>
                                 </div>
                             </div>
                         <div class="row">
                             <div class="input-field col s12">
-                                <input name="pass" type="password" class="validate">
-                                <label for="password">Contraseña</label>
-                                </div>
-                            </div>
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <a class="blue accent-1 waves-effect waves-light btn col s6" style="padding-right: 20px" href="/recuperarpass1"><i class="material-icons right">question_answer</i>¿Contraseña olvidada?</a>
-                                <a class="light-blue accent-2 waves-effect waves-light btn col s6" id="loginTrigger"><i class="material-icons right">arrow_forward</i>Conectar</a>
+                                <a class="light-blue accent-2 waves-effect waves-light btn col s6"  href="/login"><i class="material-icons left">arrow_back</i>Volver al formulario de conexión</a>
+                                <a class="blue accent-1 waves-effect waves-light btn col s6" style="padding-right: 20px" id="recoverTrigger"><i class="material-icons right">question_answer</i>Enviar instrucciones al email</a>
                                 </div>
                             </div>
                         </form>
@@ -65,7 +59,7 @@
                 </div>
             </footer>
           <!-- Modal Structure -->
-        <div id="loadingLogin" class="modal">
+        <div id="loadingRecover" class="modal">
             <div class="modal-content">
                 <h1 class="center-align">Cargando...</h1>
                 <div class="progress">
@@ -77,6 +71,6 @@
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="assets/js/snow.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-        <script type="text/javascript" src="assets/js/login.js"></script>
+        <script type="text/javascript" src="assets/js/recoverpass.js"></script>
         </body>
     </html>

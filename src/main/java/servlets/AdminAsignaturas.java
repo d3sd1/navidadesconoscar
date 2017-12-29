@@ -47,6 +47,10 @@ public class AdminAsignaturas extends HttpServlet
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/admpanel_asignaturas.ftl");
         HashMap root = new HashMap();
         root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
+        /*
+        AQUI METER SERVICIO QUE DEVUELVA TODOS LAS ASIGNATURAS PARA PASARLOS A LA PLANTILLA
+        root.put("users", );
+        */
         try
         {
             temp.process(root, response.getWriter());

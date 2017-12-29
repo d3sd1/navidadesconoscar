@@ -24,7 +24,7 @@ public class UsersDAO {
     private final String queryUserByCodigoActivacion = "SELECT * FROM users WHERE codigo_activacion = ?";
     private final String queryActivar = "UPDATE users SET activo = TRUE WHERE codigo_activacion = ?";
     private final String queryUpdateCodigo = "UPDATE users SET codigo_activacion = ? WHERE email = ?";
-    private final String queryUpdatePass = "UPDATE users SET clave = ? WHERE codigo_activacion = ?";
+    private final String queryUpdatePass = "UPDATE users SET clave = ?, codigo_activacion=? WHERE codigo_activacion = ?";
 
     public User getUserByEmail(User usr) {
         User foundUsr;
@@ -32,7 +32,6 @@ public class UsersDAO {
             JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
             foundUsr = (User) jdbcTemplateObject.queryForObject(queryGetUserByMail, new Object[]{usr.getEmail()}, new BeanPropertyRowMapper(User.class));
         } catch (DataAccessException ex) {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             foundUsr = null;
         }
         return foundUsr;
@@ -128,7 +127,7 @@ public class UsersDAO {
 
     public boolean updateCodigo(User u) {
         boolean valido = false;
-        
+
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
             if (jtm.update(queryUpdateCodigo, u.getCodigo_activacion(), u.getEmail()) > 0) {
@@ -141,13 +140,13 @@ public class UsersDAO {
 
         return valido;
     }
-    
-    public boolean updatePass(User u){
+
+    public boolean updatePass(User u) {
         boolean valido = false;
-        
+
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryUpdatePass, u.getClave(), u.getCodigo_activacion()) > 0) {
+            if (jtm.update(queryUpdatePass, u.getClave(),null, u.getCodigo_activacion()) > 0) {
                 valido = true;
             }
         } catch (DataAccessException ex) {
@@ -157,13 +156,13 @@ public class UsersDAO {
 
         return valido;
     }
-    
-    public int getPermiso(String email){
+
+    public int getPermiso(String email) {
         int permiso = 0;
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
             permiso = jtm.queryForObject(queryGetPermiso, int.class, email);
-            
+
         } catch (DataAccessException ex) {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
         }

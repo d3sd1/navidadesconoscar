@@ -19,17 +19,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import utils.Constantes;
-import utils.Language;
 
 /**
  *
- * @author Jause
+ * @author Andrei
  */
-@WebServlet(name = "AdminUsers", urlPatterns =
+@WebServlet(name = "ChangePassword", urlPatterns =
 {
-    "/panel/administrador/usuarios"
+    "/change_password"
 })
-public class AdminUsuarios extends HttpServlet
+public class ChangePassword extends HttpServlet
 {
 
     /**
@@ -44,13 +43,9 @@ public class AdminUsuarios extends HttpServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/admpanel_users.ftl");
+        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/change_password.ftl");
         HashMap root = new HashMap();
         root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
-        /*
-        AQUI METER SERVICIO QUE DEVUELVA TODOS LOS USUARIOS PARA PASARLOS A LA PLANTILLA
-        root.put("users", );
-        */
         try
         {
             temp.process(root, response.getWriter());
