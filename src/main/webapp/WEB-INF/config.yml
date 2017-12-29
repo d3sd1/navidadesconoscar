@@ -1,9 +1,9 @@
 ## YAML Template.
 ---
 driverDB: com.mysql.jdbc.Driver
-urlDB: jdbc:mysql://sql11.freemysqlhosting.net:3306/sql11211989?useSSL=false
-userDB: sql11211989
-passDB: hMriQRzgE2
+urlDB: jdbc:mysql://andirexu.heliohost.org:3306/andirexu_navidadesconoscar?useSSL=false
+userDB: andirexu_db
+passDB: navidadconoscar
 mailFrom: alumno1@iesquevedo.es
 smtpServer: smtp.gmail.com
 smtpPort: 587
