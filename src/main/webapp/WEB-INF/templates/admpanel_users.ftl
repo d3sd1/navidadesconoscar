@@ -25,6 +25,8 @@
                         <#if rango == "administrador">
                         <li class="active"><a href="/panel/administrador/usuarios">Control de usuarios</a></li>
                         <li><a href="/panel/administrador/asignaturas">Control de asignaturas</a></li>
+                        <li><a href="/panel/administrador/userplusasig">Asignar asignatura a usuario</a></li>
+                        <li><a href="/panel/administrador/teaplusasig">Asignar asignatura a profesor</a></li>
                         </#if>
                         <li><a href="/change_password">Cambiar contraseña</a></li>
                         <li><a href="/logout">Desconectar</a></li>

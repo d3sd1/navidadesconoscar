@@ -11,7 +11,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta charset="UTF-8">
         </head>
+    <!--
+(MIGUEL: POR DEFECTO MUESTRA SOLO PLANTILLA, URL: /?accion=dameusuarios&iniciousuarios=*&finusuarios=*
 
+(MIGUEL: IGUAL QUE EL ANTEIOR)
+Hace falta pantalla para asociar asignaturas y profesores. Relacion N-N
+
+Hace falta pantalla para asociar alumnos y asignaturas, Relacion N-N, se paginaran los alumnos.
+poner listado de alumnos como en un crud, un boton, se abre una emergente, y se muestran las asignaturas en la emergente con las casillas de seleccion http://materializecss.com/forms.html-->
     <body>
         <header>
             <nav>
@@ -25,6 +32,8 @@
                         <#if rango == "administrador">
                         <li><a href="/panel/administrador/usuarios">Control de usuarios</a></li>
                         <li class="active"><a href="/panel/administrador/asignaturas">Control de asignaturas</a></li>
+                        <li><a href="/panel/administrador/userplusasig">Asignar asignatura a usuario</a></li>
+                        <li><a href="/panel/administrador/teaplusasig">Asignar asignatura a profesor</a></li>
                         </#if>
                         <li><a href="/change_password">Cambiar contraseña</a></li>
                         <li><a href="/logout">Desconectar</a></li>
@@ -38,11 +47,11 @@
         <div class="container" style="margin-top: 2em">
             <div class="row">
                 <div class="col s12">
-                    <a class="waves-effect waves-light btn right"><i class="material-icons right">person_add</i>Agregar asignatura</a>
+                    <a class="waves-effect waves-light btn right"><i class="material-icons right">person_add</i>Agregar usuario</a>
                 </div>
-                <div class="col s12" id="actual_page">
+                <div class="col s12">
 
-                    <table class="responsive-table centered highlight bordered scrollspy initdatatable" id="asignaturas">
+                    <table class="responsive-table centered highlight bordered scrollspy initdatatable" id="users">
                         <thead>
                             <tr>
                                 <th>ID</th>

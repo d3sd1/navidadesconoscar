@@ -195,7 +195,20 @@ public class UsersServicios
     {
         UsersDAO dao = new UsersDAO();
         int idPermiso = dao.getPermiso(email);
-
+        System.out.println("ID PERMISO: " + idPermiso);
+        try
+        {
+            System.out.println("pass usuario: " + PasswordHash.getInstance().createHash("alumno"));
+        System.out.println("pass profe: " + PasswordHash.getInstance().createHash("profe"));
+        }
+        catch (NoSuchAlgorithmException ex)
+        {
+            Logger.getLogger(UsersServicios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (InvalidKeySpecException ex)
+        {
+            Logger.getLogger(UsersServicios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         String rango = "";
         switch (idPermiso)
         {
@@ -209,6 +222,7 @@ public class UsersServicios
                 rango = "usuario";
                 break;
         }
+        System.out.println("RANGO: " + rango);
         return rango;
     }
 }

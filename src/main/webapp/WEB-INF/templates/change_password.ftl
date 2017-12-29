@@ -18,16 +18,20 @@
                 <div class="nav-wrapper blue lighten-1">
                     <a href="#" class="brand-logo"><img alt="Logo" src="assets/images/logo.png" style="height: 50px"/></a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <!--<li><a href="#alumnos">(PROFE) Alumnos (crud)</a></li>
-                        <li><a href="asignaturas">(PROFE) Notas de alumnos</a></li>
-                        <li><a href="notas">(SUPERADMIN) Profesores (CRUD)</a></li>
-                        <li><a href="notas">(SUPERADMIN) Asignaturas + cursos (CRUD)</a></li>-->
                         <#if rango == "administrador">
-                        <li><a href="panel/administrador/usuarios">Control de usuarios</a></li>
-                        <li><a href="panel/administrador/asignaturas">Control de asignaturas</a></li>
+                        <li><a href="/panel/administrador/usuarios">Control de usuarios</a></li>
+                        <li><a href="/panel/administrador/asignaturas">Control de asignaturas</a></li>
+                        <li><a href="/panel/administrador/userplusasig">Asignar asignatura a usuario</a></li>
+                        <li><a href="/panel/administrador/teaplusasig">Asignar asignatura a profesor</a></li>
                         </#if>
-                        <li><a href="/change_password">Cambiar contraseña</a></li>
-                        <li><a href="logout">Desconectar</a></li>
+                        <#if rango == "profesor">
+                        <li><a href="/panel/profesor/notas">Notas de alumnos</a></li>
+                        </#if>
+                        <#if rango == "usuario">
+                        <li><a href="/panel/usuario/notas">Mis notas</a></li>
+                        </#if>
+                        <li class="active"><a href="/change_password">Cambiar contraseña</a></li>
+                        <li><a href="/logout">Desconectar</a></li>
                         </ul>
                     </div>
                 </nav>
