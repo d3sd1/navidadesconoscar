@@ -18,7 +18,9 @@ import utils.Constantes;
 
 @WebFilter(filterName = "FiltroLogin", urlPatterns = {
     "/login",
-    "/registro"
+    "/registro",
+    "/recuperarpass1",
+    "/recuperarpass2"
 })
 public class FiltroLogin implements Filter {
     

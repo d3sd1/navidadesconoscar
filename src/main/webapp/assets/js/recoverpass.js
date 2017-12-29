@@ -17,6 +17,9 @@ $("#recoverTrigger").click(function () {
             if (info['success'])
             {
                 Materialize.toast('<span>Email enviado correctamente.</span>', 5000, 'rounded');
+                window.setTimeout(function () {
+                    close();
+                }, 3000);
             }
             else
             {

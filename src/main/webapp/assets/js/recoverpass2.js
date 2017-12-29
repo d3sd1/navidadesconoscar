@@ -33,6 +33,9 @@ $("#recoverTrigger").click(function () {
                 if (info['success'])
                 {
                     Materialize.toast('<span>Contraseña cambiada correctamente.</span>', 5000, 'rounded');
+                    window.setTimeout(function () {
+                        window.location.href = "/login";
+                    }, 3000);
                 }
                 else
                 {
