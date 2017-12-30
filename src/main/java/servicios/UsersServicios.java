@@ -133,7 +133,7 @@ public class UsersServicios {
                 u.setClave(PasswordHash.getInstance().createHash(pass));
                 u.setCodigo_activacion(codigo);
 
-                if (dao.updatePass(u)) {
+                if (dao.updatePassByCodigo(u)) {
                     returnme = ajax.successResponse();
                 } else {
                     returnme = ajax.errorResponse(6);
@@ -178,7 +178,7 @@ public class UsersServicios {
             
             if(validPass){
                 u.setClave(PasswordHash.getInstance().createHash(nuevaPass));
-                if(dao.updatePass(u)){
+                if(dao.updatePassByEmail(u)){
                     returnme = ajax.successResponse();
                 }else{
                     returnme = ajax.errorResponse(0);

@@ -22,9 +22,10 @@ public class UsersDAO {
     private final String queryRegistrarProfe = "INSERT INTO users_profesores (id_user,nombre) VALUES (?,?)";
     private final String queryRegistrarAlumno = "INSERT INTO users_alumnos (id_user,nombre) VALUES (?,?)";
     private final String queryUserByCodigoActivacion = "SELECT * FROM users WHERE codigo_activacion = ?";
-    private final String queryActivar = "UPDATE users SET activo = TRUE WHERE codigo_activacion = ?";
+    private final String queryActivar = "UPDATE users SET activo = TRUE, codigo_activacion = NULL WHERE codigo_activacion = ?";
     private final String queryUpdateCodigo = "UPDATE users SET codigo_activacion = ? WHERE email = ?";
-    private final String queryUpdatePass = "UPDATE users SET clave = ? WHERE codigo_activacion = ?";
+    private final String queryUpdatePassByCodigo = "UPDATE users SET clave = ?, codigo_activacion = NULL WHERE codigo_activacion = ?";
+    private final String queryUpdatePassByEmail = "UPDATE users SET clave = ? WHERE email = ?";
 
     public User getUserByEmail(User usr) {
         User foundUsr;
@@ -141,12 +142,12 @@ public class UsersDAO {
         return valido;
     }
 
-    public boolean updatePass(User u) {
+    public boolean updatePassByCodigo(User u) {
         boolean valido = false;
 
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryUpdatePass, u.getClave(), u.getCodigo_activacion()) > 0) {
+            if (jtm.update(queryUpdatePassByCodigo, u.getClave(), u.getCodigo_activacion()) > 0) {
                 valido = true;
             }
         } catch (DataAccessException ex) {
@@ -167,5 +168,21 @@ public class UsersDAO {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return permiso;
+    }
+    
+    public boolean updatePassByEmail(User u) {
+        boolean valido = false;
+
+        try {
+            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+            if (jtm.update(queryUpdatePassByEmail, u.getClave(), u.getEmail()) > 0) {
+                valido = true;
+            }
+        } catch (DataAccessException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            valido = false;
+        }
+
+        return valido;
     }
 }

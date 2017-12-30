@@ -44,7 +44,6 @@ public class Panel extends HttpServlet
     {
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel_start.ftl");
         HashMap root = new HashMap();
-        System.out.println(request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
         root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
         try
         {
