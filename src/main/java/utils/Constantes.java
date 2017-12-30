@@ -10,4 +10,7 @@ public class Constantes {
     public static final String EMAIL_CONTENT_ACTIVAR_2 = "'>Activar</a></body></html>";
     public static final String EMAIL_CONTENT_NUEVA_PASS_1 = "<html><body><h1>Solicitud de <strong>cambio de contraseña</strong></h1><p>Hemos recibido tu solicitud para cambiar de contraseña.</p><p>Haz click en el siguiente enlace.</p><a href='";
     public static final String EMAIL_CONTENT_NUEVA_PASS_2 = "'>Cambiar contraseña</a></body></html>";
+    public static final String PARAMETRO_ID = "id";
+    public static final String PARAMETRO_NOMBRE = "nombre";
+    public static final String PARAMETRO_ID_CURSO = "id_curso";
 }
