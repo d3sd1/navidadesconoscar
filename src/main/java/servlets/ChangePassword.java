@@ -5,6 +5,8 @@
  */
 package servlets;
 
+import ajax.AjaxMaker;
+import ajax.AjaxResponse;
 import config.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -18,18 +20,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import servicios.UsersServicios;
 import utils.Constantes;
 
 /**
  *
  * @author Andrei
  */
-@WebServlet(name = "ChangePassword", urlPatterns =
-{
-    "/change_password"
-})
-public class ChangePassword extends HttpServlet
-{
+@WebServlet(name = "ChangePassword", urlPatterns
+        = {
+            "/change_password"
+        })
+public class ChangePassword extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,19 +43,38 @@ public class ChangePassword extends HttpServlet
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
+        
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/change_password.ftl");
         HashMap root = new HashMap();
         root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
-        try
-        {
-            temp.process(root, response.getWriter());
+        
+        UsersServicios us = new UsersServicios();
+        AjaxMaker ajax = new AjaxMaker();
+
+        String accion = request.getParameter("accion");
+        if (accion == null) {
+            accion = "";
         }
-        catch (TemplateException ex)
-        {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+
+        switch (accion) {
+            case "cambiarpass":
+                String passActual = request.getParameter("passActual");
+                String nuevaPass = request.getParameter("nuevaPass");
+                String email = (String)request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO);
+                AjaxResponse cambiarPass = us.cambiarPass(passActual, nuevaPass, email);
+                String objeto_json = ajax.parseResponse(cambiarPass);
+                response.getWriter().print(objeto_json);
+                break;
+
+            default:
+                try {
+                    temp.process(root, response.getWriter());
+                } catch (TemplateException ex) {
+                    Logger.getLogger(ChangePassword.class.getName()).log(Level.SEVERE, null, ex);
+                }
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -67,8 +88,7 @@ public class ChangePassword extends HttpServlet
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -82,8 +102,7 @@ public class ChangePassword extends HttpServlet
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -93,8 +112,7 @@ public class ChangePassword extends HttpServlet
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo()
-    {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

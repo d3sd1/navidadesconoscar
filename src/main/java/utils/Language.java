@@ -16,4 +16,5 @@ public class Language {
     public static final String ERROR_ACTIVAR = "Ha ocurrido un error al activar tu cuenta.";
     public static final String ERROR_ACTIVAR_2 = "Inténtalo de nuevo más tarde.";
     public static final String ERROR_PASSOLVIDADA_CODIGOINVALIDO = "El código introducido es inválido.";
+    public static final String ERROR_NUEVAPASS_PASSINVALIDA = "La contraseña introducida es incorrecta.";
 }

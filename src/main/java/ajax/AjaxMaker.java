@@ -30,8 +30,12 @@ public class AjaxMaker
             break;
             case 5:
                 errorMsg = Language.ERROR_PASSOLVIDADA_GENERICO;
+            break;
             case 6:
                 errorMsg = Language.ERROR_PASSOLVIDADA_CODIGOINVALIDO;
+            break;
+            case 7:
+                errorMsg = Language.ERROR_NUEVAPASS_PASSINVALIDA;
             break;
             default:
                 errorMsg = Language.ERROR_GENERIC;

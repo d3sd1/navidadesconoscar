@@ -24,7 +24,7 @@ public class UsersDAO {
     private final String queryUserByCodigoActivacion = "SELECT * FROM users WHERE codigo_activacion = ?";
     private final String queryActivar = "UPDATE users SET activo = TRUE WHERE codigo_activacion = ?";
     private final String queryUpdateCodigo = "UPDATE users SET codigo_activacion = ? WHERE email = ?";
-    private final String queryUpdatePass = "UPDATE users SET clave = ?, codigo_activacion=? WHERE codigo_activacion = ?";
+    private final String queryUpdatePass = "UPDATE users SET clave = ? WHERE codigo_activacion = ?";
 
     public User getUserByEmail(User usr) {
         User foundUsr;
@@ -146,7 +146,7 @@ public class UsersDAO {
 
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryUpdatePass, u.getClave(),null, u.getCodigo_activacion()) > 0) {
+            if (jtm.update(queryUpdatePass, u.getClave(), u.getCodigo_activacion()) > 0) {
                 valido = true;
             }
         } catch (DataAccessException ex) {
