@@ -37,6 +37,12 @@ public class AjaxMaker
             case 7:
                 errorMsg = Language.ERROR_NUEVAPASS_PASSINVALIDA;
             break;
+            case 8:
+                errorMsg = Language.ERROR_INTEGRIDAD_ASIGNATURAS;
+            break;
+            case 9:
+                errorMsg = Language.ERROR_BORRAR_ASIGNATURAS;
+            break;
             default:
                 errorMsg = Language.ERROR_GENERIC;
         }

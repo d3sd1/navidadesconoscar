@@ -66,12 +66,37 @@ public class AdminServicios {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
 
-        boolean borrado = dao.delAsig(a);
+        int borrado = dao.delAsig(a);
         
-        if (borrado) {
+        switch (borrado){
+            case 0:
+                returnme = ajax.errorResponse(8);
+                break;
+            
+            case 1:
+                returnme = ajax.successResponse();
+                break;
+                
+            case -1:
+                returnme = ajax.errorResponse(9);
+                break;
+                
+            default:
+                returnme = ajax.errorResponse(0);
+        }
+        return returnme;
+    }
+    
+    public AjaxResponse delAsig2 (Asignatura a){
+        AjaxResponse returnme;
+        AdminDAO dao = new AdminDAO();
+        
+        boolean borrado = dao.delAsig2(a);
+        
+        if(borrado){
             returnme = ajax.successResponse();
         }else{
-            returnme = ajax.errorResponse(0);
+            returnme = ajax.errorResponse(9);
         }
         return returnme;
     }

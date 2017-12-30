@@ -85,10 +85,17 @@ public class AdminAsignaturas extends HttpServlet {
                 response.getWriter().print(objeto_json);
                 break;
 
-            case "eliminar":
+            case "borrar":
                 a.setId(parseInt(request.getParameter("id")));
                 AjaxResponse delAsig = as.delAsig(a);
                 objeto_json = ajax.parseResponse(delAsig);
+                response.getWriter().print(objeto_json);
+                break;
+            
+            case "borrar2":
+                a.setId(parseInt(request.getParameter("id")));
+                AjaxResponse delAsig2 = as.delAsig2(a);
+                objeto_json = ajax.parseResponse(delAsig2);
                 response.getWriter().print(objeto_json);
                 break;
 
