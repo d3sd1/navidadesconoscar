@@ -5,6 +5,7 @@
  */
 package dao;
 
+import static java.lang.Integer.parseInt;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Asignatura;
+import model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -31,6 +33,10 @@ public class AdminDAO {
     private final String queryDelAsig = "DELETE FROM asignaturas WHERE id = ?";
     private final String queryDelNota = "DELETE FROM alumnos_asignaturas WHERE id_asignatura = ?";
     private final String queryDelAsigProfe = "DELETE FROM profesores_asignaturas WHERE id_asignatura = ?";
+    private final String queryGetAllAlumnos = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user where id_permiso = 3";
+    private final String queryGetAllProfes = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user where id_permiso = 2";
+    private final String queryAsignarProfeAsig = "INSERT INTO profesores_asignaturas (id_profesor, id_asignatura) VALUES (?,?)";
+    private final String queryEliminarProfeAsig = "DELETE FROM profesores_asignaturas WHERE id_profesor = ? AND id_asignatura = ?";
 
     public List<Asignatura> getAllAsignaturas() {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
@@ -54,6 +60,7 @@ public class AdminDAO {
                 a.setId(rs.getInt(1));
             }
 
+            stmt.close();
         } catch (Exception ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
             a = null;
@@ -99,11 +106,11 @@ public class AdminDAO {
         try {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
-            
+
             PreparedStatement stmt = con.prepareStatement(queryDelNota);
             stmt.setInt(1, a.getId());
             stmt.executeUpdate();
-            
+
             stmt = con.prepareStatement(queryDelAsigProfe);
             stmt.setInt(1, a.getId());
             stmt.executeUpdate();
@@ -111,10 +118,11 @@ public class AdminDAO {
             stmt = con.prepareStatement(queryDelAsig);
             stmt.setInt(1, a.getId());
             stmt.executeUpdate();
-            
+
             con.commit();
             borrado = true;
-            
+
+            stmt.close();
         } catch (Exception ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
             try {
@@ -128,5 +136,87 @@ public class AdminDAO {
             DBConnection.getInstance().cerrarConexion(con);
         }
         return borrado;
+    }
+
+    public List<User> getAllAlumnos() {
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        List<User> alumnos = jtm.query(queryGetAllAlumnos, new BeanPropertyRowMapper(User.class));
+
+        return alumnos;
+    }
+
+    public List<User> getAllProfes() {
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        List<User> profesores = jtm.query(queryGetAllProfes, new BeanPropertyRowMapper(User.class));
+
+        return profesores;
+    }
+
+    public boolean asignarProfeAsig(int id_profe, String[] id_asignaturas) {
+        boolean asignado = false;
+        Connection con = null;
+        try {
+            con = DBConnection.getInstance().getConnection();
+            con.setAutoCommit(false);
+            
+            PreparedStatement stmt = con.prepareStatement(queryAsignarProfeAsig);
+
+            for (int i = 0; i < id_asignaturas.length; i++) {
+                stmt.setInt(1, id_profe);
+                stmt.setInt(2, parseInt(id_asignaturas[i]));
+                stmt.executeUpdate();
+            }
+            
+            asignado = true;
+            con.commit();
+            stmt.close();
+
+        } catch (Exception ex) {
+            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (SQLException ex1) {
+                Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } finally {
+            DBConnection.getInstance().cerrarConexion(con);
+        }
+        return asignado;
+    }
+    
+    public boolean eliminarProfeAsig(int id_profe, String[] id_asignaturas) {
+        boolean eliminado = false;
+        Connection con = null;
+        try {
+            con = DBConnection.getInstance().getConnection();
+            con.setAutoCommit(false);
+            
+            PreparedStatement stmt = con.prepareStatement(queryEliminarProfeAsig);
+
+            for (int i = 0; i < id_asignaturas.length; i++) {
+                stmt.setInt(1, id_profe);
+                stmt.setInt(2, parseInt(id_asignaturas[i]));
+                stmt.executeUpdate();
+            }
+            
+            eliminado = true;
+            con.commit();
+            stmt.close();
+
+        } catch (Exception ex) {
+            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (SQLException ex1) {
+                Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } finally {
+            DBConnection.getInstance().cerrarConexion(con);
+        }
+        return eliminado;
     }
 }

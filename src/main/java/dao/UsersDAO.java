@@ -79,7 +79,8 @@ public class UsersDAO {
 
             registroCorrecto = true;
             con.commit();
-
+            
+            stmt.close();
         } catch (Exception ex) {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             registroCorrecto = false;
