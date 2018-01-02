@@ -17,7 +17,7 @@ public class Language {
     public static final String ERROR_ACTIVAR_2 = "Inténtalo de nuevo más tarde.";
     public static final String ERROR_PASSOLVIDADA_CODIGOINVALIDO = "El código introducido es inválido.";
     public static final String ERROR_NUEVAPASS_PASSINVALIDA = "La contraseña introducida es incorrecta.";
-    public static final String ERROR_INTEGRIDAD_ASIGNATURAS = "No se ha podido borrar la asignatura porque tiene notas o profesores asociados a ella.";
+    public static final String ERROR_INTEGRIDAD_ASIGNATURAS = "No se ha podido borrar la asignatura porque tiene notas, profesores o alumnos asociados a ella.";
     public static final String ERROR_BORRAR_ASIGNATURAS = "Ha ocurrido un error al borrar la asignatura.";
     public static final String ERROR_ASIGNAR_ASIGNATURAS = "Ha ocurrido un error al asignar las asignaturas.";
     public static final String ERROR_QUITAR_ASIGNATURAS = "Ha ocurrido un error al quitar las asignaturas.";

@@ -8,7 +8,6 @@ package servicios;
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
 import dao.AdminDAO;
-import static java.lang.Integer.parseInt;
 import java.util.HashMap;
 import java.util.List;
 import model.Asignatura;
@@ -130,6 +129,41 @@ public class AdminServicios {
         String[] id_asignaturas = asignaturas.split(",");
         
         if(dao.eliminarProfeAsig(id_profe, id_asignaturas)){
+            returnme = ajax.successResponse();
+        }else{
+            returnme = ajax.errorResponse(11);
+        }
+        
+        return returnme;
+    }
+    
+    public List<User> getAllAlumnos() {
+        AdminDAO dao = new AdminDAO();
+        return dao.getAllAlumnos();
+    }
+
+    public AjaxResponse asignarAlumAsig(int id_alumno, String asignaturas) {
+        AdminDAO dao = new AdminDAO();
+        AjaxResponse returnme;
+        
+        String[] id_asignaturas = asignaturas.split(",");
+        
+        if(dao.asignarAlumAsig(id_alumno, id_asignaturas)){
+            returnme = ajax.successResponse();
+        }else{
+            returnme = ajax.errorResponse(10);
+        }
+        
+        return returnme;
+    }
+    
+    public AjaxResponse eliminarAlumAsig(int id_alumno, String asignaturas) {
+        AdminDAO dao = new AdminDAO();
+        AjaxResponse returnme;
+        
+        String[] id_asignaturas = asignaturas.split(",");
+        
+        if(dao.eliminarAlumAsig(id_alumno, id_asignaturas)){
             returnme = ajax.successResponse();
         }else{
             returnme = ajax.errorResponse(11);

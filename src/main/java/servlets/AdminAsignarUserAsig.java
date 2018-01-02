@@ -5,11 +5,13 @@
  */
 package servlets;
 
+import ajax.AjaxMaker;
+import ajax.AjaxResponse;
 import config.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.io.PrintWriter;
+import static java.lang.Integer.parseInt;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,18 +20,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import servicios.AdminServicios;
 import utils.Constantes;
 
 /**
  *
  * @author Andrei
  */
-@WebServlet(name = "AdminAsignarUserAsig", urlPatterns =
-{
-    "/panel/administrador/userplusasig"
-})
-public class AdminAsignarUserAsig extends HttpServlet
-{
+@WebServlet(name = "AdminAsignarUserAsig", urlPatterns
+        = {
+            "/panel/administrador/userplusasig"
+        })
+public class AdminAsignarUserAsig extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,22 +43,48 @@ public class AdminAsignarUserAsig extends HttpServlet
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/admpanel_asignaruserasig.ftl");
         HashMap root = new HashMap();
         root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
-        /*
-        AQUI METER SERVICIO QUE DEVUELVA TODOS LAS ASIGNATURAS PARA PASARLOS A LA PLANTILLA
-        root.put("users", );
-        */
-        try
-        {
-            temp.process(root, response.getWriter());
+        
+        AdminServicios as = new AdminServicios();
+        AjaxMaker ajax = new AjaxMaker();
+
+        String accion = request.getParameter("accion");
+
+        String objeto_json;
+        int id_alumno = 0;
+        String asignaturas = "";
+                
+        if (accion == null) {
+            accion = "";
+        } else {
+            id_alumno = parseInt(request.getParameter("id"));
+            asignaturas = request.getParameter("asignaturas");
         }
-        catch (TemplateException ex)
-        {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+
+        switch (accion) {
+            case "asignar":
+                AjaxResponse asignarAlumAsig = as.asignarAlumAsig(id_alumno, asignaturas);
+                objeto_json = ajax.parseResponse(asignarAlumAsig);
+                response.getWriter().print(objeto_json);
+                break;
+            
+            case "eliminar":
+                AjaxResponse eliminarAlumAsig = as.eliminarAlumAsig(id_alumno, asignaturas);
+                objeto_json = ajax.parseResponse(eliminarAlumAsig);
+                response.getWriter().print(objeto_json);
+                break;
+                
+            default:
+                try {
+                    root.put("alumnos", as.getAllAlumnos());
+                    root.put("asignaturas", as.getAllAsignaturas());
+                    temp.process(root, response.getWriter());
+                } catch (TemplateException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                }
         }
     }
 
@@ -71,8 +99,7 @@ public class AdminAsignarUserAsig extends HttpServlet
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -86,8 +113,7 @@ public class AdminAsignarUserAsig extends HttpServlet
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -97,8 +123,7 @@ public class AdminAsignarUserAsig extends HttpServlet
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo()
-    {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 
