@@ -9,7 +9,6 @@ import config.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,18 +17,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import servicios.AlumnosServicios;
 import utils.Constantes;
 
 /**
  *
- * @author Andrei
+ * @author Miguel
  */
-@WebServlet(name = "AlumnoNotas", urlPatterns =
-{
-    "/panel/usuario/notas"
-})
-public class AlumnoNotas extends HttpServlet
-{
+@WebServlet(name = "AlumnoNotas", urlPatterns
+        = {
+            "/panel/usuario/notas"
+        })
+public class AlumnoNotas extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,21 +40,18 @@ public class AlumnoNotas extends HttpServlet
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/alupanel_notas.ftl");
+        
         HashMap root = new HashMap();
         root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
-        /*
-        AQUI METER SERVICIO QUE DEVUELVA TODOS LAS ASIGNATURAS PARA PASARLOS A LA PLANTILLA
-        root.put("users", );
-        */
-        try
-        {
+
+        AlumnosServicios as = new AlumnosServicios();
+        
+        try {
+            root.put("notas", as.getAllNotas((String)request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO)));
             temp.process(root, response.getWriter());
-        }
-        catch (TemplateException ex)
-        {
+        } catch (TemplateException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -71,8 +67,7 @@ public class AlumnoNotas extends HttpServlet
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -86,8 +81,7 @@ public class AlumnoNotas extends HttpServlet
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -97,8 +91,7 @@ public class AlumnoNotas extends HttpServlet
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo()
-    {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

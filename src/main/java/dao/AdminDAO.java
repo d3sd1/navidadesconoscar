@@ -33,8 +33,8 @@ public class AdminDAO {
     private final String queryDelAsig = "DELETE FROM asignaturas WHERE id = ?";
     private final String queryDelNota = "DELETE FROM alumnos_asignaturas WHERE id_asignatura = ?";
     private final String queryDelAsigProfe = "DELETE FROM profesores_asignaturas WHERE id_asignatura = ?";
-    private final String queryGetAllAlumnos = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user where id_permiso = 3";
-    private final String queryGetAllProfes = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user where id_permiso = 2";
+    private final String queryGetAllAlumnos = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 3";
+    private final String queryGetAllProfes = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 2";
     private final String queryAsignarProfeAsig = "INSERT INTO profesores_asignaturas (id_profesor, id_asignatura) VALUES (?,?)";
     private final String queryEliminarProfeAsig = "DELETE FROM profesores_asignaturas WHERE id_profesor = ? AND id_asignatura = ?";
     private final String queryAsignarAlumAsig = "INSERT INTO alumnos_asignaturas (id_alumno, id_asignatura) VALUES (?,?)";
@@ -160,7 +160,7 @@ public class AdminDAO {
         try {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
-            
+
             PreparedStatement stmt = con.prepareStatement(queryAsignarProfeAsig);
 
             for (int i = 0; i < id_asignaturas.length; i++) {
@@ -168,7 +168,7 @@ public class AdminDAO {
                 stmt.setInt(2, parseInt(id_asignaturas[i]));
                 stmt.executeUpdate();
             }
-            
+
             asignado = true;
             con.commit();
             stmt.close();
@@ -187,14 +187,14 @@ public class AdminDAO {
         }
         return asignado;
     }
-    
+
     public boolean eliminarProfeAsig(int id_profe, String[] id_asignaturas) {
         boolean eliminado = false;
         Connection con = null;
         try {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
-            
+
             PreparedStatement stmt = con.prepareStatement(queryEliminarProfeAsig);
 
             for (int i = 0; i < id_asignaturas.length; i++) {
@@ -202,7 +202,7 @@ public class AdminDAO {
                 stmt.setInt(2, parseInt(id_asignaturas[i]));
                 stmt.executeUpdate();
             }
-            
+
             eliminado = true;
             con.commit();
             stmt.close();
@@ -221,14 +221,14 @@ public class AdminDAO {
         }
         return eliminado;
     }
-    
+
     public boolean asignarAlumAsig(int id_alumno, String[] id_asignaturas) {
         boolean asignado = false;
         Connection con = null;
         try {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
-            
+
             PreparedStatement stmt = con.prepareStatement(queryAsignarAlumAsig);
 
             for (int i = 0; i < id_asignaturas.length; i++) {
@@ -236,7 +236,7 @@ public class AdminDAO {
                 stmt.setInt(2, parseInt(id_asignaturas[i]));
                 stmt.executeUpdate();
             }
-            
+
             asignado = true;
             con.commit();
             stmt.close();
@@ -255,14 +255,14 @@ public class AdminDAO {
         }
         return asignado;
     }
-    
+
     public boolean eliminarAlumAsig(int id_alumno, String[] id_asignaturas) {
         boolean eliminado = false;
         Connection con = null;
         try {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
-            
+
             PreparedStatement stmt = con.prepareStatement(queryEliminarAlumAsig);
 
             for (int i = 0; i < id_asignaturas.length; i++) {
@@ -270,7 +270,7 @@ public class AdminDAO {
                 stmt.setInt(2, parseInt(id_asignaturas[i]));
                 stmt.executeUpdate();
             }
-            
+
             eliminado = true;
             con.commit();
             stmt.close();
