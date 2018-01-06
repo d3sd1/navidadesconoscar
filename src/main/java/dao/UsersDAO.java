@@ -33,6 +33,7 @@ public class UsersDAO {
             JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
             foundUsr = (User) jdbcTemplateObject.queryForObject(queryGetUserByMail, new Object[]{usr.getEmail()}, new BeanPropertyRowMapper(User.class));
         } catch (DataAccessException ex) {
+            ex.printStackTrace();
             foundUsr = null;
         }
         return foundUsr;

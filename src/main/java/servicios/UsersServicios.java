@@ -174,7 +174,8 @@ public class UsersServicios {
         
         try {
             u = dao.getUserByEmail(u);
-            boolean validPass = PasswordHash.getInstance().validatePassword(passActual, u.getClave());
+            boolean validPass = 
+                    PasswordHash.getInstance().validatePassword(passActual, u.getClave());
             
             if(validPass){
                 u.setClave(PasswordHash.getInstance().createHash(nuevaPass));
@@ -186,7 +187,7 @@ public class UsersServicios {
             }else{
                 returnme = ajax.errorResponse(7);
             }
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException | NullPointerException ex) {
             Logger.getLogger(UsersServicios.class.getName()).log(Level.SEVERE, null, ex);
             returnme = ajax.errorResponse(0);
         }

@@ -25,7 +25,7 @@
                         <#if rango == "usuario">
                         <li class="active"><a href="panel/usuario/notas">Mis notas</a></li>
                         </#if>
-                        <li><a href="/change_password">Cambiar contraseña</a></li>
+                        <li><a href="/panel/change_password">Cambiar contraseña</a></li>
                         <li><a href="/logout">Desconectar</a></li>
                         </ul>
                     </div>

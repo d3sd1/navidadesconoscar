@@ -31,7 +31,7 @@ Los profesores ponen notas a los alumnos.
                         <#if rango == "profesor">
                         <li class="active"><a href="panel/profesor/notas">Notas de alumnos</a></li>
                         </#if>
-                        <li><a href="/change_password">Cambiar contraseña</a></li>
+                        <li><a href="/panel/change_password">Cambiar contraseña</a></li>
                         <li><a href="/logout">Desconectar</a></li>
                         </ul>
                     </div>

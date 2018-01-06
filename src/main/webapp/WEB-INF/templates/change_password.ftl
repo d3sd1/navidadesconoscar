@@ -5,7 +5,7 @@
         <!--Import Google Icon Font-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!--Import materialize.css-->
-        <link type="text/css" rel="stylesheet" href="assets/css/materialize.min.css"  media="screen,projection"/>
+        <link type="text/css" rel="stylesheet" href="/assets/css/materialize.min.css"  media="screen,projection"/>
 
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -16,7 +16,7 @@
         <header>
             <nav>
                 <div class="nav-wrapper blue lighten-1">
-                    <a href="#" class="brand-logo"><img alt="Logo" src="assets/images/logo.png" style="height: 50px"/></a>
+                    <a href="#" class="brand-logo"><img alt="Logo" src="/assets/images/logo.png" style="height: 50px"/></a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
                         <#if rango == "administrador">
                         <li><a href="/panel/administrador/usuarios">Control de usuarios</a></li>
@@ -30,32 +30,32 @@
                         <#if rango == "usuario">
                         <li><a href="/panel/usuario/notas">Mis notas</a></li>
                         </#if>
-                        <li class="active"><a href="/change_password">Cambiar contraseña</a></li>
+                        <li class="active"><a href="/panel/change_password">Cambiar contraseña</a></li>
                         <li><a href="/logout">Desconectar</a></li>
                         </ul>
                     </div>
                 </nav>
             </header>
         <div class="parallax-container">
-            <div class="parallax"><img src="http://www.pressdigital.es/multimedia/images/Alumnos_en_clase.jpg"></div>
+            <div class="parallax"><img src="https://www.esan.edu.pe/conexion/actualidad/2017/04/10/principal-seguridad-informatica.jpg"></div>
             </div>
         <div class="container" style="margin-top: 2em">
             <div class="row">
                 <form class="col s12 center-align">
                     <div class="row">
                         <div class="input-field col s12">
-                            <input placeholder="**********" id="first_name" type="text" class="validate">
+                            <input placeholder="**********" name="old_pass" type="password" class="validate">
                             <label for="first_name">Contraseña actual</label>
                         </div>
                         <div class="input-field col s6">
-                            <input placeholder="**********" id="first_name" type="text" class="validate">
+                            <input placeholder="**********" name="new_pass1" type="password" class="validate">
                             <label for="first_name">Contraseña nueva</label>
                         </div>
                         <div class="input-field col s6">
-                            <input placeholder="**********" id="first_name" type="text" class="validate">
+                            <input placeholder="**********" name="new_pass2" type="password" class="validate">
                             <label for="first_name">Repite la nueva contraseña</label>
                         </div>
-                        <a class="waves-effect waves-light btn"><i class="material-icons right">arrow_forward</i>Cambiar contraseña</a>
+                        <a class="waves-effect waves-light btn" id="changePassTrigger"><i class="material-icons right">arrow_forward</i>Cambiar contraseña</a>
                     </form>
                 </div>
 
@@ -76,7 +76,17 @@
                     </div>
                 </div>
             </footer>
+        
+        <div id="loading" class="modal">
+            <div class="modal-content">
+                <h1 class="center-align">Cargando...</h1>
+                <div class="progress">
+                    <div class="indeterminate"></div>
+                    </div>
+                </div>
+            </div>
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-        <script src="assets/js/panel_start.js"></script>
+        <script src="/assets/js/panel_start.js"></script>
+        <script src="/assets/js/change_password.js"></script>
     </html>

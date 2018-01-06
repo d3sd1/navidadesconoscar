@@ -28,7 +28,7 @@ import utils.Constantes;
  */
 @WebServlet(name = "ChangePassword", urlPatterns
         = {
-            "/change_password"
+            "/panel/change_password"
         })
 public class ChangePassword extends HttpServlet {
 
@@ -58,8 +58,8 @@ public class ChangePassword extends HttpServlet {
 
         switch (accion) {
             case "cambiarpass":
-                String passActual = request.getParameter("passActual");
-                String nuevaPass = request.getParameter("nuevaPass");
+                String passActual = request.getParameter("passactual");
+                String nuevaPass = request.getParameter("nuevapass");
                 String email = (String)request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO);
                 AjaxResponse cambiarPass = us.cambiarPass(passActual, nuevaPass, email);
                 String objeto_json = ajax.parseResponse(cambiarPass);
