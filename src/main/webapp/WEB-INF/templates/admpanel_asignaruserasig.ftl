@@ -6,6 +6,8 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!--Import materialize.css-->
         <link type="text/css" rel="stylesheet" href="/assets/css/materialize.min.css"  media="screen,projection"/>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -44,21 +46,44 @@ poner listado de alumnos como en un crud, un boton, se abre una emergente, y se 
         <div class="container" style="margin-top: 2em">
             <div class="row">
                 <div class="col s12">
-                    <a class="waves-effect waves-light btn right"><i class="material-icons right">person_add</i>Agregar usuario</a>
-                </div>
-                <div class="col s12">
-
                     <table class="responsive-table centered highlight bordered scrollspy initdatatable" id="users">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre</th>
-                                <th>Fecha de nacimiento</th>
-                                <th>Mayor de edad</th>
+                                <th>Email</th>
+                                <th>Activo</th>
+                                <th></th>
                                 <th></th>
                             </tr>
                         </thead>
-
+                        <#list alumnos as alumno>
+                            <tr id="alumno_${alumno.getId()}">
+                                <td>${alumno.getId()}</td>
+                                <td>${alumno.getNombre()}</th>
+                                <td>${alumno.getEmail()}</td>
+                                <td>${alumno.getActivo()?string('Si', 'No')}</td>
+                                <td>
+                                    <select name="asignaturas" multiple>
+                                        <option value="" disabled selected>Seleccionar asignaturas</option>
+                                    <#list asignaturas as asignatura>
+                                        <option value="${asignatura.getId()}">${asignatura.getNombre()}</option>
+                                    </#list>
+                                    </select>
+                                    <label>Seleccionar asignaturas</label>
+                                </td>
+                                <td><a class="waves-effect waves-light btn" onclick="asignAsig(${alumno.getId()})">Guardar</a></td>
+                            </tr>
+                            <!-- Marcar como activas las asignaturas que ya estén asignadas al alumno -->
+                            <#list asignaturas_alumnos as asignatura_alumno>
+                                <!-- Revisar que el alumno actual sea el adecuado -->
+                                <#if asignatura_alumno.id_alumno == alumno.getId()>
+                                    <script>
+                                        $('#alumno_${asignatura_alumno.id_alumno} select[name="asignaturas"] option[value="${asignatura_alumno.id_asignatura}"]').attr('selected','selected');
+                                    </script>
+                                </#if>
+                            </#list>
+                        </#list>
                         <tbody>
                         <!-- usuarios aqui -->
                         </tbody>
@@ -81,7 +106,51 @@ poner listado de alumnos como en un crud, un boton, se abre una emergente, y se 
                     </div>
                 </div>
             </footer>
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+        <div id="loading" class="modal">
+            <div class="modal-content">
+                <h1 class="center-align">Cargando...</h1>
+                <div class="progress">
+                    <div class="indeterminate"></div>
+                </div>
+            </div>
+        </div>
         <script src="/assets/js/panel_start.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('.parallax').parallax();
+                $('.modal').modal({
+                    dismissible: false
+                });
+            });
+            function asignAsig(id_alumno)
+            {
+                $.ajax({
+                    data: "accion=asignar&id=" + id_alumno + "&asignaturas=" + $("#alumno_" + id_alumno + " select[name='asignaturas']").val().toString(),
+                    url: '/panel/administrador/userplusasig',
+                    type: 'post',
+                    beforeSend: function () {
+                        $('#loading').modal('open');
+                    },
+                    success: function (data) {
+                        var info = JSON.parse(data);
+                        if (info['success'])
+                        {
+                            Materialize.toast('<span>Asignaturas asignadas correctamente.</span>', 5000, 'rounded');
+                        }
+                        else
+                        {
+                            Materialize.toast('<span>Ha ocurrido un error al asignar las asignaturas: ' + info["reason"] + '</span>', 5000, 'rounded');
+                        }
+                    },
+                    error: function(e)
+                    {
+                        Materialize.toast("Ha ocurrido un error al procesar la petición.", 4000);
+                    },
+                    complete: function(c)
+                    {
+                        $('#loading').modal('close');
+                    }
+                });
+            }
+        </script>
     </html>

@@ -3,6 +3,7 @@ package model;
 
 public class User {
     private int id;
+    private String nombre;
     private String email;
     private String clave;
     private boolean activo;
@@ -50,4 +51,15 @@ public class User {
     public void setCodigo_activacion(String codigo_activacion) {
         this.codigo_activacion = codigo_activacion;
     }
+
+    public String getNombre()
+    {
+        return nombre;
+    }
+
+    public void setNombre(String nombre)
+    {
+        this.nombre = nombre;
+    }
+    
 }

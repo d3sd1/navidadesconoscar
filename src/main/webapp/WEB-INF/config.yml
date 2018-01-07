@@ -1,9 +1,7 @@
 ## YAML Template.
 ---
 driverDB: com.mysql.jdbc.Driver
-urlDB: jdbc:mysql://37.11.108.51:3307/navidadesconoscar?useSSL=false
-userDB: rootchulo
-passDB: rootchulo
+urlDB: jdbc:mysql://37.11.108.51:3307/navidadesconoscar?user=rootchulo&password=rootchulo&useSSL=false&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false
 mailFrom: alumno1@iesquevedo.es
 smtpServer: smtp.gmail.com
 smtpPort: 587

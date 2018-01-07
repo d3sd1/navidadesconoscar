@@ -41,8 +41,6 @@ public class DBConnection {
         HikariConfig config = new HikariConfig();
 
         config.setJdbcUrl( Configuration.getInstance().getUrlDB());
-        config.setUsername(Configuration.getInstance().getUserDB());
-        config.setPassword( Configuration.getInstance().getPassDB());
         config.setDriverClassName(Configuration.getInstance().getDriverDB());
         config.setMaximumPoolSize(1);
         

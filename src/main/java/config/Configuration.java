@@ -2,7 +2,6 @@ package config;
 
 import freemarker.template.TemplateExceptionHandler;
 import java.io.InputStream;
-import java.util.Locale;
 import javax.servlet.ServletContext;
 import org.yaml.snakeyaml.Yaml;
 
@@ -39,8 +38,6 @@ public class Configuration
     }
     private String urlDB;
     private String driverDB;
-    private String userDB;
-    private String passDB;
     private String mailFrom;
     private String smtpServer;
     private String smtpPort;
@@ -78,26 +75,6 @@ public class Configuration
     public void setDriverDB(String driverDB)
     {
         this.driverDB = driverDB;
-    }
-
-    public String getUserDB()
-    {
-        return userDB;
-    }
-
-    public void setUserDB(String userDB)
-    {
-        this.userDB = userDB;
-    }
-
-    public String getPassDB()
-    {
-        return passDB;
-    }
-
-    public void setPassDB(String passDB)
-    {
-        this.passDB = passDB;
     }
 
     public String getMailFrom()
