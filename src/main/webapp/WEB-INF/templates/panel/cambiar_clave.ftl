@@ -30,15 +30,17 @@
                         <li><a href="/panel/administrador/usuarios">Control de usuarios</a></li>
                         <li><a href="/panel/administrador/asignaturas">Control de asignaturas</a></li>
                         <li><a href="/panel/administrador/asignaturas_usuarios">Asignar asignatura a alumno</a></li>
-                        <li><a href="panel/administrador/asignaturas_profesores">Asignar asignatura a profesor</a></li>
+                        <li><a href="/panel/administrador/asignaturas_profesores">Asignar asignatura a profesor</a></li>
                         </#if>
                         <#if rango == "profesor">
-                        <li><a href="/panel/profesor/modificar_notas">Notas de alumnos</a></li>
+                        <li><a href="/panel/profesor/notas_curso">Ver notas mis cursos</a></li>
+                        <li><a href="/panel/profesor/notas_alumnado">Ver notas de mis alumnos</a></li>
+                        <li><a href="/panel/profesor/modificar_notas">Cambiar notas</a></li>
                         </#if>
                         <#if rango == "usuario">
                         <li><a href="/panel/usuario/notas">Mis notas</a></li>
                         </#if>
-                        <li class="active"><a href="/panel/cambiar_clave">Cambiar contraseña</a></li>
+                        <li><a href="/panel/cambiar_clave">Cambiar contraseña</a></li>
                         <li><a href="/desconectar">Desconectar</a></li>
                         </ul>
                     </div>
