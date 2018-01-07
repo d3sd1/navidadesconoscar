@@ -25,7 +25,6 @@ public class MailServicios {
             email.addTo(to);
             email.send();
         } catch (EmailException ex) {
-            System.out.println(ex.getMessage());
             Logger.getLogger(MailServicios.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

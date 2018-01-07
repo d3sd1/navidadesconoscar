@@ -192,10 +192,6 @@ public class AdminDAO
     {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
         List<User> alumnos = jtm.query(queryGetAllAlumnos, new BeanPropertyRowMapper(User.class));
-        for (User usr : alumnos)
-        {
-            System.out.println(usr.getEmail());
-        }
         return alumnos;
     }
 

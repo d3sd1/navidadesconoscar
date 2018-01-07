@@ -12,7 +12,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class UsersDAO {
+public class UsersDAO
+{
 
     private final String queryGetUserByMail = "SELECT * FROM users WHERE email = ?";
     private final String queryGetPermiso = "SELECT up.id_permiso FROM users_permisos up JOIN users u ON up.id_user = u.id WHERE u.email = ?";
@@ -27,22 +28,30 @@ public class UsersDAO {
     private final String queryUpdatePassByCodigo = "UPDATE users SET clave = ?, codigo_activacion = NULL WHERE codigo_activacion = ?";
     private final String queryUpdatePassByEmail = "UPDATE users SET clave = ? WHERE email = ?";
 
-    public User getUserByEmail(User usr) {
+    public User getUserByEmail(User usr)
+    {
         User foundUsr;
-        try {
+        try
+        {
             JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            foundUsr = (User) jdbcTemplateObject.queryForObject(queryGetUserByMail, new Object[]{usr.getEmail()}, new BeanPropertyRowMapper(User.class));
-        } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            foundUsr = (User) jdbcTemplateObject.queryForObject(queryGetUserByMail, new Object[]
+            {
+                usr.getEmail()
+            }, new BeanPropertyRowMapper(User.class));
+        }
+        catch (DataAccessException ex)
+        {
             foundUsr = null;
         }
         return foundUsr;
     }
 
-    public boolean registro(User u, String nombre, int tipo) {
+    public boolean registro(User u, String nombre, int tipo)
+    {
         Connection con = null;
         boolean registroCorrecto;
-        try {
+        try
+        {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
@@ -54,7 +63,8 @@ public class UsersDAO {
 
             ResultSet rs = stmt.getGeneratedKeys();
             int idUser = 0;
-            if (rs.next()) {
+            if (rs.next())
+            {
                 idUser = rs.getInt(1);
             }
 
@@ -63,7 +73,8 @@ public class UsersDAO {
             stmt.setInt(2, tipo);
             stmt.executeUpdate();
 
-            switch (tipo) {
+            switch (tipo)
+            {
                 case 1:
                     stmt = con.prepareStatement(queryRegistrarAdmin);
                     break;
@@ -80,47 +91,65 @@ public class UsersDAO {
 
             registroCorrecto = true;
             con.commit();
-            
+
             stmt.close();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             registroCorrecto = false;
 
-            try {
-                if (con != null) {
+            try
+            {
+                if (con != null)
+                {
                     con.rollback();
                 }
-            } catch (SQLException ex1) {
+            }
+            catch (SQLException ex1)
+            {
                 Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex1);
             }
-        } finally {
+        }
+        finally
+        {
             DBConnection.getInstance().cerrarConexion(con);
         }
         return registroCorrecto;
     }
 
-    public User getUserByCodigoActivacion(String codigoActivacion) {
+    public User getUserByCodigoActivacion(String codigoActivacion)
+    {
         User u;
-        try {
+        try
+        {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            u = (User) jtm.queryForObject(queryUserByCodigoActivacion, new Object[]{
+            u = (User) jtm.queryForObject(queryUserByCodigoActivacion, new Object[]
+            {
                 codigoActivacion
             }, new BeanPropertyRowMapper(User.class));
-        } catch (DataAccessException ex) {
+        }
+        catch (DataAccessException ex)
+        {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             u = null;
         }
         return u;
     }
 
-    public int activarUser(User user) {
+    public int activarUser(User user)
+    {
         int valido = -1;
-        try {
+        try
+        {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryActivar, user.getCodigo_activacion()) > 0) {
+            if (jtm.update(queryActivar, user.getCodigo_activacion()) > 0)
+            {
                 valido = 1;
             }
-        } catch (DataAccessException ex) {
+        }
+        catch (DataAccessException ex)
+        {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             valido = -1;
         }
@@ -128,15 +157,20 @@ public class UsersDAO {
         return valido;
     }
 
-    public boolean updateCodigo(User u) {
+    public boolean updateCodigo(User u)
+    {
         boolean valido = false;
 
-        try {
+        try
+        {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryUpdateCodigo, u.getCodigo_activacion(), u.getEmail()) > 0) {
+            if (jtm.update(queryUpdateCodigo, u.getCodigo_activacion(), u.getEmail()) > 0)
+            {
                 valido = true;
             }
-        } catch (DataAccessException ex) {
+        }
+        catch (DataAccessException ex)
+        {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             valido = false;
         }
@@ -144,15 +178,20 @@ public class UsersDAO {
         return valido;
     }
 
-    public boolean updatePassByCodigo(User u) {
+    public boolean updatePassByCodigo(User u)
+    {
         boolean valido = false;
 
-        try {
+        try
+        {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryUpdatePassByCodigo, u.getClave(), u.getCodigo_activacion()) > 0) {
+            if (jtm.update(queryUpdatePassByCodigo, u.getClave(), u.getCodigo_activacion()) > 0)
+            {
                 valido = true;
             }
-        } catch (DataAccessException ex) {
+        }
+        catch (DataAccessException ex)
+        {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             valido = false;
         }
@@ -160,27 +199,36 @@ public class UsersDAO {
         return valido;
     }
 
-    public int getPermiso(String email) {
+    public int getPermiso(String email)
+    {
         int permiso = 0;
-        try {
+        try
+        {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
             permiso = jtm.queryForObject(queryGetPermiso, int.class, email);
 
-        } catch (DataAccessException ex) {
+        }
+        catch (DataAccessException ex)
+        {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return permiso;
     }
-    
-    public boolean updatePassByEmail(User u) {
+
+    public boolean updatePassByEmail(User u)
+    {
         boolean valido = false;
 
-        try {
+        try
+        {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryUpdatePassByEmail, u.getClave(), u.getEmail()) > 0) {
+            if (jtm.update(queryUpdatePassByEmail, u.getClave(), u.getEmail()) > 0)
+            {
                 valido = true;
             }
-        } catch (DataAccessException ex) {
+        }
+        catch (DataAccessException ex)
+        {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             valido = false;
         }
