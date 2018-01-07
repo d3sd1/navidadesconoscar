@@ -53,7 +53,7 @@ poner listado de alumnos como en un crud, un boton, se abre una emergente, y se 
                                 <th>Nombre</th>
                                 <th>Email</th>
                                 <th>Activo</th>
-                                <th></th>
+                                <th>Asignaturas</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -74,15 +74,14 @@ poner listado de alumnos como en un crud, un boton, se abre una emergente, y se 
                                 </td>
                                 <td><a class="waves-effect waves-light btn" onclick="asignAsig(${alumno.getId()})">Guardar</a></td>
                             </tr>
-                            <!-- Marcar como activas las asignaturas que ya estén asignadas al alumno -->
-                            <#list asignaturas_alumnos as asignatura_alumno>
-                                <!-- Revisar que el alumno actual sea el adecuado -->
-                                <#if asignatura_alumno.id_alumno == alumno.getId()>
-                                    <script>
-                                        $('#alumno_${asignatura_alumno.id_alumno} select[name="asignaturas"] option[value="${asignatura_alumno.id_asignatura}"]').attr('selected','selected');
-                                    </script>
-                                </#if>
-                            </#list>
+                            
+                        </#list>
+                        <!-- Marcar como activas las asignaturas que ya estén asignadas al alumno correspondiente -->
+                        <#list asignaturas_alumnos as asignatura_alumno>
+                            <!-- Revisar que el alumno actual sea el adecuado -->
+                            <script>
+                                $('#alumno_${asignatura_alumno.id_alumno} select[name="asignaturas"] option[value="${asignatura_alumno.id_asignatura}"]').attr('selected','selected');
+                            </script>
                         </#list>
                         <tbody>
                         <!-- usuarios aqui -->

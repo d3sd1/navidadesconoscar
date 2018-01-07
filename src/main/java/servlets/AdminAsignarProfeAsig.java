@@ -71,17 +71,12 @@ public class AdminAsignarProfeAsig extends HttpServlet {
                 objeto_json = ajax.parseResponse(asignarProfeAsig);
                 response.getWriter().print(objeto_json);
                 break;
-            
-            case "eliminar":
-                AjaxResponse eliminarProfeAsig = as.eliminarProfeAsig(id_profesor, asignaturas);
-                objeto_json = ajax.parseResponse(eliminarProfeAsig);
-                response.getWriter().print(objeto_json);
-                break;
                 
             default:
                 try {
                     root.put("profesores", as.getAllProfes());
                     root.put("asignaturas", as.getAllAsignaturas());
+                    root.put("asignaturas_profesores", as.getAsigProfesor());
                     temp.process(root, response.getWriter());
                 } catch (TemplateException ex) {
                     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);

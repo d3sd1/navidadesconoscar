@@ -1,31 +1,25 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Inicio</title>
+        <title>Asignar asignaturas a profesor</title>
         <!--Import Google Icon Font-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!--Import materialize.css-->
         <link type="text/css" rel="stylesheet" href="/assets/css/materialize.min.css"  media="screen,projection"/>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta charset="UTF-8">
         </head>
-<!--
-(MIGUEL: POR DEFECTO MUESTRA SOLO PLANTILLA, URL: /?accion=dameusuarios&iniciousuarios=*&finusuarios=*
-URL: /?accion=relacionarlos&id_alumno=15&ids_asignaturas=*,*,*)
-Hace falta pantalla para asociar alumnos y asignaturas, Relacion N-N, se paginaran los alumnos.
-poner listado de alumnos como en un crud, un boton, se abre una emergente, y se muestran las asignaturas en la emergente con las casillas de seleccion http://materializecss.com/forms.html-->
+
     <body>
         <header>
             <nav>
                 <div class="nav-wrapper blue lighten-1">
                     <a href="#" class="brand-logo"><img alt="Logo" src="/assets/images/logo.png" style="height: 50px"/></a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <!--<li><a href="#alumnos">(PROFE) Alumnos (crud)</a></li>
-                        <li><a href="asignaturas">(PROFE) Notas de alumnos</a></li>
-                        <li><a href="notas">(SUPERADMIN) Profesores (CRUD)</a></li>
-                        <li><a href="notas">(SUPERADMIN) Asignaturas + cursos (CRUD)</a></li>-->
                         <#if rango == "administrador">
                         <li><a href="/panel/administrador/usuarios">Control de usuarios</a></li>
                         <li><a href="/panel/administrador/asignaturas">Control de asignaturas</a></li>
@@ -44,23 +38,42 @@ poner listado de alumnos como en un crud, un boton, se abre una emergente, y se 
         <div class="container" style="margin-top: 2em">
             <div class="row">
                 <div class="col s12">
-                    <a class="waves-effect waves-light btn right"><i class="material-icons right">person_add</i>Agregar usuario</a>
-                </div>
-                <div class="col s12">
-
                     <table class="responsive-table centered highlight bordered scrollspy initdatatable" id="users">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre</th>
-                                <th>Fecha de nacimiento</th>
-                                <th>Mayor de edad</th>
+                                <th>Email</th>
+                                <th>Activo</th>
+                                <th>Asignaturas</th>
                                 <th></th>
                             </tr>
                         </thead>
-
+                        <#list profesores as profesor>
+                            <tr id="profesor_${profesor.getId()}">
+                                <td>${profesor.getId()}</td>
+                                <td>${profesor.getNombre()}</th>
+                                <td>${profesor.getEmail()}</td>
+                                <td>${profesor.getActivo()?string('Si', 'No')}</td>
+                                <td>
+                                    <select name="asignaturas" multiple>
+                                        <option value="" disabled selected>Seleccionar asignaturas</option>
+                                    <#list asignaturas as asignatura>
+                                        <option value="${asignatura.getId()}">${asignatura.getNombre()}</option>
+                                    </#list>
+                                    </select>
+                                    <label>Seleccionar asignaturas</label>
+                                </td>
+                                <td><a class="waves-effect waves-light btn" onclick="asignAsig(${profesor.getId()})">Guardar</a></td>
+                            </tr>
+                        </#list>
+                        <!-- Marcar como activas las asignaturas que ya estén asignadas al profesor correspondiente -->
+                        <#list asignaturas_profesores as asignatura_profesor>
+                            <script>
+                                $('#profesor_${asignatura_profesor.id_profesor} select[name="asignaturas"] option[value="${asignatura_profesor.id_asignatura}"]').attr('selected','selected');
+                            </script>
+                        </#list>
                         <tbody>
-                        <!-- usuarios aqui -->
                         </tbody>
                     </table>
                 </div>
@@ -81,7 +94,51 @@ poner listado de alumnos como en un crud, un boton, se abre una emergente, y se 
                     </div>
                 </div>
             </footer>
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+        <div id="loading" class="modal">
+            <div class="modal-content">
+                <h1 class="center-align">Cargando...</h1>
+                <div class="progress">
+                    <div class="indeterminate"></div>
+                </div>
+            </div>
+        </div>
         <script src="/assets/js/panel_start.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('.parallax').parallax();
+                $('.modal').modal({
+                    dismissible: false
+                });
+            });
+            function asignAsig(id_profesor)
+            {
+                $.ajax({
+                    data: "accion=asignar&id=" + id_profesor + "&asignaturas=" + $("#profesor_" + id_profesor + " select[name='asignaturas']").val().toString(),
+                    url: '/panel/administrador/teaplusasig',
+                    type: 'post',
+                    beforeSend: function () {
+                        $('#loading').modal('open');
+                    },
+                    success: function (data) {
+                        var info = JSON.parse(data);
+                        if (info['success'])
+                        {
+                            Materialize.toast('<span>Asignaturas asignadas correctamente.</span>', 5000, 'rounded');
+                        }
+                        else
+                        {
+                            Materialize.toast('<span>Ha ocurrido un error al asignar las asignaturas: ' + info["reason"] + '</span>', 5000, 'rounded');
+                        }
+                    },
+                    error: function(e)
+                    {
+                        Materialize.toast("Ha ocurrido un error al procesar la petición.", 4000);
+                    },
+                    complete: function(c)
+                    {
+                        $('#loading').modal('close');
+                    }
+                });
+            }
+        </script>
     </html>

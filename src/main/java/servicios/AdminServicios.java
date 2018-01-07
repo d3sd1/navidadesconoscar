@@ -126,42 +126,32 @@ public class AdminServicios
 
     public AjaxResponse asignarProfeAsig(int id_profe, String asignaturas)
     {
-        AdminDAO dao = new AdminDAO();
+         AdminDAO dao = new AdminDAO();
         AjaxResponse returnme;
 
         String[] id_asignaturas = asignaturas.split(",");
-
-        if (dao.asignarProfeAsig(id_profe, id_asignaturas))
+        
+        /* Primero se eliminan los registros del usuario y luego se actualizan...
+        Así se evita tener que ir fila por fila revisando si existe o no.
+        De este modo... También se agiliza el proceso.
+        */
+        boolean errors = false;
+        if(dao.eliminarProfeAsig(id_profe))
         {
-            returnme = ajax.successResponse();
+            if(!dao.asignarInsertandoProfeAsig(id_profe, id_asignaturas))
+            {
+                errors = true;
+            }
         }
         else
         {
-            returnme = ajax.errorResponse(10);
+            errors = true;
         }
-
-        return returnme;
+        
+        return (!errors ? returnme = ajax.successResponse():ajax.errorResponse(10));
+        
     }
-
-    public AjaxResponse eliminarProfeAsig(int id_profe, String asignaturas)
-    {
-        AdminDAO dao = new AdminDAO();
-        AjaxResponse returnme;
-
-        String[] id_asignaturas = asignaturas.split(",");
-
-        if (dao.eliminarProfeAsig(id_profe, id_asignaturas))
-        {
-            returnme = ajax.successResponse();
-        }
-        else
-        {
-            returnme = ajax.errorResponse(11);
-        }
-
-        return returnme;
-    }
-
+    
     public List<User> getAllAlumnos()
     {
         AdminDAO dao = new AdminDAO();
@@ -172,6 +162,12 @@ public class AdminServicios
     {
         AdminDAO dao = new AdminDAO();
         return dao.getAsignaturasAlumno();
+    }
+    
+    public List getAsigProfesor()
+    {
+        AdminDAO dao = new AdminDAO();
+        return dao.getAsignaturasProfesor();
     }
 
     public AjaxResponse asignarAlumAsig(int id_alumno, String asignaturas)
