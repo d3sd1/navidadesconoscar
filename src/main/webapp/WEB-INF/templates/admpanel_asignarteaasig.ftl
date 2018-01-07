@@ -49,7 +49,8 @@
                                 <th></th>
                             </tr>
                         </thead>
-                        <#list profesores as profesor>
+                        <tbody>
+                            <#list profesores as profesor>
                             <tr id="profesor_${profesor.getId()}">
                                 <td>${profesor.getId()}</td>
                                 <td>${profesor.getNombre()}</th>
@@ -67,18 +68,18 @@
                                 <td><a class="waves-effect waves-light btn" onclick="asignAsig(${profesor.getId()})">Guardar</a></td>
                             </tr>
                         </#list>
-                        <!-- Marcar como activas las asignaturas que ya estén asignadas al profesor correspondiente -->
-                        <#list asignaturas_profesores as asignatura_profesor>
-                            <script>
-                                $('#profesor_${asignatura_profesor.id_profesor} select[name="asignaturas"] option[value="${asignatura_profesor.id_asignatura}"]').attr('selected','selected');
-                            </script>
-                        </#list>
-                        <tbody>
+                        
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+        <!-- Marcar como activas las asignaturas que ya estén asignadas al profesor correspondiente -->
+        <#list asignaturas_profesores as asignatura_profesor>
+            <script>
+                $('#profesor_${asignatura_profesor.id_profesor} select[name="asignaturas"] option[value="${asignatura_profesor.id_asignatura}"]').attr('selected','selected');
+            </script>
+        </#list>
         <footer class="page-footer cyan accent-4">
             <div class="container">
                 <div class="row">

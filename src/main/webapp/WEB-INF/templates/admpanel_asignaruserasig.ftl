@@ -57,7 +57,8 @@ poner listado de alumnos como en un crud, un boton, se abre una emergente, y se 
                                 <th></th>
                             </tr>
                         </thead>
-                        <#list alumnos as alumno>
+                        <tbody>
+                            <#list alumnos as alumno>
                             <tr id="alumno_${alumno.getId()}">
                                 <td>${alumno.getId()}</td>
                                 <td>${alumno.getNombre()}</th>
@@ -76,20 +77,18 @@ poner listado de alumnos como en un crud, un boton, se abre una emergente, y se 
                             </tr>
                             
                         </#list>
-                        <!-- Marcar como activas las asignaturas que ya estén asignadas al alumno correspondiente -->
-                        <#list asignaturas_alumnos as asignatura_alumno>
-                            <!-- Revisar que el alumno actual sea el adecuado -->
-                            <script>
-                                $('#alumno_${asignatura_alumno.id_alumno} select[name="asignaturas"] option[value="${asignatura_alumno.id_asignatura}"]').attr('selected','selected');
-                            </script>
-                        </#list>
-                        <tbody>
-                        <!-- usuarios aqui -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+        <!-- Marcar como activas las asignaturas que ya estén asignadas al alumno correspondiente -->
+        <#list asignaturas_alumnos as asignatura_alumno>
+            <!-- Revisar que el alumno actual sea el adecuado -->
+            <script>
+                $('#alumno_${asignatura_alumno.id_alumno} select[name="asignaturas"] option[value="${asignatura_alumno.id_asignatura}"]').attr('selected','selected');
+            </script>
+        </#list>
         <footer class="page-footer cyan accent-4">
             <div class="container">
                 <div class="row">

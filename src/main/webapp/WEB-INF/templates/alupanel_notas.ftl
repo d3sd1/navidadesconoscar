@@ -6,6 +6,7 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!--Import materialize.css-->
         <link type="text/css" rel="stylesheet" href="/assets/css/materialize.min.css"  media="screen,projection"/>
+        <link type="text/css" rel="stylesheet" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"  media="screen,projection"/>
 
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -42,16 +43,16 @@
                     <table class="responsive-table centered highlight bordered scrollspy initdatatable" id="users">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Fecha de nacimiento</th>
-                                <th>Mayor de edad</th>
-                                <th></th>
+                                <th>Asignatura</th>
+                                <th>Nota</th>
                             </tr>
                         </thead>
-
                         <tbody>
-                        <!-- usuarios aqui -->
+                        <#list notas as nota>
+                            <tr>
+                                <td>${nota.getNombre_asignatura()}</td>
+                                <td>${nota.getNota()}</td>
+                        </#list>
                         </tbody>
                     </table>
                 </div>
@@ -74,5 +75,11 @@
             </footer>
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+        <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
         <script src="/assets/js/panel_start.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('#users').DataTable();
+            });
+    </script>
     </html>
