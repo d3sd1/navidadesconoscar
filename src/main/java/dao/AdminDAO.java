@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,10 +26,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
  *
  * @author Miguel
  */
-public class AdminDAO
-{
+public class AdminDAO {
 
     private final String queryGetAllAsignaturas = "SELECT * FROM asignaturas";
+    private final String queryGetAllUsers = "SELECT * FROM users";
+    private final String queryGetAllPermisos = "SELECT id_permiso FROM users_permisos";
     private final String queryAddAsig = "INSERT INTO asignaturas (nombre,id_curso) VALUES (?,?)";
     private final String queryModAsig = "UPDATE asignaturas SET nombre = ?, id_curso = ? WHERE id = ?";
     private final String queryDelAsig = "DELETE FROM asignaturas WHERE id = ?";
@@ -42,36 +44,85 @@ public class AdminDAO
     private final String queryEliminarAlumAsig = "DELETE FROM alumnos_asignaturas WHERE id_alumno = ?";
     private final String queryGetAllAlumAsig = "SELECT * FROM alumnos_asignaturas";
     private final String queryGetAllProfeAsig = "SELECT * FROM profesores_asignaturas";
+    private final String queryComprobarEmail = "SELECT email FROM users WHERE email = ?";
+    private final String queryRegistrarUser = "INSERT INTO users (email,clave,activo,codigo_activacion) VALUES (?,?,0,?)";
+    private final String queryRegistrarUserPermisos = "INSERT INTO users_permisos (id_user,id_permiso) VALUES (?,?)";
+    private final String queryRegistrarAdmin = "INSERT INTO users_administradores (id_user,nombre) VALUES (?,?)";
+    private final String queryRegistrarProfe = "INSERT INTO users_profesores (id_user,nombre) VALUES (?,?)";
+    private final String queryRegistrarAlumno = "INSERT INTO users_alumnos (id_user,nombre) VALUES (?,?)";
+    private final String queryModificarUser = "UPDATE users SET email = ? WHERE id = ?";
+    private final String queryModificarUserPermisos = "UPDATE users_permisos SET id_permiso = ? WHERE id_user = ?";
+    private final String queryBorrarAdmin = "DELETE FROM users_administradores WHERE id_user = ?";
+    private final String queryBorrarProfe = "DELETE FROM users_profesores WHERE id_user = ?";
+    private final String queryBorrarAlumno = "DELETE FROM users_alumnos WHERE id_user = ?";
+    private final String queryGetPermiso = "SELECT id_permiso FROM users_permisos WHERE id_user = ?";
 
-    public List<Asignatura> getAllAsignaturas()
-    {
+    public List<Asignatura> getAllAsignaturas() {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
         List<Asignatura> asignaturas = jtm.query(queryGetAllAsignaturas, new BeanPropertyRowMapper(Asignatura.class));
 
         return asignaturas;
     }
 
-    public List<Asignatura> getAsignaturasAlumno()
-    {
+    public List<User> getAllUsers() {
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        List<User> users = jtm.query(queryGetAllUsers, new BeanPropertyRowMapper(User.class));
+
+        return users;
+    }
+
+    public List<Integer> getAllPermisos() {
+        List<Integer> lista = new ArrayList<>();
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            con = DBConnection.getInstance().getConnection();
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(queryGetAllPermisos);
+            
+            while (rs.next()) {
+                int id = rs.getInt("id_permiso");
+                lista.add(id);
+            }
+            
+        } catch (Exception ex) {
+            Logger.getLogger(AlumnosDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(AlumnosDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            DBConnection.getInstance().cerrarConexion(con);
+        }
+        return lista;
+    }
+
+    public List<Asignatura> getAsignaturasAlumno() {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
         List asignaturas = jtm.queryForList(queryGetAllAlumAsig);
 
         return asignaturas;
     }
-    public List<Asignatura> getAsignaturasProfesor()
-    {
+
+    public List<Asignatura> getAsignaturasProfesor() {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
         List asignaturas = jtm.queryForList(queryGetAllProfeAsig);
 
         return asignaturas;
     }
 
-    public Asignatura addAsig(Asignatura a)
-    {
+    public Asignatura addAsig(Asignatura a) {
         Connection con = null;
 
-        try
-        {
+        try {
             con = DBConnection.getInstance().getConnection();
             PreparedStatement stmt = con.prepareStatement(queryAddAsig, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, a.getNombre());
@@ -79,73 +130,54 @@ public class AdminDAO
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next())
-            {
+            if (rs.next()) {
                 a.setId(rs.getInt(1));
             }
 
             stmt.close();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
             a = null;
-        }
-        finally
-        {
+        } finally {
             DBConnection.getInstance().cerrarConexion(con);
         }
         return a;
     }
 
-    public Asignatura modAsig(Asignatura a)
-    {
-        try
-        {
+    public Asignatura modAsig(Asignatura a) {
+        try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (!(jtm.update(queryModAsig, a.getNombre(), a.getId_curso(), a.getId()) > 0))
-            {
+            if (!(jtm.update(queryModAsig, a.getNombre(), a.getId_curso(), a.getId()) > 0)) {
                 a = null;
             }
-        }
-        catch (DataAccessException ex)
-        {
+        } catch (DataAccessException ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
             a = null;
         }
         return a;
     }
 
-    public int delAsig(Asignatura a)
-    {
+    public int delAsig(Asignatura a) {
         int borrado = -1;
-        try
-        {
+        try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryDelAsig, a.getId()) > 0)
-            {
+            if (jtm.update(queryDelAsig, a.getId()) > 0) {
                 borrado = 1;
             }
-        }
-        catch (DataIntegrityViolationException ex)
-        {
+        } catch (DataIntegrityViolationException ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
             borrado = 0;
-        }
-        catch (DataAccessException ex)
-        {
+        } catch (DataAccessException ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
             borrado = -1;
         }
         return borrado;
     }
 
-    public boolean delAsig2(Asignatura a)
-    {
+    public boolean delAsig2(Asignatura a) {
         Connection con = null;
         boolean borrado = false;
-        try
-        {
+        try {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
@@ -165,57 +197,44 @@ public class AdminDAO
             borrado = true;
 
             stmt.close();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            try
-            {
-                if (con != null)
-                {
+            try {
+                if (con != null) {
                     con.rollback();
                 }
-            }
-            catch (SQLException ex1)
-            {
+            } catch (SQLException ex1) {
                 Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
             }
-        }
-        finally
-        {
+        } finally {
             DBConnection.getInstance().cerrarConexion(con);
         }
         return borrado;
     }
 
-    public List<User> getAllAlumnos()
-    {
+    public List<User> getAllAlumnos() {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
         List<User> alumnos = jtm.query(queryGetAllAlumnos, new BeanPropertyRowMapper(User.class));
         return alumnos;
     }
 
-    public List<User> getAllProfes()
-    {
+    public List<User> getAllProfes() {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
         List<User> profesores = jtm.query(queryGetAllProfes, new BeanPropertyRowMapper(User.class));
 
         return profesores;
     }
 
-    public boolean asignarProfeAsig(int id_profe, String[] id_asignaturas)
-    {
+    public boolean asignarProfeAsig(int id_profe, String[] id_asignaturas) {
         boolean asignado = false;
         Connection con = null;
-        try
-        {
+        try {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
             PreparedStatement stmt = con.prepareStatement(queryAsignarProfeAsig);
 
-            for (int i = 0; i < id_asignaturas.length; i++)
-            {
+            for (int i = 0; i < id_asignaturas.length; i++) {
                 stmt.setInt(1, id_profe);
                 stmt.setInt(2, parseInt(id_asignaturas[i]));
                 stmt.executeUpdate();
@@ -225,35 +244,25 @@ public class AdminDAO
             con.commit();
             stmt.close();
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            try
-            {
-                if (con != null)
-                {
+            try {
+                if (con != null) {
                     con.rollback();
                 }
-            }
-            catch (SQLException ex1)
-            {
+            } catch (SQLException ex1) {
                 Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
             }
-        }
-        finally
-        {
+        } finally {
             DBConnection.getInstance().cerrarConexion(con);
         }
         return asignado;
     }
 
-    public boolean asignarInsertandoAlumAsig(int id_alumno, String[] id_asignaturas)
-    {
+    public boolean asignarInsertandoAlumAsig(int id_alumno, String[] id_asignaturas) {
         boolean asignado = false;
         Connection con = null;
-        try
-        {
+        try {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
@@ -268,34 +277,25 @@ public class AdminDAO
             con.commit();
             stmt.close();
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            try
-            {
-                if (con != null)
-                {
+            try {
+                if (con != null) {
                     con.rollback();
                 }
-            }
-            catch (SQLException ex1)
-            {
+            } catch (SQLException ex1) {
                 Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
             }
-        }
-        finally
-        {
+        } finally {
             DBConnection.getInstance().cerrarConexion(con);
         }
         return asignado;
     }
-    public boolean asignarInsertandoProfeAsig(int id_profe, String[] id_asignaturas)
-    {
+
+    public boolean asignarInsertandoProfeAsig(int id_profe, String[] id_asignaturas) {
         boolean asignado = false;
         Connection con = null;
-        try
-        {
+        try {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
@@ -310,35 +310,25 @@ public class AdminDAO
             con.commit();
             stmt.close();
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            try
-            {
-                if (con != null)
-                {
+            try {
+                if (con != null) {
                     con.rollback();
                 }
-            }
-            catch (SQLException ex1)
-            {
+            } catch (SQLException ex1) {
                 Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
             }
-        }
-        finally
-        {
+        } finally {
             DBConnection.getInstance().cerrarConexion(con);
         }
         return asignado;
     }
 
-    public boolean eliminarAlumAsig(int id_alumno)
-    {
+    public boolean eliminarAlumAsig(int id_alumno) {
         boolean eliminado = false;
         Connection con = null;
-        try
-        {
+        try {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
@@ -350,34 +340,25 @@ public class AdminDAO
             eliminado = true;
             con.commit();
             stmt.close();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            try
-            {
-                if (con != null)
-                {
+            try {
+                if (con != null) {
                     con.rollback();
                 }
-            }
-            catch (SQLException ex1)
-            {
+            } catch (SQLException ex1) {
                 Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
             }
-        }
-        finally
-        {
+        } finally {
             DBConnection.getInstance().cerrarConexion(con);
         }
         return eliminado;
     }
-    public boolean eliminarProfeAsig(int id_profe)
-    {
+
+    public boolean eliminarProfeAsig(int id_profe) {
         boolean eliminado = false;
         Connection con = null;
-        try
-        {
+        try {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
@@ -389,26 +370,170 @@ public class AdminDAO
             eliminado = true;
             con.commit();
             stmt.close();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            try
-            {
-                if (con != null)
-                {
+            try {
+                if (con != null) {
                     con.rollback();
                 }
-            }
-            catch (SQLException ex1)
-            {
+            } catch (SQLException ex1) {
                 Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
             }
-        }
-        finally
-        {
+        } finally {
             DBConnection.getInstance().cerrarConexion(con);
         }
         return eliminado;
+    }
+
+    public boolean comprobarEmail(String email) {
+        boolean existe = false;
+        try {
+            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+            String emailDB = jtm.queryForObject(queryComprobarEmail, String.class, email);
+
+            if (emailDB != null) {
+                existe = true;
+            }
+        } catch (DataAccessException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return existe;
+    }
+
+    public User addUser(User u) {
+        Connection con = null;
+
+        try {
+            con = DBConnection.getInstance().getConnection();
+            con.setAutoCommit(false);
+
+            PreparedStatement stmt = con.prepareStatement(queryRegistrarUser, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, u.getEmail());
+            stmt.setString(2, u.getClave());
+            stmt.setString(3, u.getCodigo_activacion());
+            stmt.executeUpdate();
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                u.setId(rs.getInt(1));
+            }
+
+            stmt = con.prepareStatement(queryRegistrarUserPermisos);
+            stmt.setInt(1, u.getId());
+            stmt.setInt(2, u.getTipo());
+            stmt.executeUpdate();
+
+            switch (u.getTipo()) {
+                case 1:
+                    stmt = con.prepareStatement(queryRegistrarAdmin);
+                    break;
+                case 2:
+                    stmt = con.prepareStatement(queryRegistrarProfe);
+                    break;
+                case 3:
+                    stmt = con.prepareStatement(queryRegistrarAlumno);
+                    break;
+            }
+            stmt.setInt(1, u.getId());
+            stmt.setString(2, u.getNombre());
+            stmt.executeUpdate();
+
+            con.commit();
+
+            stmt.close();
+        } catch (Exception ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            u = null;
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (SQLException ex1) {
+                Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } finally {
+            DBConnection.getInstance().cerrarConexion(con);
+        }
+        return u;
+    }
+
+    public boolean modUser(User u, int tipo) {
+        Connection con = null;
+        boolean userModificado = false;
+        try {
+            con = DBConnection.getInstance().getConnection();
+            con.setAutoCommit(false);
+
+            PreparedStatement stmt = con.prepareStatement(queryModificarUser);
+            stmt.setString(1, u.getEmail());
+            stmt.setInt(2, u.getId());
+            stmt.executeUpdate();
+
+            stmt = con.prepareStatement(queryModificarUserPermisos);
+            stmt.setInt(1, u.getTipo());
+            stmt.setInt(2, u.getId());
+            stmt.executeUpdate();
+
+            switch (tipo) {
+                case 1:
+                    stmt = con.prepareStatement(queryBorrarAdmin);
+                    break;
+                case 2:
+                    stmt = con.prepareStatement(queryBorrarProfe);
+                    break;
+                case 3:
+                    stmt = con.prepareStatement(queryBorrarAlumno);
+                    break;
+            }
+
+            stmt.setInt(1, u.getId());
+            stmt.executeUpdate();
+
+            switch (u.getTipo()) {
+                case 1:
+                    stmt = con.prepareStatement(queryRegistrarAdmin);
+                    break;
+                case 2:
+                    stmt = con.prepareStatement(queryRegistrarProfe);
+                    break;
+                case 3:
+                    stmt = con.prepareStatement(queryRegistrarAlumno);
+                    break;
+            }
+
+            stmt.setInt(1, u.getId());
+            stmt.setString(2, u.getNombre());
+            stmt.executeUpdate();
+
+            con.commit();
+            userModificado = true;
+            stmt.close();
+        } catch (Exception ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            userModificado = false;
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (SQLException ex1) {
+                Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } finally {
+            DBConnection.getInstance().cerrarConexion(con);
+        }
+        return userModificado;
+    }
+    
+    
+    public int getPermiso(int id) {
+        int permiso = 0;
+        try {
+            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+            permiso = jtm.queryForObject(queryGetPermiso, int.class, id);
+
+        } catch (DataAccessException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return permiso;
     }
 }

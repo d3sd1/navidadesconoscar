@@ -44,6 +44,7 @@ public class Configuration
     private String mailPass;
     private int minutosParaValidar;
     private int longitudCodigo;
+    private int longitudPass;
 
     private freemarker.template.Configuration freeMarker;
 
@@ -135,6 +136,16 @@ public class Configuration
     public void setLongitudCodigo(int longitudCodigo)
     {
         this.longitudCodigo = longitudCodigo;
+    }
+    
+    public int getLongitudPass()
+    {
+        return longitudPass;
+    }
+
+    public void setLongitudPass(int longitudPass)
+    {
+        this.longitudPass = longitudPass;
     }
 
 }

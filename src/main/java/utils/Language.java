@@ -21,4 +21,6 @@ public class Language {
     public static final String ERROR_BORRAR_ASIGNATURAS = "Ha ocurrido un error al borrar la asignatura.";
     public static final String ERROR_ASIGNAR_ASIGNATURAS = "Ha ocurrido un error al asignar las asignaturas.";
     public static final String ERROR_QUITAR_ASIGNATURAS = "Ha ocurrido un error al quitar las asignaturas.";
+    public static final String ERROR_INSERTAR_USER = "Ha ocurrido un error al crear el usuario.";
+    public static final String ERROR_MODIFICAR_USER = "Ha ocurrido un error al modificar el usuario.";
 }

@@ -49,6 +49,12 @@ public class AjaxMaker
             case 11:
                 errorMsg = Language.ERROR_QUITAR_ASIGNATURAS;
             break;
+            case 12:
+                errorMsg = Language.ERROR_INSERTAR_USER;
+                break;
+            case 13:
+                errorMsg = Language.ERROR_MODIFICAR_USER;
+                break;
             default:
                 errorMsg = Language.ERROR_GENERIC;
         }

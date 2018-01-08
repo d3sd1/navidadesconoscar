@@ -8,6 +8,7 @@ public class User {
     private String clave;
     private boolean activo;
     private String codigo_activacion;
+    private int tipo;
 
     public User() {
     }
@@ -62,4 +63,11 @@ public class User {
         this.nombre = nombre;
     }
     
+    public int getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(int tipo) {
+        this.tipo = tipo;
+    }
 }
