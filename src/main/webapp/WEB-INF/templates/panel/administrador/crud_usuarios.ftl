@@ -11,6 +11,9 @@
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta charset="UTF-8">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+        <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
         </head>
 
     <body>
@@ -59,7 +62,7 @@
                                     <td>${user.getEmail()}</td>
                                     <td>${user.getActivo()?string("Si","No")}</td>
                                     <td><#switch user.getId_permiso()><#case 1>Administrador<#break><#case 2>Profesor<#break><#case 3>Alumno<#break><#default>Rango no identificado</#switch></td>
-                                    <td><a class='dropdown-button btn' href='#' onclick="markActualUser(${user.getId()})" data-activates='acciones'>Acciones</a></td>
+                                    <td><a class='dropdown-button btn' href='#' onclick="markActualUser(${user.getId()})" data-activates='dropdown-${user.getId()}'>Acciones</a><ul id='dropdown-${user.getId()}' class='dropdown-content'><li><a onclick="editView()">Editar</a></li><li><a onclick="deleteConfirm()">Eliminar</a></li></ul></td>
                                 </tr>
                             </#list>
                         </tbody>
@@ -96,6 +99,7 @@
               <h4>Modificar usuario</h4>
                 <div class="row">
                     <form class="col s12">
+                        <input name="id" type="hidden">
                       <div class="row">
                         <div class="input-field col s6">
                           <input name="nombre" type="text" class="validate">
@@ -121,7 +125,7 @@
             </div>
             <div class="modal-footer">
               <a onclick="closeView()" class="waves-effect waves-green btn-flat">Cancelar</a>
-              <a onclick="add()" class="waves-effect waves-green btn-flat">Confirmar</a>
+              <a onclick="action()" class="waves-effect waves-green btn-flat">Confirmar</a>
             </div>
         </div>
         <div id="deleteConfirm" class="modal">
@@ -133,20 +137,16 @@
               <a class="modal-action modal-close waves-effect waves-green btn-flat">No</a>
               <a onclick="del()" class="waves-effect waves-green btn-flat">Si</a>
             </div>
-        </div>    
-        <ul id='acciones' class='dropdown-content'>
-            <li><a onclick="edit()">Editar</a></li>
-            <li><a onclick="deleteConfirm()">Eliminar</a></li>
-        </ul>
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-        <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        </div>
         <script>
-            var actualuser, $dataTable;
+            var actualuser, $dataTable,actualAction;
             $(document).ready(function () {
                 $dataTable = $('#crud_usuarios').DataTable({
                     "language": {
                         "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+                    },
+                    "drawCallback": function() {
+                        $('.dropdown-button').dropdown();
                     }
                 });
                 $('.carousel').carousel();
@@ -156,6 +156,21 @@
                     dismissible: false
                 });
             });
+            function action()
+            {
+                if(actualAction == "edit")
+                {
+                    return edit();
+                }
+                else if(actualAction == "add")
+                {
+                    return add();
+                }
+                else
+                {
+                    console.error("action not found: " + actualAction);
+                }
+            }
             function markActualUser(userId)
             {
                 actualuser = userId;
@@ -167,6 +182,7 @@
             /* ADD */
             function addView()
             {
+                actualAction = "add";
                 $("#manage").modal("open");
             }
             function closeView()
@@ -237,13 +253,114 @@
                                     uinfo["email"],
                                     (uinfo["activo"] == "true" ? "Si":"No"),
                                     tipoUsuario,
-                                    "<a class='dropdown-button btn' href='#' onclick='markActualUser(" + uinfo["id"] + ")' data-activates='acciones'>Acciones</a>"
-                                ] ).draw().node();
+                                    "<a class='dropdown-button btn' href='#' onclick='markActualUser(" + uinfo["id"] + ")' data-activates='dropdown-" + uinfo["id"] + "'>Acciones</a><ul id='dropdown-" + uinfo["id"] + "' class='dropdown-content'><li><a onclick='editView()'>Editar</a></li><li><a onclick='deleteConfirm()'>Eliminar</a></li></ul>"
+                                     ] ).draw().node();
                                 $(newCell).attr("id","user-" + info["id"]);
                             }
                             else
                             {
                                 Materialize.toast('<span>Ha ocurrido un error al añadir el usuario: ' + info["reason"] + '</span>', 5000, 'rounded');
+                            }
+                        },
+                        error: function(e)
+                        {
+                            Materialize.toast("Ha ocurrido un error al procesar la petición.", 4000);
+                        },
+                        complete: function(c)
+                        {
+                            $('#loading').modal('close');
+                            closeView();
+                        }
+                    });
+                }
+            }
+            /* EDIT */
+            function editView()
+            {
+                actualAction = "edit";
+                var nombre = $('#user-' + actualuser).children().eq(1).text(),
+                email = $('#user-' + actualuser).children().eq(2).text(),
+                id = $('#user-' + actualuser).children().eq(0).text(),
+                tipoTxt = $('#user-' + actualuser).children().eq(4).text(),
+                tipo = 0;
+                switch(tipoTxt)
+                {
+                    case "Administrador":
+                        tipo = 1;
+                    break;
+                    case "Profesor":
+                        tipo = 2;
+                    break;
+                    case "Alumno":
+                        tipo = 3;
+                    break;
+                }
+                $("#manage").find("input[name='mail']").val(email);
+                $("#manage").find("input[name='id']").val(id);
+                $("#manage").find("input[name='nombre']").val(nombre);
+                $("#manage ").find("select[name='tipo']").find('option[value="' + tipo + '"]').attr('selected', 'selected');
+                $("#manage ").find("select[name='tipo']").material_select();
+                Materialize.updateTextFields();
+                $("#manage").modal("open");
+                        
+                        
+            }
+            function edit()
+            {
+                var email = $("#manage").find("input[name='mail']").val(),
+                    id = $("#manage").find("input[name='id']").val(),
+                    nombre = $("#manage").find("input[name='nombre']").val(),
+                    tipo = $("#manage").find("select[name='tipo']").val();
+                if(email == "" || nombre == "" || tipo == "" || email == null || nombre == null || tipo == null)
+                {
+                    Materialize.toast('<span>Por favor, rellena todos los campos.</span>', 5000, 'rounded');
+                }
+                else if(!validateEmail(email))
+                {
+                    Materialize.toast('<span>Por favor, introduce un email válido.</span>', 5000, 'rounded');
+                }
+                else
+                {
+                    $.ajax({
+                        data: "accion=modificar&id=" + id + "&email=" + email + "&nombre=" + nombre + "&tipo=" + tipo,
+                        url: '/panel/administrador/usuarios',
+                        type: 'post',
+                        beforeSend: function () {
+                            $('#manage').modal('close');
+                            $('#loading').modal('open');
+                        },
+                        success: function (data) {
+                            var info = JSON.parse(data);
+                            if (info['success'])
+                            {
+                                Materialize.toast('<span>Usuario modificado correctamente</span>', 5000, 'rounded');
+                                var uinfo = info["data"],
+                                    tipoUsuario = "Rango no identificado";
+                                switch(parseInt(uinfo["tipo"])){
+                                    case 1:
+                                        tipoUsuario = "Administrador";
+                                    break;
+                                    case 2:
+                                        tipoUsuario = "Profesor";
+                                    break;
+                                    case 3:
+                                        tipoUsuario = "Alumno";
+                                    break;
+                                }
+                                $dataTable.row('#user-' + uinfo["id"]).remove();
+                                var newCell = $dataTable.row.add( [
+                                    uinfo["id"],
+                                    uinfo["nombre"],
+                                    uinfo["email"],
+                                    (uinfo["activo"] == "true" ? "Si":"No"),
+                                    tipoUsuario,
+                                    "<a class='dropdown-button btn' href='#' onclick='markActualUser(" + uinfo["id"] + ")' data-activates='dropdown-" + uinfo["id"] + "'>Acciones</a><ul id='dropdown-" + uinfo["id"] + "' class='dropdown-content'><li><a onclick='editView()'>Editar</a></li><li><a onclick='deleteConfirm()'>Eliminar</a></li></ul>"
+                                     ] ).draw().node();
+                                $(newCell).attr("id","user-" + info["id"]);
+                            }
+                            else
+                            {
+                                Materialize.toast('<span>Ha ocurrido un error al modificar el usuario: ' + info["reason"] + '</span>', 5000, 'rounded');
                             }
                         },
                         error: function(e)
@@ -277,7 +394,7 @@
                         var info = JSON.parse(data);
                         if (info['success'])
                         {
-                            Materialize.toast('<span>Usuario elminado correctamente</span>', 5000, 'rounded');
+                            Materialize.toast('<span>Usuario eliminado correctamente</span>', 5000, 'rounded');
                             $dataTable.row('#user-' + actualuser).remove().draw();
                         }
                         else
