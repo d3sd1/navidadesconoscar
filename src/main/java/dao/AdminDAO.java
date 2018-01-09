@@ -37,7 +37,7 @@ public class AdminDAO {
     private final String queryGetAllAlumAsig = "SELECT * FROM alumnos_asignaturas";
     private final String queryGetAllProfeAsig = "SELECT * FROM profesores_asignaturas";
     private final String queryComprobarEmail = "SELECT email FROM users WHERE email = ?";
-    private final String queryRegistrarUser = "INSERT INTO users (email,clave,activo,codigo_activacion) VALUES (?,?,0,?)";
+    private final String queryRegistrarUser = "INSERT INTO users (email,clave,activo,codigo_activacion,nombre) VALUES (?,?,0,?,?)";
     private final String queryRegistrarUserPermisos = "INSERT INTO users_permisos (id_user,id_permiso) VALUES (?,?)";
     private final String queryModificarUser = "UPDATE users SET email = ?, nombre = ? WHERE id = ?";
     private final String queryModificarUserPermisos = "UPDATE users_permisos SET id_permiso = ? WHERE id_user = ?";
@@ -383,7 +383,6 @@ public class AdminDAO {
                 existe = true;
             }
         } catch (DataAccessException ex) {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return existe;
     }
@@ -399,6 +398,7 @@ public class AdminDAO {
             stmt.setString(1, u.getEmail());
             stmt.setString(2, u.getClave());
             stmt.setString(3, u.getCodigoActivacion());
+            stmt.setString(4, u.getNombre());
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();
@@ -409,7 +409,6 @@ public class AdminDAO {
             stmt = con.prepareStatement(queryRegistrarUserPermisos);
             stmt.setInt(1, u.getId());
             stmt.setInt(2, u.getId_permiso());
-            stmt.setString(2, u.getNombre());
             stmt.executeUpdate();
 
             con.commit();
