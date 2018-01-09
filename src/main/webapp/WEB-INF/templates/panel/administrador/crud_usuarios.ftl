@@ -35,7 +35,7 @@
         <div class="container" style="margin-top: 2em">
             <div class="row">
                 <div class="col s12">
-                    <a class="waves-effect waves-light btn right"><i class="material-icons right">person_add</i>Agregar usuario</a>
+                    <a class="waves-effect waves-light btn right" onclick="addView()"><i class="material-icons right">person_add</i>Agregar usuario</a>
                 </div>
                 <div class="col s12">
 
@@ -46,7 +46,6 @@
                                 <th>Nombre</th>
                                 <th>Email</th>
                                 <th>Activo</th>
-                                <th>Código de activación</th>
                                 <th>Tipo</th>
                                 <th></th>
                             </tr>
@@ -54,14 +53,25 @@
 
                         <tbody>
                             <#list users as user>
-                                <tr>
+                                <tr id="user-${user.getId()}">
                                     <td>${user.getId()}</td>
                                     <td>${user.getNombre()}</td>
                                     <td>${user.getEmail()}</td>
                                     <td>${user.getActivo()?string("Si","No")}</td>
-                                    <td>${(user.getCodigoActivacion())!"{No definido}"}</td>
-                                    <td>${user.getTipo()}</td>
-                                    <td></td>
+                                    <td><#switch user.getId_permiso()>
+  <#case 1>
+     Administrador
+     <#break>
+       <#case 1>
+     Profesor
+     <#break>
+       <#case 1>
+     Alumno
+     <#break>
+  <#default>
+     Rango no identificado
+</#switch></td>
+                                    <td><a class='dropdown-button btn' href='#' onclick="markActualUser(${user.getId()})" data-activates='acciones'>Acciones</a></td>
                                 </tr>
                             </#list>
                         </tbody>
@@ -69,6 +79,7 @@
                 </div>
             </div>
         </div>
+
         <footer class="page-footer cyan accent-4">
             <div class="container">
                 <div class="row">
@@ -84,12 +95,68 @@
                     </div>
                 </div>
             </footer>
+        <div id="loading" class="modal">
+            <div class="modal-content">
+                <h1 class="center-align">Cargando...</h1>
+                <div class="progress">
+                    <div class="indeterminate"></div>
+                    </div>
+                </div>
+        </div>
+        <div id="manage" class="modal">
+            <div class="modal-content">
+              <h4>Modificar usuario</h4>
+                <div class="row">
+                    <form class="col s12">
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input name="nombre" type="text" class="validate">
+                          <label for="first_name">Nombre</label>
+                        </div>
+                        <div class="input-field col s6">
+                          <input name="mail" type="email" class="validate">
+                          <label>Email</label>
+                        </div>
+                          <div class="input-field col s12">
+                            <select name="tipo">
+                              <option value="" disabled selected>Tipo de usuario</option>
+                              <option value="1">Administrador</option>
+                              <option value="2">Profesor</option>
+                              <option value="3">Usuario</option>
+                            </select>
+                            <label>Tipo de usuario</label>
+                          </div>
+                      </div>
+                      
+                      </div>
+                    </form>
+            </div>
+            <div class="modal-footer">
+              <a onclick="closeView()" class="waves-effect waves-green btn-flat">Cancelar</a>
+              <a onclick="add()" class="waves-effect waves-green btn-flat">Confirmar</a>
+            </div>
+        </div>
+        <div id="deleteConfirm" class="modal">
+            <div class="modal-content">
+              <h4>Eliminar usuario</h4>
+              <p>¿Seguro que deseas eliminar el usuario?</p>
+            </div>
+            <div class="modal-footer">
+              <a class="modal-action modal-close waves-effect waves-green btn-flat">No</a>
+              <a onclick="del()" class="waves-effect waves-green btn-flat">Si</a>
+            </div>
+        </div>    
+        <ul id='acciones' class='dropdown-content'>
+            <li><a onclick="edit()">Editar</a></li>
+            <li><a onclick="deleteConfirm()">Eliminar</a></li>
+        </ul>
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
         <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
         <script>
+            var actualuser, $dataTable;
             $(document).ready(function () {
-                $('#crud_usuarios').DataTable({
+                $dataTable = $('#crud_usuarios').DataTable({
                     "language": {
                         "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
                     }
@@ -97,6 +164,118 @@
                 $('.carousel').carousel();
                 $('.parallax').parallax();
                 $('select').material_select();
+                $('.modal').modal({
+                    dismissible: false
+                });
             });
+            function markActualUser(userId)
+            {
+                actualuser = userId;
+            }
+            /* ADD */
+            function addView()
+            {
+                $("#manage").modal("open");
+            }
+            function closeView()
+            {
+                $("#manage input").each(
+                    function( index, element ){
+                        $(element).val("");
+                    }
+                );
+                $("#manage select").each(
+                    function( index, element ){
+                        $(element).val("");
+                        $(element).material_select();
+                    }
+                );
+                $("#manage .validate").each(
+                    function( index, element ){
+                        $(element).removeClass("valid").removeClass("invalid");
+                    }
+                );
+                Materialize.updateTextFields();
+                $("#manage").modal("close");
+            }
+            function add()
+            {
+                $.ajax({
+                    data: "accion=insertar&email=" + $("#manage").find("input[name='mail']").val() + "&nombre=" + $("#manage").find("input[name='nombre']").val() + "&tipo=" + $("#manage").find("select[name='tipo']").val(),
+                    url: '/panel/administrador/usuarios',
+                    type: 'post',
+                    beforeSend: function () {
+                        $('#manage').modal('close');
+                        $('#loading').modal('open');
+                    },
+                    success: function (data) {
+                        var info = JSON.parse(data);
+                        if (info['success'])
+                        {
+                            Materialize.toast('<span>Usuario añadido correctamente</span>', 5000, 'rounded');
+                            var uinfo = info["data"];
+                            var newCell = $dataTable.row.add( [
+                                uinfo["id"],
+                                uinfo["nombre"],
+                                uinfo["email"],
+                                (uinfo["activo"] == "true" ? "Si":"No"),
+                                uinfo["tipo"],
+                                "<a class='dropdown-button btn' href='#' onclick='markActualUser(" + uinfo["id"] + ")' data-activates='acciones'>Acciones</a>"
+                            ] ).draw().node();
+                            $(newCell).attr("id","user-" + info["id"]);
+                        }
+                        else
+                        {
+                            Materialize.toast('<span>Ha ocurrido un error al añadir el usuario: ' + info["reason"] + '</span>', 5000, 'rounded');
+                        }
+                    },
+                    error: function(e)
+                    {
+                        Materialize.toast("Ha ocurrido un error al procesar la petición.", 4000);
+                    },
+                    complete: function(c)
+                    {
+                        $('#loading').modal('close');
+                        closeView();
+                    }
+                });
+            }
+            /* DELETE */
+            function deleteConfirm()
+            {
+                $("#deleteConfirm").modal("open");
+            }
+            function del()
+            {
+                $.ajax({
+                    data: "accion=borrar&id=" + actualuser,
+                    url: '/panel/administrador/usuarios',
+                    type: 'post',
+                    beforeSend: function () {
+                        $('#deleteConfirm').modal('close');
+                        $('#loading').modal('open');
+                    },
+                    success: function (data) {
+                        var info = JSON.parse(data);
+                        if (info['success'])
+                        {
+                            Materialize.toast('<span>Usuario elminado correctamente</span>', 5000, 'rounded');
+                            $dataTable.row('#user-' + actualuser).remove().draw();
+                        }
+                        else
+                        {
+                            Materialize.toast('<span>Ha ocurrido un error al eliminar el usuario: ' + info["reason"] + '</span>', 5000, 'rounded');
+                        }
+                    },
+                    error: function(e)
+                    {
+                        Materialize.toast("Ha ocurrido un error al procesar la petición.", 4000);
+                    },
+                    complete: function(c)
+                    {
+                        $('#loading').modal('close');
+                    }
+                });
+            }
         </script>
     </html>
