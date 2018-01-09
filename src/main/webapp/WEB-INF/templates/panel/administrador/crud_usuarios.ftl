@@ -58,19 +58,7 @@
                                     <td>${user.getNombre()}</td>
                                     <td>${user.getEmail()}</td>
                                     <td>${user.getActivo()?string("Si","No")}</td>
-                                    <td><#switch user.getId_permiso()>
-  <#case 1>
-     Administrador
-     <#break>
-       <#case 1>
-     Profesor
-     <#break>
-       <#case 1>
-     Alumno
-     <#break>
-  <#default>
-     Rango no identificado
-</#switch></td>
+                                    <td><#switch user.getId_permiso()><#case 1>Administrador<#break><#case 2>Profesor<#break><#case 3>Alumno<#break><#default>Rango no identificado</#switch></td>
                                     <td><a class='dropdown-button btn' href='#' onclick="markActualUser(${user.getId()})" data-activates='acciones'>Acciones</a></td>
                                 </tr>
                             </#list>
@@ -172,6 +160,10 @@
             {
                 actualuser = userId;
             }
+            function validateEmail(email) {
+                var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+                return regex.test(email);
+            }
             /* ADD */
             function addView()
             {
@@ -200,45 +192,71 @@
             }
             function add()
             {
-                $.ajax({
-                    data: "accion=insertar&email=" + $("#manage").find("input[name='mail']").val() + "&nombre=" + $("#manage").find("input[name='nombre']").val() + "&tipo=" + $("#manage").find("select[name='tipo']").val(),
-                    url: '/panel/administrador/usuarios',
-                    type: 'post',
-                    beforeSend: function () {
-                        $('#manage').modal('close');
-                        $('#loading').modal('open');
-                    },
-                    success: function (data) {
-                        var info = JSON.parse(data);
-                        if (info['success'])
+                var email = $("#manage").find("input[name='mail']").val(),
+                    nombre = $("#manage").find("input[name='nombre']").val(),
+                    tipo = $("#manage").find("select[name='tipo']").val();
+                if(email == "" || nombre == "" || tipo == "" || email == null || nombre == null || tipo == null)
+                {
+                    Materialize.toast('<span>Por favor, rellena todos los campos.</span>', 5000, 'rounded');
+                }
+                else if(!validateEmail(email))
+                {
+                    Materialize.toast('<span>Por favor, introduce un email válido.</span>', 5000, 'rounded');
+                }
+                else
+                {
+                    $.ajax({
+                        data: "accion=insertar&email=" + email + "&nombre=" + nombre + "&tipo=" + tipo,
+                        url: '/panel/administrador/usuarios',
+                        type: 'post',
+                        beforeSend: function () {
+                            $('#manage').modal('close');
+                            $('#loading').modal('open');
+                        },
+                        success: function (data) {
+                            var info = JSON.parse(data);
+                            if (info['success'])
+                            {
+                                Materialize.toast('<span>Usuario añadido correctamente</span>', 5000, 'rounded');
+                                var uinfo = info["data"],
+                                    tipoUsuario = "Rango no identificado";
+                                switch(parseInt(uinfo["tipo"])){
+                                    case 1:
+                                        tipoUsuario = "Administrador";
+                                    break;
+                                    case 2:
+                                        tipoUsuario = "Profesor";
+                                    break;
+                                    case 3:
+                                        tipoUsuario = "Alumno";
+                                    break;
+                                }
+                                var newCell = $dataTable.row.add( [
+                                    uinfo["id"],
+                                    uinfo["nombre"],
+                                    uinfo["email"],
+                                    (uinfo["activo"] == "true" ? "Si":"No"),
+                                    tipoUsuario,
+                                    "<a class='dropdown-button btn' href='#' onclick='markActualUser(" + uinfo["id"] + ")' data-activates='acciones'>Acciones</a>"
+                                ] ).draw().node();
+                                $(newCell).attr("id","user-" + info["id"]);
+                            }
+                            else
+                            {
+                                Materialize.toast('<span>Ha ocurrido un error al añadir el usuario: ' + info["reason"] + '</span>', 5000, 'rounded');
+                            }
+                        },
+                        error: function(e)
                         {
-                            Materialize.toast('<span>Usuario añadido correctamente</span>', 5000, 'rounded');
-                            var uinfo = info["data"];
-                            var newCell = $dataTable.row.add( [
-                                uinfo["id"],
-                                uinfo["nombre"],
-                                uinfo["email"],
-                                (uinfo["activo"] == "true" ? "Si":"No"),
-                                uinfo["tipo"],
-                                "<a class='dropdown-button btn' href='#' onclick='markActualUser(" + uinfo["id"] + ")' data-activates='acciones'>Acciones</a>"
-                            ] ).draw().node();
-                            $(newCell).attr("id","user-" + info["id"]);
-                        }
-                        else
+                            Materialize.toast("Ha ocurrido un error al procesar la petición.", 4000);
+                        },
+                        complete: function(c)
                         {
-                            Materialize.toast('<span>Ha ocurrido un error al añadir el usuario: ' + info["reason"] + '</span>', 5000, 'rounded');
+                            $('#loading').modal('close');
+                            closeView();
                         }
-                    },
-                    error: function(e)
-                    {
-                        Materialize.toast("Ha ocurrido un error al procesar la petición.", 4000);
-                    },
-                    complete: function(c)
-                    {
-                        $('#loading').modal('close');
-                        closeView();
-                    }
-                });
+                    });
+                }
             }
             /* DELETE */
             function deleteConfirm()
