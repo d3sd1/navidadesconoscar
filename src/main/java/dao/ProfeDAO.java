@@ -27,9 +27,9 @@ public class ProfeDAO {
             + "ORDER BY a.id";
     private final String queryGetId = "SELECT id FROM users WHERE email = ?";
     
-    public List<Nota> getAllNotas() {
+    public List<Nota> getAllNotas(int id) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<Nota> notas = jtm.query(queryGetAllNotas, new BeanPropertyRowMapper(Nota.class));
+        List<Nota> notas = jtm.query(queryGetAllNotas, new BeanPropertyRowMapper(Nota.class), id);
 
         return notas;
     }

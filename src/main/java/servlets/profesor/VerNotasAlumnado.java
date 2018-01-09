@@ -12,33 +12,33 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import servicios.ProfeServicios;
 import servlets.Conectar;
 import utils.Constantes;
 
-@WebServlet(name = "VerNotasAlumnado", urlPatterns =
-{
-    "/panel/profesor/notas_alumnado"
-})
-public class VerNotasAlumnado extends HttpServlet
-{
+@WebServlet(name = "VerNotasAlumnado", urlPatterns
+        = {
+            "/panel/profesor/notas_alumnado"
+        })
+public class VerNotasAlumnado extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/profesor/notas_alumnado.ftl");
         HashMap root = new HashMap();
         root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
-        /* (PARA UN USUARIO CONECTADO COMO profesor: pasar lista)
-Todas las notas de los alumnos de un profesor en todas las asignaturas. */
-        try
-        {
+
+        String email = (String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO);
+        ProfeServicios ps = new ProfeServicios();
+
+        root.put("notas", ps.getAllNotas(email));
+
+        try {
             temp.process(root, response.getWriter());
-        }
-        catch (TemplateException ex)
-        {
+        } catch (TemplateException ex) {
             Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -52,8 +52,7 @@ Todas las notas de los alumnos de un profesor en todas las asignaturas. */
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -67,8 +66,7 @@ Todas las notas de los alumnos de un profesor en todas las asignaturas. */
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -78,8 +76,7 @@ Todas las notas de los alumnos de un profesor en todas las asignaturas. */
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo()
-    {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 
