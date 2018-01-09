@@ -45,11 +45,11 @@ public class User {
         this.activo = activo;
     }
 
-    public String getCodigo_activacion() {
+    public String getCodigoActivacion() {
         return codigo_activacion;
     }
 
-    public void setCodigo_activacion(String codigo_activacion) {
+    public void setCodigoActivacion(String codigo_activacion) {
         this.codigo_activacion = codigo_activacion;
     }
 

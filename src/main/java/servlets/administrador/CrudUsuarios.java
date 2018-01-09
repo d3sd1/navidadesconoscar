@@ -21,13 +21,16 @@ import servlets.Conectar;
 import utils.Constantes;
 
 @WebServlet(name = "CrudUsuarios", urlPatterns
-        = {
+        =
+        {
             "/panel/administrador/usuarios"
         })
-public class CrudUsuarios extends HttpServlet {
+public class CrudUsuarios extends HttpServlet
+{
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/administrador/crud_usuarios.ftl");
         HashMap root = new HashMap();
         root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
@@ -38,12 +41,14 @@ public class CrudUsuarios extends HttpServlet {
 
         String accion = request.getParameter("accion");
         String objeto_json;
-        
-        if (accion == null) {
+
+        if (accion == null)
+        {
             accion = "";
         }
 
-        switch (accion) {
+        switch (accion)
+        {
             case "insertar":
                 u.setEmail(request.getParameter("email"));
                 u.setNombre(request.getParameter("nombre"));
@@ -65,15 +70,18 @@ public class CrudUsuarios extends HttpServlet {
 
             case "borrar":
                 break;
-                
+
             case "borrar2":
                 break;
 
             default:
-                try {
+                try
+                {
                     root.put("users", as.getAllUsers());
                     temp.process(root, response.getWriter());
-                } catch (TemplateException ex) {
+                }
+                catch (TemplateException ex)
+                {
                     Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
                 }
         }
@@ -91,7 +99,8 @@ public class CrudUsuarios extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         processRequest(request, response);
     }
 
@@ -105,7 +114,8 @@ public class CrudUsuarios extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         processRequest(request, response);
     }
 
@@ -115,7 +125,8 @@ public class CrudUsuarios extends HttpServlet {
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo() {
+    public String getServletInfo()
+    {
         return "Short description";
     }// </editor-fold>
 

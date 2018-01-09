@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dao;
 
 import static java.lang.Integer.parseInt;
@@ -22,10 +17,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-/**
- *
- * @author Miguel
- */
 public class AdminDAO {
 
     private final String queryGetAllAsignaturas = "SELECT * FROM asignaturas";
@@ -36,8 +27,8 @@ public class AdminDAO {
     private final String queryDelAsig = "DELETE FROM asignaturas WHERE id = ?";
     private final String queryDelNota = "DELETE FROM alumnos_asignaturas WHERE id_asignatura = ?";
     private final String queryDelAsigProfe = "DELETE FROM profesores_asignaturas WHERE id_asignatura = ?";
-    private final String queryGetAllAlumnos = "SELECT * FROM users u JOIN users_alumnos ua ON u.id=ua.id_user JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 3";
-    private final String queryGetAllProfes = "SELECT * FROM users u JOIN users_profesores ua ON u.id=ua.id_user JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 2";
+    private final String queryGetAllAlumnos = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 3";
+    private final String queryGetAllProfes = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 2";
     private final String queryAsignarProfeAsig = "INSERT INTO profesores_asignaturas (id_profesor, id_asignatura) VALUES (?,?)";
     private final String queryEliminarProfeAsig = "DELETE FROM profesores_asignaturas WHERE id_profesor = ?";
     private final String queryAsignarAlumAsig = "INSERT INTO alumnos_asignaturas (id_alumno, id_asignatura) VALUES (?,?)";
@@ -47,14 +38,8 @@ public class AdminDAO {
     private final String queryComprobarEmail = "SELECT email FROM users WHERE email = ?";
     private final String queryRegistrarUser = "INSERT INTO users (email,clave,activo,codigo_activacion) VALUES (?,?,0,?)";
     private final String queryRegistrarUserPermisos = "INSERT INTO users_permisos (id_user,id_permiso) VALUES (?,?)";
-    private final String queryRegistrarAdmin = "INSERT INTO users_administradores (id_user,nombre) VALUES (?,?)";
-    private final String queryRegistrarProfe = "INSERT INTO users_profesores (id_user,nombre) VALUES (?,?)";
-    private final String queryRegistrarAlumno = "INSERT INTO users_alumnos (id_user,nombre) VALUES (?,?)";
     private final String queryModificarUser = "UPDATE users SET email = ? WHERE id = ?";
-    private final String queryModificarUserPermisos = "UPDATE users_permisos SET id_permiso = ? WHERE id_user = ?";
-    private final String queryBorrarAdmin = "DELETE FROM users_administradores WHERE id_user = ?";
-    private final String queryBorrarProfe = "DELETE FROM users_profesores WHERE id_user = ?";
-    private final String queryBorrarAlumno = "DELETE FROM users_alumnos WHERE id_user = ?";
+    private final String queryModificarUserPermisos = "UPDATE users_permisos SET id_permiso = ?, nombre = ? WHERE id_user = ?";
     private final String queryGetPermiso = "SELECT id_permiso FROM users_permisos WHERE id_user = ?";
 
     public List<Asignatura> getAllAsignaturas() {
@@ -410,7 +395,7 @@ public class AdminDAO {
             PreparedStatement stmt = con.prepareStatement(queryRegistrarUser, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, u.getEmail());
             stmt.setString(2, u.getClave());
-            stmt.setString(3, u.getCodigo_activacion());
+            stmt.setString(3, u.getCodigoActivacion());
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();
@@ -421,20 +406,6 @@ public class AdminDAO {
             stmt = con.prepareStatement(queryRegistrarUserPermisos);
             stmt.setInt(1, u.getId());
             stmt.setInt(2, u.getTipo());
-            stmt.executeUpdate();
-
-            switch (u.getTipo()) {
-                case 1:
-                    stmt = con.prepareStatement(queryRegistrarAdmin);
-                    break;
-                case 2:
-                    stmt = con.prepareStatement(queryRegistrarProfe);
-                    break;
-                case 3:
-                    stmt = con.prepareStatement(queryRegistrarAlumno);
-                    break;
-            }
-            stmt.setInt(1, u.getId());
             stmt.setString(2, u.getNombre());
             stmt.executeUpdate();
 
@@ -471,38 +442,10 @@ public class AdminDAO {
 
             stmt = con.prepareStatement(queryModificarUserPermisos);
             stmt.setInt(1, u.getTipo());
-            stmt.setInt(2, u.getId());
-            stmt.executeUpdate();
-
-            switch (tipo) {
-                case 1:
-                    stmt = con.prepareStatement(queryBorrarAdmin);
-                    break;
-                case 2:
-                    stmt = con.prepareStatement(queryBorrarProfe);
-                    break;
-                case 3:
-                    stmt = con.prepareStatement(queryBorrarAlumno);
-                    break;
-            }
-
-            stmt.setInt(1, u.getId());
-            stmt.executeUpdate();
-
-            switch (u.getTipo()) {
-                case 1:
-                    stmt = con.prepareStatement(queryRegistrarAdmin);
-                    break;
-                case 2:
-                    stmt = con.prepareStatement(queryRegistrarProfe);
-                    break;
-                case 3:
-                    stmt = con.prepareStatement(queryRegistrarAlumno);
-                    break;
-            }
-
-            stmt.setInt(1, u.getId());
             stmt.setString(2, u.getNombre());
+            stmt.setInt(3, u.getId());
+            stmt.executeUpdate();
+
             stmt.executeUpdate();
 
             con.commit();

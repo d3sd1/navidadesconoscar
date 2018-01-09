@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servicios;
 
 import ajax.AjaxMaker;
@@ -22,10 +17,6 @@ import utils.Language;
 import utils.PasswordHash;
 import utils.Utils;
 
-/**
- *
- * @author Miguel
- */
 public class AdminServicios {
 
     private final AjaxMaker ajax = new AjaxMaker();
@@ -196,13 +187,13 @@ public class AdminServicios {
             try {
                 String clave = Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudPass());
                 u.setClave(PasswordHash.getInstance().createHash(clave));
-                u.setCodigo_activacion(Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
+                u.setCodigoActivacion(Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
                 u = dao.addUser(u);
 
                 if (u != null) {
                     MailServicios nuevoMail = new MailServicios();
                     nuevoMail.mandarMail(u.getEmail(), Constantes.EMAIL_CONTENT_ACTIVAR_1
-                            + Constantes.LINK_EMAIL_ACTIVAR + u.getCodigo_activacion()
+                            + Constantes.LINK_EMAIL_ACTIVAR + u.getCodigoActivacion()
                             + Constantes.EMAIL_CONTENT_ACTIVAR_2 + clave
                             + Constantes.EMAIL_CONTENT_ACTIVAR_3,
                             Language.ASUNTO_EMAIL_ACTIVAR);

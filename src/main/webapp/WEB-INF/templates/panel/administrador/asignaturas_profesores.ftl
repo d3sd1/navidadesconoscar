@@ -117,7 +117,7 @@
             {
                 $.ajax({
                     data: "accion=asignar&id=" + id_profesor + "&asignaturas=" + $("#profesor_" + id_profesor + " select[name='asignaturas']").val().toString(),
-                    url: 'panel/administrador/asignaturas_profesores',
+                    url: '/panel/administrador/asignaturas_profesores',
                     type: 'post',
                     beforeSend: function () {
                         $('#loading').modal('open');

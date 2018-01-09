@@ -54,53 +54,6 @@ public class UsersServicios
         return returnme;
     }
 
-    public AjaxResponse registro(String mail, String pass, String nombre, int tipo)
-    {
-        UsersDAO dao = new UsersDAO();
-        AjaxResponse returnme;
-
-        User userRegister = new User();
-        userRegister.setEmail(mail);
-        userRegister.setClave(pass);
-
-        User u = dao.getUserByEmail(userRegister);
-
-        if (u == null)
-        {
-            try
-            {
-                u = new User();
-                u.setEmail(mail);
-                u.setClave(PasswordHash.getInstance().createHash(pass));
-                u.setCodigo_activacion(Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
-                boolean userRegistrado = dao.registro(u, nombre, tipo);
-                if (userRegistrado == true)
-                {
-                    returnme = ajax.successResponse();
-                    MailServicios nuevoMail = new MailServicios();
-                    nuevoMail.mandarMail(u.getEmail(), Constantes.EMAIL_CONTENT_ACTIVAR_1
-                            + Constantes.LINK_EMAIL_ACTIVAR + u.getCodigo_activacion()
-                            + Constantes.EMAIL_CONTENT_ACTIVAR_2,
-                            Language.ASUNTO_EMAIL_ACTIVAR);
-                }
-                else
-                {
-                    returnme = ajax.errorResponse(0);
-                }
-            }
-            catch (NoSuchAlgorithmException | InvalidKeySpecException ex)
-            {
-                Logger.getLogger(UsersServicios.class.getName()).log(Level.SEVERE, null, ex);
-                returnme = ajax.errorResponse(0);
-            }
-        }
-        else
-        {
-            returnme = ajax.errorResponse(3);
-        }
-        return returnme;
-    }
-
     public int activar(String codigo)
     {
         UsersDAO dao = new UsersDAO();
@@ -133,13 +86,13 @@ public class UsersServicios
 
         if (u != null && u.getEmail() != "")
         {
-            u.setCodigo_activacion(Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
+            u.setCodigoActivacion(Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
             if (dao.updateCodigo(u))
             {
                 MailServicios nuevoMail = new MailServicios();
                 nuevoMail.mandarMail(email, Constantes.EMAIL_CONTENT_NUEVA_PASS_1
                         + Constantes.LINK_EMAIL_NUEVA_PASS
-                        + u.getCodigo_activacion()
+                        + u.getCodigoActivacion()
                         + Constantes.EMAIL_CONTENT_NUEVA_PASS_2,
                         Language.ASUNTO_EMAIL_NUEVA_PASS);
 
@@ -167,7 +120,7 @@ public class UsersServicios
                 UsersDAO dao = new UsersDAO();
                 User u = new User();
                 u.setClave(PasswordHash.getInstance().createHash(pass));
-                u.setCodigo_activacion(codigo);
+                u.setCodigoActivacion(codigo);
 
                 if (dao.updatePassByCodigo(u))
                 {
