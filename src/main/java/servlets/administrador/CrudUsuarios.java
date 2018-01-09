@@ -8,6 +8,7 @@ import freemarker.template.TemplateException;
 import java.io.IOException;
 import static java.lang.Integer.parseInt;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -46,37 +47,56 @@ public class CrudUsuarios extends HttpServlet
         {
             accion = "";
         }
-
+        String email = Objects.toString(request.getParameter("email"),"");
+        String nombre = Objects.toString(request.getParameter("nombre"),"");
+        int id;
+        try
+        {
+            id = parseInt(Objects.toString(request.getParameter("id"),"1"));
+        }
+        catch(NumberFormatException ex)
+        {
+            id = 0;
+        }
+        int idPermiso;
+        try
+        {
+            idPermiso = parseInt(Objects.toString(request.getParameter("tipo"),"1"));
+        }
+        catch(NumberFormatException ex)
+        {
+            idPermiso = 0;
+        }
         switch (accion)
         {
             case "insertar":
-                u.setEmail(request.getParameter("email"));
-                u.setNombre(request.getParameter("nombre"));
-                u.setId_permiso(parseInt(request.getParameter("tipo")));
+                u.setEmail(email);
+                u.setNombre(nombre);
+                u.setId_permiso(idPermiso);
                 AjaxResponse insertarUser = as.addUser(u);
                 objeto_json = ajax.parseResponse(insertarUser);
                 response.getWriter().print(objeto_json);
                 break;
 
             case "modificar":
-                u.setId(parseInt(request.getParameter("id")));
-                u.setEmail(request.getParameter("email"));
-                u.setNombre(request.getParameter("nombre"));
-                u.setId_permiso(parseInt(request.getParameter("tipo")));
+                u.setId(id);
+                u.setEmail(email);
+                u.setNombre(nombre);
+                u.setId_permiso(idPermiso);
                 AjaxResponse modificarUser = as.modUser(u);
                 objeto_json = ajax.parseResponse(modificarUser);
                 response.getWriter().print(objeto_json);
                 break;
 
             case "borrar":
-                u.setId(parseInt(request.getParameter("id")));
+                u.setId(id);
                 AjaxResponse delUser = as.delUser(u);
                 objeto_json = ajax.parseResponse(delUser);
                 response.getWriter().print(objeto_json);
                 break;
 
             case "borrar2":
-                u.setId(parseInt(request.getParameter("id")));
+                u.setId(id);
                 AjaxResponse delUser2 = as.delUser2(u);
                 objeto_json = ajax.parseResponse(delUser2);
                 response.getWriter().print(objeto_json);
