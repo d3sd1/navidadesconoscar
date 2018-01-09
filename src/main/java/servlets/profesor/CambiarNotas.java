@@ -1,9 +1,12 @@
 package servlets.profesor;
 
+import ajax.AjaxMaker;
+import ajax.AjaxResponse;
 import config.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.IOException;
+import static java.lang.Integer.parseInt;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,34 +15,53 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.Nota;
+import servicios.ProfeServicios;
 import servlets.Conectar;
 import utils.Constantes;
 
-@WebServlet(name = "CambiarNotas", urlPatterns =
-{
-    "/panel/profesor/modificar_notas"
-})
-public class CambiarNotas extends HttpServlet
-{
+@WebServlet(name = "CambiarNotas", urlPatterns
+        = {
+            "/panel/profesor/modificar_notas"
+        })
+public class CambiarNotas extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/profesor/notas_cambiar.ftl");
         HashMap root = new HashMap();
         root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
-        /*
-        AQUI METER SERVICIO QUE DEVUELVA TODOS LAS ASIGNATURAS PARA PASARLOS A LA PLANTILLA
-        root.put("users", );
-         */
-        try
-        {
-            temp.process(root, response.getWriter());
+
+        String accion = request.getParameter("accion");
+        ProfeServicios ps = new ProfeServicios();
+        AjaxMaker ajax = new AjaxMaker();
+        String objeto_json;
+        
+        if (accion == null) {
+            accion = "";
         }
-        catch (TemplateException ex)
-        {
-            Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
+
+        switch (accion) {
+            case "modificar":
+                Nota n = new Nota();
+                n.setId_alumno(parseInt(request.getParameter("idAlumno")));
+                n.setId_asignatura(parseInt(request.getParameter("idAsignatura")));
+                n.setNota(parseInt(request.getParameter("nota")));
+                AjaxResponse modNota = ps.modNota(n);
+                objeto_json = ajax.parseResponse(modNota);
+                response.getWriter().print(objeto_json);
+                break;
+
+            default:
+                try {
+                    String email = (String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO);
+                    root.put("notas", ps.getAllNotas(email));
+                    temp.process(root, response.getWriter());
+                } catch (TemplateException ex) {
+                    Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
+                }
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -53,8 +75,7 @@ public class CambiarNotas extends HttpServlet
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -68,8 +89,7 @@ public class CambiarNotas extends HttpServlet
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -79,8 +99,7 @@ public class CambiarNotas extends HttpServlet
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo()
-    {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 
