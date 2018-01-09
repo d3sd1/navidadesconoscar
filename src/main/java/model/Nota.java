@@ -1,6 +1,7 @@
 package model;
 public class Nota {
     private int id_alumno;
+    private String nombre;
     private int id_asignatura;
     private String nombre_asignatura;
     private int nota;
@@ -11,6 +12,14 @@ public class Nota {
 
     public void setId_alumno(int id_alumno) {
         this.id_alumno = id_alumno;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public int getId_asignatura() {
