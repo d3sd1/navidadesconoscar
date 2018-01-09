@@ -44,14 +44,26 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre</th>
-                                <th>Fecha de nacimiento</th>
-                                <th>Mayor de edad</th>
+                                <th>Email</th>
+                                <th>Activo</th>
+                                <th>Código de activación</th>
+                                <th>Tipo</th>
                                 <th></th>
                             </tr>
                         </thead>
 
                         <tbody>
-                        <!-- usuarios aqui -->
+                            <#list users as user>
+                                <tr>
+                                    <td>${user.getId()}</td>
+                                    <td>${user.getNombre()}</td>
+                                    <td>${user.getEmail()}</td>
+                                    <td>${user.getActivo()?string("Si","No")}</td>
+                                    <td>${(user.getCodigoActivacion())!"{No definido}"}</td>
+                                    <td>${user.getTipo()}</td>
+                                    <td></td>
+                                </tr>
+                            </#list>
                         </tbody>
                     </table>
                 </div>

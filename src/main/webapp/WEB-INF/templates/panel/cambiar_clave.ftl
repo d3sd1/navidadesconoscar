@@ -10,14 +10,6 @@
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta charset="UTF-8">
-        <style>
-            canvas {
-                position: absolute;
-                top: 0;
-                left: 0;
-                z-index: 1;
-            }
-            </style>
         </head>
 
     <body>
@@ -47,7 +39,7 @@
                 </nav>
             </header>
         <div class="parallax-container">
-            <div class="parallax"><img src="https://www.esan.edu.pe/conectar/actualidad/2017/04/10/principal-seguridad-informatica.jpg"></div>
+            <div class="parallax"><img src="https://static.iris.net.co/semana/upload/images/2017/7/21/533321_1.jpg"></div>
             </div>
         <div class="container" style="margin-top: 2em">
             <div class="row">
@@ -97,7 +89,6 @@
         </div>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-    <script src="/assets/js/panel_start.js"></script>
     <script>
         $(document).ready(function () {
             $('.carousel').carousel();
