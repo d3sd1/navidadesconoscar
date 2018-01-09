@@ -52,7 +52,7 @@ public class CrudUsuarios extends HttpServlet
             case "insertar":
                 u.setEmail(request.getParameter("email"));
                 u.setNombre(request.getParameter("nombre"));
-                u.setTipo(parseInt(request.getParameter("tipo")));
+                u.setId_permiso(parseInt(request.getParameter("tipo")));
                 AjaxResponse insertarUser = as.addUser(u);
                 objeto_json = ajax.parseResponse(insertarUser);
                 response.getWriter().print(objeto_json);
@@ -62,7 +62,7 @@ public class CrudUsuarios extends HttpServlet
                 u.setId(parseInt(request.getParameter("id")));
                 u.setEmail(request.getParameter("email"));
                 u.setNombre(request.getParameter("nombre"));
-                u.setTipo(parseInt(request.getParameter("tipo")));
+                u.setId_permiso(parseInt(request.getParameter("tipo")));
                 AjaxResponse modificarUser = as.modUser(u);
                 objeto_json = ajax.parseResponse(modificarUser);
                 response.getWriter().print(objeto_json);

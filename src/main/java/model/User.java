@@ -8,7 +8,7 @@ public class User {
     private String clave;
     private boolean activo;
     private String codigo_activacion;
-    private int tipo;
+    private int id_permiso;
 
     public User() {
     }
@@ -63,11 +63,11 @@ public class User {
         this.nombre = nombre;
     }
     
-    public int getTipo() {
-        return tipo;
+    public int getId_permiso() {
+        return id_permiso;
     }
 
-    public void setTipo(int tipo) {
-        this.tipo = tipo;
+    public void setId_permiso(int id_permiso) {
+        this.id_permiso = id_permiso;
     }
 }

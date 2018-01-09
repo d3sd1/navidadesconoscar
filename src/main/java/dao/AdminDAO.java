@@ -20,7 +20,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class AdminDAO {
 
     private final String queryGetAllAsignaturas = "SELECT * FROM asignaturas";
-    private final String queryGetAllUsers = "SELECT * FROM users";
+    private final String queryGetAllUsers = "SELECT u.id, u.email, u.nombre, up.id_permiso FROM users u JOIN users_permisos up ON u.id = up.id_user";
     private final String queryGetAllPermisos = "SELECT id_permiso FROM users_permisos";
     private final String queryAddAsig = "INSERT INTO asignaturas (nombre,id_curso) VALUES (?,?)";
     private final String queryModAsig = "UPDATE asignaturas SET nombre = ?, id_curso = ? WHERE id = ?";
@@ -38,8 +38,8 @@ public class AdminDAO {
     private final String queryComprobarEmail = "SELECT email FROM users WHERE email = ?";
     private final String queryRegistrarUser = "INSERT INTO users (email,clave,activo,codigo_activacion) VALUES (?,?,0,?)";
     private final String queryRegistrarUserPermisos = "INSERT INTO users_permisos (id_user,id_permiso) VALUES (?,?)";
-    private final String queryModificarUser = "UPDATE users SET email = ? WHERE id = ?";
-    private final String queryModificarUserPermisos = "UPDATE users_permisos SET id_permiso = ?, nombre = ? WHERE id_user = ?";
+    private final String queryModificarUser = "UPDATE users SET email = ?, nombre = ? WHERE id = ?";
+    private final String queryModificarUserPermisos = "UPDATE users_permisos SET id_permiso = ? WHERE id_user = ?";
     private final String queryGetPermiso = "SELECT id_permiso FROM users_permisos WHERE id_user = ?";
     private final String queryDelUser = "DELETE FROM users WHERE id = ?";
 
@@ -406,7 +406,7 @@ public class AdminDAO {
 
             stmt = con.prepareStatement(queryRegistrarUserPermisos);
             stmt.setInt(1, u.getId());
-            stmt.setInt(2, u.getTipo());
+            stmt.setInt(2, u.getId_permiso());
             stmt.setString(2, u.getNombre());
             stmt.executeUpdate();
 
@@ -438,13 +438,13 @@ public class AdminDAO {
 
             PreparedStatement stmt = con.prepareStatement(queryModificarUser);
             stmt.setString(1, u.getEmail());
-            stmt.setInt(2, u.getId());
+            stmt.setString(2, u.getNombre());
+            stmt.setInt(3, u.getId());
             stmt.executeUpdate();
 
             stmt = con.prepareStatement(queryModificarUserPermisos);
-            stmt.setInt(1, u.getTipo());
-            stmt.setString(2, u.getNombre());
-            stmt.setInt(3, u.getId());
+            stmt.setInt(1, u.getId_permiso());
+            stmt.setInt(2, u.getId());
             stmt.executeUpdate();
 
             stmt.executeUpdate();

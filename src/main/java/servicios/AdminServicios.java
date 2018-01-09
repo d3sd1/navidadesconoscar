@@ -168,12 +168,7 @@ public class AdminServicios {
 
     public List<User> getAllUsers() {
         AdminDAO dao = new AdminDAO();
-        List<User> users = dao.getAllUsers();
-        List<Integer> permisos = dao.getAllPermisos();
-        for (int i = 0; i < users.size(); i++) {
-            users.get(i).setTipo(permisos.get(i));
-        }
-        return users;
+        return dao.getAllUsers();
     }
 
     public AjaxResponse addUser(User u) {
@@ -202,7 +197,7 @@ public class AdminServicios {
                     datos.put(Constantes.PARAMETRO_ID, String.valueOf(u.getId()));
                     datos.put(Constantes.PARAMETRO_NOMBRE, u.getNombre());
                     datos.put(Constantes.PARAMETRO_EMAIL, u.getEmail());
-                    datos.put(Constantes.PARAMETRO_TIPO, String.valueOf(u.getTipo()));
+                    datos.put(Constantes.PARAMETRO_TIPO, String.valueOf(u.getId_permiso()));
                     returnme = ajax.successResponse(datos);
                 } else {
                     returnme = ajax.errorResponse(12);
@@ -230,7 +225,7 @@ public class AdminServicios {
             datos.put(Constantes.PARAMETRO_ID, String.valueOf(u.getId()));
             datos.put(Constantes.PARAMETRO_NOMBRE, u.getNombre());
             datos.put(Constantes.PARAMETRO_EMAIL, u.getEmail());
-            datos.put(Constantes.PARAMETRO_TIPO, String.valueOf(u.getTipo()));
+            datos.put(Constantes.PARAMETRO_TIPO, String.valueOf(u.getId_permiso()));
             returnme = ajax.successResponse(datos);
         } else {
             returnme = ajax.errorResponse(13);
