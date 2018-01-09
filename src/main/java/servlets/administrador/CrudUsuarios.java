@@ -64,9 +64,17 @@ public class CrudUsuarios extends HttpServlet {
                 break;
 
             case "borrar":
+                u.setId(parseInt(request.getParameter("id")));
+                AjaxResponse delUser = as.delUser(u);
+                objeto_json = ajax.parseResponse(delUser);
+                response.getWriter().print(objeto_json);
                 break;
                 
             case "borrar2":
+                u.setId(parseInt(request.getParameter("id")));
+                AjaxResponse delUser2 = as.delUser2(u);
+                objeto_json = ajax.parseResponse(delUser2);
+                response.getWriter().print(objeto_json);
                 break;
 
             default:

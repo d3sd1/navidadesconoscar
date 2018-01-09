@@ -56,6 +56,7 @@ public class AdminDAO {
     private final String queryBorrarProfe = "DELETE FROM users_profesores WHERE id_user = ?";
     private final String queryBorrarAlumno = "DELETE FROM users_alumnos WHERE id_user = ?";
     private final String queryGetPermiso = "SELECT id_permiso FROM users_permisos WHERE id_user = ?";
+    private final String queryDelUser = "DELETE FROM users WHERE id = ?";
 
     public List<Asignatura> getAllAsignaturas() {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
@@ -535,5 +536,60 @@ public class AdminDAO {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return permiso;
+    }
+    
+    public int delUser(User u){
+        int borrado = -1;
+        try {
+            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+            if (jtm.update(queryDelUser, u.getId()) > 0) {
+                borrado = 1;
+            }
+        } catch (DataIntegrityViolationException ex) {
+            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+            borrado = 0;
+        } catch (DataAccessException ex) {
+            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+            borrado = -1;
+        }
+        return borrado;
+    }
+    
+    public boolean delUser2(User u) {
+        Connection con = null;
+        boolean borrado = false;
+        try {
+            con = DBConnection.getInstance().getConnection();
+            con.setAutoCommit(false);
+
+            PreparedStatement stmt = con.prepareStatement(queryEliminarAlumAsig);
+            stmt.setInt(1, u.getId());
+            stmt.executeUpdate();
+
+            stmt = con.prepareStatement(queryEliminarProfeAsig);
+            stmt.setInt(1, u.getId());
+            stmt.executeUpdate();
+
+            stmt = con.prepareStatement(queryDelUser);
+            stmt.setInt(1, u.getId());
+            stmt.executeUpdate();
+
+            con.commit();
+            borrado = true;
+
+            stmt.close();
+        } catch (Exception ex) {
+            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (SQLException ex1) {
+                Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } finally {
+            DBConnection.getInstance().cerrarConexion(con);
+        }
+        return borrado;
     }
 }

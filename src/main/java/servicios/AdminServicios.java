@@ -246,5 +246,44 @@ public class AdminServicios {
         }
         return returnme;
     }
+    
+    public AjaxResponse delUser(User u){
+        AdminDAO dao = new AdminDAO();
+        AjaxResponse returnme;
+        
+        int borrado = dao.delUser(u);
+        
+        switch(borrado){
+            case 0:
+                returnme = ajax.errorResponse(14);
+                break;
+              
+            case 1:
+                returnme = ajax.successResponse();
+                break;
+               
+            case -1:
+                returnme = ajax.errorResponse(15);
+                break;
+                
+            default:
+                returnme = ajax.errorResponse(0);
+        }
+        return returnme;
+    }
+    
+    public AjaxResponse delUser2(User u){
+        AjaxResponse returnme;
+        AdminDAO dao = new AdminDAO();
+        
+        boolean borrado = dao.delUser2(u);
+        
+        if(borrado == true){
+            returnme = ajax.successResponse();
+        }else{
+            returnme = ajax.errorResponse(15);
+        }
+        return returnme;
+    }
 
 }
