@@ -16,4 +16,5 @@ public class Constantes {
     public static final String PARAMETRO_ID_CURSO = "id_curso";
     public static final String PARAMETRO_EMAIL = "email";
     public static final String PARAMETRO_TIPO = "tipo";
+    public static final String PARAMETRO_NOTA = "nota";
 }

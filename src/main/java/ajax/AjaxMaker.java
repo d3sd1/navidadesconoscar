@@ -61,6 +61,9 @@ public class AjaxMaker
             case 15:
                 errorMsg = Language.ERROR_BORRAR_USER;
                 break;
+            case 16:
+                errorMsg = Language.ERROR_MODIFICAR_NOTA;
+                break;
             default:
                 errorMsg = Language.ERROR_GENERIC;
         }

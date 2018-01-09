@@ -26,6 +26,7 @@ public class ProfeDAO {
             + "WHERE pa.id_profesor = ?"
             + "ORDER BY a.id";
     private final String queryGetId = "SELECT id FROM users WHERE email = ?";
+    private final String queryModNota = "UPDATE alumnos_asignaturas SET nota = ? WHERE id_alumno = ? AND id_asignatura = ?";
     
     public List<Nota> getAllNotas(int id) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
@@ -44,5 +45,19 @@ public class ProfeDAO {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return id;
-    } 
+    }
+    
+    public boolean modNota(Nota n){
+        boolean modificado = false;
+        try {
+            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+            if (jtm.update(queryModNota, n.getNota(), n.getId_alumno(), n.getId_asignatura()) > 0) {
+                modificado = true;
+            }
+        } catch (DataAccessException ex) {
+            Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex);
+            modificado = false;
+        }
+        return modificado;
+    }
 }
