@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class AdminDAO {
     private final String queryModificarUserPermisos = "UPDATE users_permisos SET id_permiso = ? WHERE id_user = ?";
     private final String queryGetPermiso = "SELECT id_permiso FROM users_permisos WHERE id_user = ?";
     private final String queryDelUser = "DELETE FROM users WHERE id = ?";
+    private final String queryDelUserPermiso = "DELETE FROM users_permisos WHERE id_user = ?";
 
     public List<Asignatura> getAllAsignaturas() {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
@@ -482,18 +484,50 @@ public class AdminDAO {
     }
     
     public int delUser(User u){
+        Connection con = null;
         int borrado = -1;
         try {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryDelUser, u.getId()) > 0) {
-                borrado = 1;
-            }
-        } catch (DataIntegrityViolationException ex) {
+            con = DBConnection.getInstance().getConnection();
+            con.setAutoCommit(false);
+            
+            PreparedStatement stmt = con.prepareStatement(queryDelUserPermiso);
+            stmt.setInt(1, u.getId());
+            stmt.executeUpdate();
+
+            stmt = con.prepareStatement(queryDelUser);
+            stmt.setInt(1, u.getId());
+            stmt.executeUpdate();
+            
+            borrado = 1;
+            
+            con.commit();
+            stmt.close();
+            
+        } catch (SQLIntegrityConstraintViolationException ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+            
             borrado = 0;
-        } catch (DataAccessException ex) {
+            
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (SQLException ex1) {
+                Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } catch (Exception ex) {
             Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
             borrado = -1;
+            
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (SQLException ex1) {
+                Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } finally {
+            DBConnection.getInstance().cerrarConexion(con);
         }
         return borrado;
     }
@@ -510,6 +544,10 @@ public class AdminDAO {
             stmt.executeUpdate();
 
             stmt = con.prepareStatement(queryEliminarProfeAsig);
+            stmt.setInt(1, u.getId());
+            stmt.executeUpdate();
+            
+            stmt = con.prepareStatement(queryDelUserPermiso);
             stmt.setInt(1, u.getId());
             stmt.executeUpdate();
 
