@@ -42,4 +42,10 @@ public class ProfeServicios {
         
         return returnme;
     }
+    
+    public List<Nota> getAllNotasCursos(String email) {
+        ProfeDAO dao = new ProfeDAO();
+        int id = dao.getId(email);
+        return dao.getAllNotasCursos(id);
+    }
 }

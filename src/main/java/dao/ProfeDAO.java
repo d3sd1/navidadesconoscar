@@ -25,6 +25,13 @@ public class ProfeDAO {
             + "JOIN profesores_asignaturas pa ON pa.id_asignatura = aa.id_asignatura"
             + "WHERE pa.id_profesor = ?"
             + "ORDER BY a.id";
+    private final String queryGetAllNotasCursos = "SELECT c.id AS id_curso, c.nombre AS nombre_curso, u.id, u.nombre, a.id AS id_asignatura, a.nombre AS nombre_asignatura, aa.nota "
+            + "FROM users u JOIN alumnos_asignaturas aa ON u.id = aa.id_alumno"
+            + "JOIN asignaturas a ON a.id = aa.id_asignatura"
+            + "JOIN profesores_asignaturas pa ON pa.id_asignatura = aa.id_asignatura"
+            + "JOIN cursos c ON c.id = a.id_curso"
+            + "WHERE pa.id_profesor = ?"
+            + "ORDER BY c.id";
     private final String queryGetId = "SELECT id FROM users WHERE email = ?";
     private final String queryModNota = "UPDATE alumnos_asignaturas SET nota = ? WHERE id_alumno = ? AND id_asignatura = ?";
     
@@ -59,5 +66,12 @@ public class ProfeDAO {
             modificado = false;
         }
         return modificado;
+    }
+    
+    public List<Nota> getAllNotasCursos(int id) {
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        List<Nota> notas = jtm.query(queryGetAllNotasCursos, new BeanPropertyRowMapper(Nota.class), id);
+
+        return notas;
     }
 }
