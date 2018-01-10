@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Asignatura;
+import model.Curso;
 import model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,7 +23,6 @@ public class AdminDAO {
 
     private final String queryGetAllAsignaturas = "SELECT * FROM asignaturas";
     private final String queryGetAllUsers = "SELECT u.id, u.email, u.nombre, up.id_permiso FROM users u JOIN users_permisos up ON u.id = up.id_user";
-    private final String queryGetAllPermisos = "SELECT id_permiso FROM users_permisos";
     private final String queryAddAsig = "INSERT INTO asignaturas (nombre,id_curso) VALUES (?,?)";
     private final String queryModAsig = "UPDATE asignaturas SET nombre = ?, id_curso = ? WHERE id = ?";
     private final String queryDelAsig = "DELETE FROM asignaturas WHERE id = ?";
@@ -44,6 +44,9 @@ public class AdminDAO {
     private final String queryGetPermiso = "SELECT id_permiso FROM users_permisos WHERE id_user = ?";
     private final String queryDelUser = "DELETE FROM users WHERE id = ?";
     private final String queryDelUserPermiso = "DELETE FROM users_permisos WHERE id_user = ?";
+    private final String queryAddCurso = "INSERT INTO cursos (nombre) VALUES (?)";
+    private final String queryModCurso = "UPDATE cursos SET nombre = ? WHERE id = ?";
+    private final String queryGetAllCursos = "SELECT * FROM cursos";
 
     public List<Asignatura> getAllAsignaturas() {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
@@ -57,40 +60,6 @@ public class AdminDAO {
         List<User> users = jtm.query(queryGetAllUsers, new BeanPropertyRowMapper(User.class));
 
         return users;
-    }
-
-    public List<Integer> getAllPermisos() {
-        List<Integer> lista = new ArrayList<>();
-        Connection con = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        
-        try {
-            con = DBConnection.getInstance().getConnection();
-            stmt = con.createStatement();
-            rs = stmt.executeQuery(queryGetAllPermisos);
-            
-            while (rs.next()) {
-                int id = rs.getInt("id_permiso");
-                lista.add(id);
-            }
-            
-        } catch (Exception ex) {
-            Logger.getLogger(AlumnosDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(AlumnosDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return lista;
     }
 
     public List<Asignatura> getAsignaturasAlumno() {
@@ -571,5 +540,49 @@ public class AdminDAO {
             DBConnection.getInstance().cerrarConexion(con);
         }
         return borrado;
+    }
+    
+    public Curso addCurso(Curso c) {
+        Connection con = null;
+
+        try {
+            con = DBConnection.getInstance().getConnection();
+            PreparedStatement stmt = con.prepareStatement(queryAddCurso, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, c.getNombre());
+            stmt.executeUpdate();
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                c.setId(rs.getInt(1));
+            }
+
+            stmt.close();
+        } catch (Exception ex) {
+            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+            c = null;
+        } finally {
+            DBConnection.getInstance().cerrarConexion(con);
+        }
+        return c;
+    }
+    
+    public Curso modCurso(Curso c) {
+        try {
+            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+            if (!(jtm.update(queryModCurso, c.getNombre(), c.getId()) > 0)) {
+                c = null;
+            }
+        } catch (DataAccessException ex) {
+            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+            c = null;
+        }
+        return c;
+    }
+    
+    public List<Curso> getAllCursos() {
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        List<Curso> cursos = jtm.query(queryGetAllCursos, new BeanPropertyRowMapper(Asignatura.class));
+
+        return cursos;
     }
 }

@@ -64,6 +64,18 @@ public class AjaxMaker
             case 16:
                 errorMsg = Language.ERROR_MODIFICAR_NOTA;
                 break;
+            case 17:
+                errorMsg = Language.ERROR_INSERTAR_CURSO;
+                break;
+            case 18:
+                errorMsg = Language.ERROR_MODIFICAR_CURSO;
+                break;
+            case 19:
+                errorMsg = Language.ERROR_BORRAR_CURSO;
+                break;
+            case 20:
+                errorMsg = Language.ERROR_BORRAR_ADMIN;
+                break;
             default:
                 errorMsg = Language.ERROR_GENERIC;
         }

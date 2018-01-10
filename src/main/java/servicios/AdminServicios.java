@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Asignatura;
+import model.Curso;
 import model.User;
 import utils.Constantes;
 import utils.Language;
@@ -232,44 +233,90 @@ public class AdminServicios {
         }
         return returnme;
     }
-    
-    public AjaxResponse delUser(User u){
+
+    public AjaxResponse delUser(User u) {
         AdminDAO dao = new AdminDAO();
         AjaxResponse returnme;
-        
-        int borrado = dao.delUser(u);
-        
-        switch(borrado){
-            case 0:
-                returnme = ajax.errorResponse(14);
-                break;
-              
-            case 1:
-                returnme = ajax.successResponse();
-                break;
-               
-            case -1:
-                returnme = ajax.errorResponse(15);
-                break;
-                
-            default:
-                returnme = ajax.errorResponse(0);
-        }
-        return returnme;
-    }
-    
-    public AjaxResponse delUser2(User u){
-        AjaxResponse returnme;
-        AdminDAO dao = new AdminDAO();
-        
-        boolean borrado = dao.delUser2(u);
-        
-        if(borrado == true){
-            returnme = ajax.successResponse();
-        }else{
-            returnme = ajax.errorResponse(15);
+
+        if (u.getId() == 1) {
+            returnme = ajax.errorResponse(20);
+        } else {
+            int borrado = dao.delUser(u);
+
+            switch (borrado) {
+                case 0:
+                    returnme = ajax.errorResponse(14);
+                    break;
+
+                case 1:
+                    returnme = ajax.successResponse();
+                    break;
+
+                case -1:
+                    returnme = ajax.errorResponse(15);
+                    break;
+
+                default:
+                    returnme = ajax.errorResponse(0);
+            }
         }
         return returnme;
     }
 
+    public AjaxResponse delUser2(User u) {
+        AjaxResponse returnme;
+        AdminDAO dao = new AdminDAO();
+        
+        if (u.getId() == 1) {
+            returnme = ajax.errorResponse(20);
+        } else {
+            boolean borrado = dao.delUser2(u);
+
+            if (borrado == true) {
+                returnme = ajax.successResponse();
+            } else {
+                returnme = ajax.errorResponse(15);
+            }
+        }
+        return returnme;
+    }
+
+    public List<Curso> getAllCursos() {
+        AdminDAO dao = new AdminDAO();
+        return dao.getAllCursos();
+    }
+
+    public AjaxResponse addCurso(Curso c) {
+        AjaxResponse returnme;
+        AdminDAO dao = new AdminDAO();
+
+        c = dao.addCurso(c);
+
+        if (c != null) {
+            HashMap<String, String> datos = new HashMap<>();
+            datos.put(Constantes.PARAMETRO_ID, String.valueOf(c.getId()));
+            datos.put(Constantes.PARAMETRO_NOMBRE, c.getNombre());
+            returnme = ajax.successResponse(datos);
+        } else {
+            returnme = ajax.errorResponse(17);
+        }
+        return returnme;
+    }
+
+    public AjaxResponse modCurso(Curso c) {
+        AjaxResponse returnme;
+        AdminDAO dao = new AdminDAO();
+
+        c = dao.modCurso(c);
+
+        if (c != null) {
+            HashMap<String, String> datos = new HashMap<>();
+            datos.put(Constantes.PARAMETRO_ID, String.valueOf(c.getId()));
+            datos.put(Constantes.PARAMETRO_NOMBRE, c.getNombre());
+            returnme = ajax.successResponse(datos);
+        } else {
+            returnme = ajax.errorResponse(18);
+        }
+        return returnme;
+    }
 }

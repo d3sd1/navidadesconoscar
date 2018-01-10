@@ -26,4 +26,8 @@ public class Language {
     public static final String ERROR_BORRAR_USER_INTEGRIDAD = "No se ha podido eliminar el usuario porque tiene notas o asignaturas asociadas.";
     public static final String ERROR_BORRAR_USER = "Ha ocurrido un error al borrar el usuario.";
     public static final String ERROR_MODIFICAR_NOTA = "Ha ocurrido un error al modificar la nota.";
+    public static final String ERROR_INSERTAR_CURSO = "Ha ocurrido un error al crear el curso.";
+    public static final String ERROR_MODIFICAR_CURSO = "Ha ocurrido un error al modificar el curso.";
+    public static final String ERROR_BORRAR_CURSO = "Ha ocurrido un error al borrar el curso.";
+    public static final String ERROR_BORRAR_ADMIN = "No se puede borrar ese usuario.";
 }
