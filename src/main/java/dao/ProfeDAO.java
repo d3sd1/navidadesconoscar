@@ -88,10 +88,12 @@ public class ProfeDAO {
 
                 asignatura.setId(rs.getInt(2));
                 asignatura.setNombre(rs.getString(4));
+                nota.setAsignatura(asignatura);
                 
                 Curso curso = new Curso();
                 curso.setNombre(rs.getString(6));
                 curso.setId(rs.getInt(7));
+                nota.setCurso(curso);
                 return nota;
             }
         },id);
