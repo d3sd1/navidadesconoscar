@@ -41,7 +41,7 @@ public class CrudAsignaturas extends HttpServlet
 
         String accion = request.getParameter("accion");
         String nombre = "";
-        int id_curso = 0;
+        int id_curso = 0, id = 0;
         Asignatura a = null;
         String objeto_json;
 
@@ -53,7 +53,22 @@ public class CrudAsignaturas extends HttpServlet
         {
             a = new Asignatura();
             nombre = request.getParameter("nombre");
-            id_curso = parseInt(request.getParameter("idCurso"));
+            try
+            {
+                id_curso = parseInt(request.getParameter("id_curso"));
+            }
+            catch(Exception e)
+            {
+                
+            }
+            try
+            {
+                id = parseInt(request.getParameter("id"));
+            }
+            catch(Exception e)
+            {
+                
+            }
         }
 
         switch (accion)
@@ -67,7 +82,7 @@ public class CrudAsignaturas extends HttpServlet
                 break;
 
             case "modificar":
-                a.setId(parseInt(request.getParameter("id")));
+                a.setId(id);
                 a.setNombre(nombre);
                 a.setId_curso(id_curso);
                 AjaxResponse modAsig = as.modAsig(a);
@@ -76,14 +91,7 @@ public class CrudAsignaturas extends HttpServlet
                 break;
 
             case "borrar":
-                a.setId(parseInt(request.getParameter("id")));
-                AjaxResponse delAsig = as.delAsig(a);
-                objeto_json = ajax.parseResponse(delAsig);
-                response.getWriter().print(objeto_json);
-                break;
-
-            case "borrar2":
-                a.setId(parseInt(request.getParameter("id")));
+                a.setId(id);
                 AjaxResponse delAsig2 = as.delAsig2(a);
                 objeto_json = ajax.parseResponse(delAsig2);
                 response.getWriter().print(objeto_json);
@@ -91,6 +99,7 @@ public class CrudAsignaturas extends HttpServlet
 
             default:
                 root.put("asignaturas", as.getAllAsignaturas());
+                root.put("cursos", as.getAllCursos());
                 try
                 {
                     temp.process(root, response.getWriter());

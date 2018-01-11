@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -82,6 +81,7 @@ public class AdminDAO {
         try {
             con = DBConnection.getInstance().getConnection();
             PreparedStatement stmt = con.prepareStatement(queryAddAsig, Statement.RETURN_GENERATED_KEYS);
+            System.out.println("NOMBRE "+  a.getNombre() + " curso " + a.getId_curso());
             stmt.setString(1, a.getNombre());
             stmt.setInt(2, a.getId_curso());
             stmt.executeUpdate();
@@ -93,7 +93,6 @@ public class AdminDAO {
 
             stmt.close();
         } catch (Exception ex) {
-            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
             a = null;
         } finally {
             DBConnection.getInstance().cerrarConexion(con);

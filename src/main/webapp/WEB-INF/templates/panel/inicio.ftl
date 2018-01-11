@@ -18,10 +18,6 @@
                 <div class="nav-wrapper blue lighten-1">
                     <a href="#" class="brand-logo"><img alt="Logo" src="https://image.ibb.co/fXxOcG/logo.png" style="height: 50px"/></a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <!--<li><a href="#alumnos">(PROFE) Alumnos (crud)</a></li>
-                        <li><a href="asignaturas">(PROFE) Notas de alumnos</a></li>
-                        <li><a href="notas">(SUPERADMIN) Profesores (CRUD)</a></li>
-                        <li><a href="notas">(SUPERADMIN) Asignaturas + cursos (CRUD)</a></li>-->
                         <#if rango == "administrador">
                         <li><a href="/panel/administrador/usuarios">Control de usuarios</a></li>
                         <li><a href="/panel/administrador/asignaturas">Control de asignaturas</a></li>

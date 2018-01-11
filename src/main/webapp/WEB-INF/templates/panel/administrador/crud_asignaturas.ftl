@@ -30,7 +30,7 @@
         <div class="container" style="margin-top: 2em">
             <div class="row">
                 <div class="col s12">
-                    <a class="waves-effect waves-light btn right"><i class="material-icons right">person_add</i>Agregar usuario</a>
+                    <a class="waves-effect waves-light btn right" onclick="addView()"><i class="material-icons right">person_add</i>Agregar asignatura</a>
                 </div>
                 <div class="col s12">
 
@@ -39,11 +39,32 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre</th>
-                                <th>Fecha de nacimiento</th>
-                                <th>Mayor de edad</th>
+                                <th>Curso</th>
                                 <th></th>
                             </tr>
                         </thead>
+
+                        <tbody>
+                            <#list asignaturas as asignatura>
+                                <tr id="asignatura-${asignatura.getId()}">
+                                    <td>${asignatura.getId()}</td>
+                                    <td><input id="asignatura-${asignatura.getId()}-nombre" value="${asignatura.getNombre()}" type="text"></td>
+                                    <td>
+                                    <select name="cursos">
+                                        <option value="" disabled selected>Seleccionar curso</option>
+                                    <#list cursos as curso>
+                                        <#if curso.getId() == asignatura.getId_curso()>
+                                        <option value="${curso.getId()}" selected>${curso.getNombre()}</option>
+                                        <#else>
+                                        <option value="${curso.getId()}">${curso.getNombre()}</option>
+                                        </#if>
+                                    </#list>
+                                    </select>
+                                    <label>Seleccionar curso</label></td>
+                                    <td><a class='dropdown-button btn' href='#' onclick="markActualAsig(${asignatura.getId()})" data-activates='dropdown-${asignatura.getId()}'>Acciones</a><ul id='dropdown-${asignatura.getId()}' class='dropdown-content'><li><a onclick="edit()">Confirmar</a></li><li><a onclick="deleteConfirm()">Eliminar</a></li></ul></td>
+                                </tr>
+                            </#list>
+                        </tbody>
 
                         <tbody>
                         <!-- usuarios aqui -->
@@ -51,6 +72,54 @@
                     </table>
                 </div>
             </div>
+        </div>
+        <div id="manage" class="modal">
+            <div class="modal-content">
+              <h4>Añadir asignatura</h4>
+                <div class="row">
+                    <form class="col s12">
+                        <input name="id" type="hidden">
+                      <div class="row">
+                        <div class="input-field col s12">
+                          <input name="nombre" type="text" class="validate">
+                          <label for="first_name">Nombre</label>
+                        </div>
+                          <div class="input-field col s12">
+                            <select name="curso">
+                              <option value="" disabled selected>Curso</option>
+                                <#list cursos as curso>
+                                    <option value="${curso.getId()}">${curso.getNombre()}</option>
+                                </#list>
+                            </select>
+                            <label>Curso</label>
+                          </div>
+                      </div>
+                      
+                      </div>
+                    </form>
+            </div>
+            <div class="modal-footer">
+              <a onclick="closeView()" class="waves-effect waves-green btn-flat">Cancelar</a>
+              <a onclick="add()" class="waves-effect waves-green btn-flat">Añadir</a>
+            </div>
+        </div>
+        <div id="deleteConfirm" class="modal">
+            <div class="modal-content">
+              <h4>Eliminar usuario</h4>
+              <p>¿Seguro que deseas eliminar el usuario?</p>
+            </div>
+            <div class="modal-footer">
+              <a class="modal-action modal-close waves-effect waves-green btn-flat">No</a>
+              <a onclick="del()" class="waves-effect waves-green btn-flat">Si</a>
+            </div>
+        </div>
+        <div id="loading" class="modal">
+            <div class="modal-content">
+                <h1 class="center-align">Cargando...</h1>
+                <div class="progress">
+                    <div class="indeterminate"></div>
+                    </div>
+                </div>
         </div>
         <footer class="page-footer cyan accent-4">
             <div class="container">
@@ -71,15 +140,176 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
         <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
         <script>
+            var actualAsig, $dataTable;
             $(document).ready(function () {
-                $('#crud_asignaturas').DataTable({
+                $dataTable = $('#crud_asignaturas').DataTable({
                     "language": {
                         "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+                    },
+                    "drawCallback": function(){
+                        $('select').material_select();
+                        Materialize.updateTextFields();
                     }
                 });
                 $('.carousel').carousel();
                 $('.parallax').parallax();
+                $('.modal').modal({
+                    dismissible: false
+                });
                 $('select').material_select();
-            });
+                Materialize.updateTextFields();
+                });
+            function add()
+            {
+                var nombre = $("#manage").find("input[name='nombre']").val(),
+                    curso = $("#manage").find("select[name='curso']").val();
+                if(nombre == "" || curso == "" || curso == null || nombre == null)
+                {
+                    Materialize.toast('<span>Por favor, rellena todos los campos.</span>', 5000, 'rounded');
+                }
+                else
+                {
+                    console.log("accion=insertar&nombre=" + nombre + "&curso=" + curso);
+                    $.ajax({
+                        data: "accion=insertar&nombre=" + nombre + "&id_curso=" + curso,
+                        url: '/panel/administrador/asignaturas',
+                        type: 'post',
+                        beforeSend: function () {
+                            $('#manage').modal('close');
+                            $('#loading').modal('open');
+                        },
+                        success: function (data) {
+                            var info = JSON.parse(data);
+                            if (info['success'])
+                            {
+                                Materialize.toast('<span>Asignatura añadida correctamente</span>', 5000, 'rounded');
+                                
+                                var uinfo = info["data"], newCell = $dataTable.row.add( [
+                                    uinfo["id"],
+                                    '<input id="asignatura-' + uinfo["id"] + '-nombre" value="' + uinfo["nombre"] + '" type="text">',
+                                    '<select name="cursos"> <option value="" disabled selected>Seleccionar curso</option>' +
+                                    <#list cursos as curso>
+                                        '<option value="${curso.getId()}" ' + (parseInt(uinfo["id_curso"]) == ${curso.getId()} ? "selected":"") + '>${curso.getNombre()}</option>' +
+                                    </#list>
+                                    '</select><label>Seleccionar curso</label>',
+                                    "<a class='dropdown-button btn' href='#' onclick='markActualAsig(" + uinfo["id"] + ")' data-activates='dropdown-" + uinfo["id"] + "'>Acciones</a><ul id='dropdown-" + uinfo["id"] + "' class='dropdown-content'><li><a onclick='editView()'>Editar</a></li><li><a onclick='deleteConfirm()'>Eliminar</a></li></ul>"
+                                     ] ).draw().node();
+                                $(newCell).attr("id","user-" + info["id"]);
+                            }
+                            else
+                            {
+                                Materialize.toast('<span>Ha ocurrido un error al añadir el usuario: ' + info["reason"] + '</span>', 5000, 'rounded');
+                            }
+                        },
+                        error: function(e)
+                        {
+                            Materialize.toast("Ha ocurrido un error al procesar la petición.", 4000);
+                        },
+                        complete: function(c)
+                        {
+                            $('#loading').modal('close');
+                            closeView();
+                        }
+                    });
+                }
+            }
+            function closeView()
+            {
+                $("#manage input").each(
+                    function( index, element ){
+                        $(element).val("");
+                    }
+                );
+                $("#manage select").each(
+                    function( index, element ){
+                        $(element).val("");
+                        $(element).material_select();
+                    }
+                );
+                $("#manage .validate").each(
+                    function( index, element ){
+                        $(element).removeClass("valid").removeClass("invalid");
+                    }
+                );
+                Materialize.updateTextFields();
+                $("#manage").modal("close");
+            }
+            function addView()
+            {
+                $("#manage").modal("open");
+            }
+            function markActualAsig(asg)
+            {
+                actualAsig = asg;
+            }
+            function edit()
+            {
+                var nombre = $("#asignatura-" + actualAsig + "-nombre").val(),
+                    curso = $("#asignatura-" + actualAsig).find("select[name=cursos]").val();
+                $.ajax({
+                    data: "accion=modificar&id=" + actualAsig + "&nombre=" + nombre + "&id_curso=" + curso,
+                    url: '/panel/administrador/asignaturas',
+                    type: 'post',
+                    beforeSend: function () {
+                        $('#loading').modal('open');
+                    },
+                    success: function (data) {
+                        var info = JSON.parse(data);
+                        if (info['success'])
+                        {
+                            Materialize.toast('<span>Asignatura modificado correctamente</span>', 5000, 'rounded');
+                        }
+                        else
+                        {
+                            Materialize.toast('<span>Ha ocurrido un error al modificar la asignatura: ' + info["reason"] + '</span>', 5000, 'rounded');
+                        }
+                    },
+                    error: function(e)
+                    {
+                        Materialize.toast("Ha ocurrido un error al procesar la petición.", 4000);
+                    },
+                    complete: function(c)
+                    {
+                        $('#loading').modal('close');
+                    }
+                });
+            }
+            function deleteConfirm()
+            {
+                $("#deleteConfirm").modal("open");
+            }
+            function del()
+            {
+                $.ajax({
+                    data: "accion=borrar&id=" + actualAsig,
+                    url: '/panel/administrador/asignaturas',
+                    type: 'post',
+                    beforeSend: function () {
+                        $('#deleteConfirm').modal('close');
+                        $('#loading').modal('open');
+                    },
+                    success: function (data) {
+                        var info = JSON.parse(data);
+                        if (info['success'])
+                        {
+                            Materialize.toast('<span>Asignatura eliminada correctamente</span>', 5000, 'rounded');
+                            $dataTable.row('#asignatura-' + actualAsig).remove().draw();
+                        }
+                        else
+                        {
+                            Materialize.toast('<span>Ha ocurrido un error al eliminar la asignatura: ' + info["reason"] + '</span>', 5000, 'rounded');
+                        }
+                    },
+                    error: function(e)
+                    {
+                        Materialize.toast("Ha ocurrido un error al procesar la petición.", 4000);
+                    },
+                    complete: function(c)
+                    {
+                        $('#loading').modal('close');
+                    }
+                });
+            }
+                
         </script>
     </html>
