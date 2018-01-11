@@ -44,9 +44,9 @@ public class CambiarNotas extends HttpServlet {
         switch (accion) {
             case "modificar":
                 Nota n = new Nota();
-                n.setId_alumno(parseInt(request.getParameter("idAlumno")));
-                n.setId_asignatura(parseInt(request.getParameter("idAsignatura")));
-                n.setNota(parseInt(request.getParameter("nota")));
+                n.getAlumno().setId(parseInt(request.getParameter("idAlumno")));
+                n.getAsignatura().setId(parseInt(request.getParameter("idAsignatura")));
+                n.getCurso().setId(parseInt(request.getParameter("nota")));
                 AjaxResponse modNota = ps.modNota(n);
                 objeto_json = ajax.parseResponse(modNota);
                 response.getWriter().print(objeto_json);
