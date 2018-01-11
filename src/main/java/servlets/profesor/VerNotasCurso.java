@@ -32,7 +32,6 @@ public class VerNotasCurso extends HttpServlet {
         ProfeServicios ps = new ProfeServicios();
         
         root.put("notas", ps.getAllNotasCursos(email));
-
         try {
             temp.process(root, response.getWriter());
         } catch (TemplateException ex) {

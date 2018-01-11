@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Modificar notas de alumnos</title>
+        <title>Ver notas del curso</title>
         <!--Import Google Icon Font-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!--Import materialize.css-->
         <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css"  media="screen,projection"/>
+        <link type="text/css" rel="stylesheet" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"  media="screen,projection"/>
 
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+        <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta charset="UTF-8">
+        <style>
+            .group {
+                background-color: #ddd !important;
+            }
+        </style>
         </head>
     <body>
         <header>
@@ -31,23 +40,25 @@
             </div>
         <div class="container" style="margin-top: 2em">
             <div class="row">
-                <div class="col s12">
-                    <a class="waves-effect waves-light btn right"><i class="material-icons right">person_add</i>Agregar asignatura</a>
-                    </div>
                 <div class="col s12" id="actual_page">
 
-                    <table class="responsive-table centered highlight bordered scrollspy initdatatable" id="asignaturas">
+                    <table class="responsive-table centered highlight bordered scrollspy initdatatable" id="notas">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Fecha de nacimiento</th>
-                                <th>Mayor de edad</th>
-                                <th></th>
+                                <th>Nombre Alumno</th>
+                                <th>Nombre asignatura</th>
+                                <th>Nota</th>
                                 </tr>
                             </thead>
 
                             <tbody>
+                                 <#list notas as nota>
+                                    <tr>
+                                        <td>${nota.getNombre()}</td>
+                                        <td>${nota.getNombre_asignatura()}</td>
+                                        <td>${nota.getNota()}</td>
+                                    </tr>
+                                </#list>
                             </tbody>
                         </table>
                     </div>
@@ -68,13 +79,47 @@
                     </div>
                 </div>
             </footer>
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
         <script>
+            var $dataTable;
             $(document).ready(function () {
+                $dataTable = $('#notas').DataTable({
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+                    },
+                    "order": [[ 2, 'asc' ]],
+                    "columnDefs": [
+                        { "visible": false, "targets": 1 }
+                    ],
+                    "drawCallback": function ( settings ) {
+                        var api = this.api();
+                        var rows = api.rows( {page:'current'} ).nodes();
+                        var last=null;
+
+                        api.column(1, {page:'current'} ).data().each( function ( group, i ) {
+                            if ( last !== group ) {
+                                $(rows).eq( i ).before(
+                                    '<tr class="group"><td colspan="5">'+group+'</td></tr>'
+                                );
+
+                                last = group;
+                            }
+                        } );
+                    }
+                });
+                        // Order by the grouping
+    $('#notas tbody').on( 'click', 'tr.group', function () {
+        var currentOrder = table.order()[0];
+        if ( currentOrder[0] === 2 && currentOrder[1] === 'asc' ) {
+            table.order( [ 2, 'desc' ] ).draw();
+        }
+        else {
+            table.order( [ 2, 'asc' ] ).draw();
+        }
+    } );
                 $('.carousel').carousel();
                 $('.parallax').parallax();
                 $('select').material_select();
             });
+                
         </script>
     </html>
