@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Ver notas del alumno</title>
+        <title>Ver notas del curso</title>
         <!--Import Google Icon Font-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!--Import materialize.css-->
@@ -14,11 +14,6 @@
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta charset="UTF-8">
-        <style>
-            .group {
-                background-color: #ddd !important;
-            }
-        </style>
         </head>
     <body>
         <header>
@@ -36,7 +31,7 @@
                 </nav>
             </header>
         <div class="parallax-container">
-            <div class="parallax"><img src="https://diariodigital.uja.es/sites/default/files/imagen/2015-09/np_Alumnado%20Facultad%20de%20Humanidades%20y%20Ciencias%20de%20la%20Educaci%C3%B3n.jpg"></div>
+            <div class="parallax"><img src="http://www.pressdigital.es/multimedia/images/Alumnos_en_clase.jpg"></div>
             </div>
         <div class="container" style="margin-top: 2em">
             <div class="row">
@@ -47,9 +42,8 @@
                             <tr>
                                 <th>Nombre Alumno</th>
                                 <th>Nombre asignatura</th>
-                                <th>ID Curso</th>
                                 <th>Nota</th>
-                            </tr>
+                                </tr>
                             </thead>
 
                             <tbody>
@@ -57,7 +51,6 @@
                                     <tr>
                                         <td>${nota.getAlumno().getNombre()}</td>
                                         <td>${nota.getAsignatura().getNombre()}</td>
-                                        <td>${nota.getCurso().getNombre()}</td>
                                         <td>${nota.getNota()}</td>
                                     </tr>
                                 </#list>
@@ -90,17 +83,17 @@
                     },
                     "order": [[ 2, 'asc' ]],
                     "columnDefs": [
-                        { "visible": false, "targets": 2 }
+                        { "visible": false, "targets": 1 }
                     ],
                     "drawCallback": function ( settings ) {
                         var api = this.api();
                         var rows = api.rows( {page:'current'} ).nodes();
                         var last=null;
 
-                        api.column(2, {page:'current'} ).data().each( function ( group, i ) {
+                        api.column(1, {page:'current'} ).data().each( function ( group, i ) {
                             if ( last !== group ) {
                                 $(rows).eq( i ).before(
-                                    '<tr class="group"><td colspan="5">'+group+'</td></tr>'
+                                    '<tr class="group blue lighten-3"><td colspan="5">'+group+'</td></tr>'
                                 );
 
                                 last = group;
@@ -110,11 +103,11 @@
                 });
                 $('#notas tbody').on( 'click', 'tr.group', function () {
                     var currentOrder = $dataTable.order()[0];
-                    if ( currentOrder[0] === 2 && currentOrder[1] === 'asc' ) {
-                        $dataTable.order( [ 2, 'desc' ] ).draw();
+                    if ( currentOrder[0] === 1 && currentOrder[1] === 'asc' ) {
+                        $dataTable.order( [ 1, 'desc' ] ).draw();
                     }
                     else {
-                        $dataTable.order( [ 2, 'asc' ] ).draw();
+                        $dataTable.order( [ 1, 'asc' ] ).draw();
                     }
                 } );
                 $('.carousel').carousel();

@@ -10,13 +10,19 @@ import model.Curso;
 import model.Nota;
 import model.User;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
 public class ProfeDAO {
     
-    private final String queryGetAllNotas = "SELECT aa.nota, a.id, u.id, a.nombre, u.nombre, c.nombre, c.id "
+    private final String queryGetAllNotasCurso = "SELECT c.nombre, c.id, a.id, a.nombre, AVG(aa.nota) " +
+            "FROM users u " +
+            "JOIN alumnos_asignaturas aa ON u.id = aa.id_alumno " +
+            "JOIN profesores_asignaturas pa ON pa.id_asignatura = aa.id_asignatura " +
+            "JOIN asignaturas a ON a.id = aa.id_asignatura " +
+            "JOIN cursos c ON c.id = a.id_curso  " +
+            "WHERE pa.id_profesor=? " +
+            "GROUP BY aa.id_asignatura";
+    private final String queryGetAllNotas = "SELECT u.id, u.nombre, a.id, a.nombre, c.id, c.nombre, aa.nota "
             + "FROM users u "
             + "JOIN alumnos_asignaturas aa ON u.id = aa.id_alumno "
             + "JOIN asignaturas a ON a.id = aa.id_asignatura "
@@ -34,22 +40,23 @@ public class ProfeDAO {
             
             
             
-            nota.setNota(rs.getInt(1));
+            nota.setNota(rs.getDouble(7));
             
             User alumno = new User();
-            alumno.setId(rs.getInt(3));
-            alumno.setNombre(rs.getString(5));
+            alumno.setId(rs.getInt(1));
+            alumno.setNombre(rs.getString(2));
             nota.setAlumno(alumno);
+            
             
             Asignatura asignatura = new Asignatura();
             
-            asignatura.setId(rs.getInt(2));
+            asignatura.setId(rs.getInt(3));
             asignatura.setNombre(rs.getString(4));
             nota.setAsignatura(asignatura);
             
             Curso curso = new Curso();
+            curso.setId(rs.getInt(5));
             curso.setNombre(rs.getString(6));
-            curso.setId(rs.getInt(7));
             nota.setCurso(curso);
             return nota;
         },id);
@@ -87,28 +94,25 @@ public class ProfeDAO {
     public List<Nota> getAllNotasCursos(int id) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
         
-        List<Nota> notas = jtm.query(queryGetAllNotas, (ResultSet rs, int rowNum) ->
+        
+        List<Nota> notas = jtm.query(queryGetAllNotasCurso, (ResultSet rs, int rowNum) ->
         {
             Nota nota = new Nota();
             
             
             
-            nota.setNota(rs.getInt(1));
-            
-            User alumno = new User();
-            alumno.setId(rs.getInt(3));
-            alumno.setNombre(rs.getString(5));
-            nota.setAlumno(alumno);
+            nota.setNota(rs.getDouble(5));
+           
             
             Asignatura asignatura = new Asignatura();
             
-            asignatura.setId(rs.getInt(2));
+            asignatura.setId(rs.getInt(3));
             asignatura.setNombre(rs.getString(4));
             nota.setAsignatura(asignatura);
             
             Curso curso = new Curso();
-            curso.setNombre(rs.getString(6));
-            curso.setId(rs.getInt(7));
+            curso.setNombre(rs.getString(1));
+            curso.setId(rs.getInt(2));
             nota.setCurso(curso);
             return nota;
         },id);

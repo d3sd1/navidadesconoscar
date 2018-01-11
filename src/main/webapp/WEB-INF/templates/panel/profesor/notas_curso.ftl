@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Ver notas del curso</title>
+        <title>Ver notas del alumno</title>
         <!--Import Google Icon Font-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!--Import materialize.css-->
@@ -14,11 +14,6 @@
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta charset="UTF-8">
-        <style>
-            .group {
-                background-color: #ddd !important;
-            }
-        </style>
         </head>
     <body>
         <header>
@@ -36,7 +31,7 @@
                 </nav>
             </header>
         <div class="parallax-container">
-            <div class="parallax"><img src="http://www.pressdigital.es/multimedia/images/Alumnos_en_clase.jpg"></div>
+            <div class="parallax"><img src="https://diariodigital.uja.es/sites/default/files/imagen/2015-09/np_Alumnado%20Facultad%20de%20Humanidades%20y%20Ciencias%20de%20la%20Educaci%C3%B3n.jpg"></div>
             </div>
         <div class="container" style="margin-top: 2em">
             <div class="row">
@@ -45,17 +40,17 @@
                     <table class="responsive-table centered highlight bordered scrollspy initdatatable" id="notas">
                         <thead>
                             <tr>
-                                <th>Nombre Alumno</th>
-                                <th>Nombre asignatura</th>
-                                <th>Nota</th>
-                                </tr>
+                                <th>Asignatura</th>
+                                <th>Curso</th>
+                                <th>Nota media</th>
+                            </tr>
                             </thead>
 
                             <tbody>
                                  <#list notas as nota>
                                     <tr>
-                                        <td>${nota.getAlumno().getNombre()}</td>
                                         <td>${nota.getAsignatura().getNombre()}</td>
+                                        <td>${nota.getCurso().getNombre()}</td>
                                         <td>${nota.getNota()}</td>
                                     </tr>
                                 </#list>
@@ -86,7 +81,7 @@
                     "language": {
                         "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
                     },
-                    "order": [[ 2, 'asc' ]],
+                    "order": [[ 1, 'asc' ]],
                     "columnDefs": [
                         { "visible": false, "targets": 1 }
                     ],
@@ -98,7 +93,7 @@
                         api.column(1, {page:'current'} ).data().each( function ( group, i ) {
                             if ( last !== group ) {
                                 $(rows).eq( i ).before(
-                                    '<tr class="group"><td colspan="5">'+group+'</td></tr>'
+                                    '<tr class="group blue lighten-3"><td colspan="5">'+group+'</td></tr>'
                                 );
 
                                 last = group;
@@ -115,6 +110,7 @@
                         $dataTable.order( [ 1, 'asc' ] ).draw();
                     }
                 } );
+                
                 $('.carousel').carousel();
                 $('.parallax').parallax();
                 $('select').material_select();
