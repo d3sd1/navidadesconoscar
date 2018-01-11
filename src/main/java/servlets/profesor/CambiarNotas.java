@@ -15,7 +15,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.Asignatura;
 import model.Nota;
+import model.User;
 import servicios.ProfeServicios;
 import servlets.Conectar;
 import utils.Constantes;
@@ -44,18 +46,47 @@ public class CambiarNotas extends HttpServlet {
         switch (accion) {
             case "modificar":
                 Nota n = new Nota();
-                n.getAlumno().setId(parseInt(request.getParameter("idAlumno")));
-                n.getAsignatura().setId(parseInt(request.getParameter("idAsignatura")));
-                n.getCurso().setId(parseInt(request.getParameter("nota")));
-                AjaxResponse modNota = ps.modNota(n);
-                objeto_json = ajax.parseResponse(modNota);
+                AjaxResponse modNota;
+                try
+                {
+                    if(request.getParameter("id_alumno") == null || request.getParameter("id_asignatura") == null || request.getParameter("nota") == null)
+                    {
+                        throw new NullPointerException();
+                    }
+                    else
+                    {
+                        User alumno = new User();
+                        alumno.setId(parseInt(request.getParameter("id_alumno")));
+                        n.setAlumno(alumno);
+                        Asignatura asignatura = new Asignatura();
+                        asignatura.setId(parseInt(request.getParameter("id_asignatura")));
+                        n.setAsignatura(asignatura);
+                        double nota = parseInt(request.getParameter("nota"));
+                        if(nota < 0)
+                        {
+                            nota = 0;
+                        }
+                        else if(nota > 10)
+                        {
+                            nota = 10;
+                        }
+                        n.setNota(nota);
+                        modNota = ps.modNota(n);
+                        objeto_json = ajax.parseResponse(modNota);
+                    }
+                }
+                catch(NumberFormatException | NullPointerException e)
+                {
+                    objeto_json = ajax.parseResponse(ajax.errorResponse());
+                }
+                
                 response.getWriter().print(objeto_json);
                 break;
 
             default:
                 try {
                     String email = (String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO);
-                    root.put("notas", ps.getAllNotas(email));
+                    root.put("notas", ps.getAllNotasCursosAlumnos(email));
                     temp.process(root, response.getWriter());
                 } catch (TemplateException ex) {
                     Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);

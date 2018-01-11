@@ -81,7 +81,7 @@
                     "language": {
                         "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
                     },
-                    "order": [[ 2, 'asc' ]],
+                    "order": [[ 1, 'asc' ]],
                     "columnDefs": [
                         { "visible": false, "targets": 1 }
                     ],

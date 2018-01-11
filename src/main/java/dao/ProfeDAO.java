@@ -22,6 +22,13 @@ public class ProfeDAO {
             "JOIN cursos c ON c.id = a.id_curso  " +
             "WHERE pa.id_profesor=? " +
             "GROUP BY aa.id_asignatura";
+    private final String queryGetAllNotasCursoAlumnos = "SELECT c.nombre, c.id, a.id, a.nombre, u.id, u.nombre, aa.nota " +
+            "FROM users u " +
+            "JOIN alumnos_asignaturas aa ON u.id = aa.id_alumno " +
+            "JOIN profesores_asignaturas pa ON pa.id_asignatura = aa.id_asignatura " +
+            "JOIN asignaturas a ON a.id = aa.id_asignatura " +
+            "JOIN cursos c ON c.id = a.id_curso  " +
+            "WHERE pa.id_profesor=? ";
     private final String queryGetAllNotas = "SELECT u.id, u.nombre, a.id, a.nombre, c.id, c.nombre, aa.nota "
             + "FROM users u "
             + "JOIN alumnos_asignaturas aa ON u.id = aa.id_alumno "
@@ -109,6 +116,39 @@ public class ProfeDAO {
             asignatura.setId(rs.getInt(3));
             asignatura.setNombre(rs.getString(4));
             nota.setAsignatura(asignatura);
+            
+            Curso curso = new Curso();
+            curso.setNombre(rs.getString(1));
+            curso.setId(rs.getInt(2));
+            nota.setCurso(curso);
+            return nota;
+        },id);
+        return notas;
+    }
+    public List<Nota> getAllNotasCursosAlumnos(int id) {
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        
+        
+        List<Nota> notas = jtm.query(queryGetAllNotasCursoAlumnos, (ResultSet rs, int rowNum) ->
+        {
+            Nota nota = new Nota();
+            
+            
+            
+            nota.setNota(rs.getDouble(7));
+           
+            
+            Asignatura asignatura = new Asignatura();
+            
+            asignatura.setId(rs.getInt(3));
+            asignatura.setNombre(rs.getString(4));
+            nota.setAsignatura(asignatura);
+            
+            User alumno = new User();
+            
+            alumno.setId(rs.getInt(5));
+            alumno.setNombre(rs.getString(6));
+            nota.setAlumno(alumno);
             
             Curso curso = new Curso();
             curso.setNombre(rs.getString(1));

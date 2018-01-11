@@ -17,6 +17,12 @@ public class ProfeServicios {
         int id = dao.getId(email);
         return dao.getAllNotas(id);
     }
+    
+    public List<Nota> getAllNotasCursosAlumnos(String email) {
+        ProfeDAO dao = new ProfeDAO();
+        int id = dao.getId(email);
+        return dao.getAllNotasCursosAlumnos(id);
+    }
 
     public AjaxResponse modNota(Nota n) {
         ProfeDAO dao = new ProfeDAO();
