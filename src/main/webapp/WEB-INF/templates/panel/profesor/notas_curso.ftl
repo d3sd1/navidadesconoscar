@@ -19,7 +19,8 @@
             <nav>
                 <div class="nav-wrapper blue lighten-1">
                     <a href="#" class="brand-logo"><img alt="Logo" src="https://image.ibb.co/fXxOcG/logo.png" style="height: 50px"/></a>
-                    <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <ul id="nav-mobile" class="right">
+                        <li><a href="/panel/profesor/asignar_tarea">Asignar tarea</a></li>
                         <li class="active"><a href="/panel/profesor/notas_curso">Ver notas mis cursos</a></li>
                         <li><a href="/panel/profesor/notas_alumnado">Ver notas de mis alumnos</a></li>
                         <li><a href="/panel/profesor/modificar_notas">Cambiar notas</a></li>

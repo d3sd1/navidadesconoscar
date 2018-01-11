@@ -17,7 +17,7 @@
             <nav>
                 <div class="nav-wrapper blue lighten-1">
                     <a href="#" class="brand-logo"><img alt="Logo" src="https://image.ibb.co/fXxOcG/logo.png" style="height: 50px"/></a>
-                    <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <ul id="nav-mobile" class="right">
                         <li><a href="/panel/administrador/usuarios">Control de usuarios</a></li>
                         <li><a href="/panel/administrador/asignaturas">Control de asignaturas</a></li>
                         <li><a href="/panel/administrador/asignaturas_usuarios">Asignar asignatura a alumno</a></li>
