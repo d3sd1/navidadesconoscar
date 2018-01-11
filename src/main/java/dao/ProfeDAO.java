@@ -1,13 +1,16 @@
 package dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Asignatura;
 import model.Curso;
 import model.Nota;
+import model.Tarea;
 import model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,6 +41,8 @@ public class ProfeDAO {
             + "WHERE pa.id_profesor = ? ";
     private final String queryGetId = "SELECT id FROM users WHERE email = ?";
     private final String queryModNota = "UPDATE alumnos_asignaturas SET nota = ? WHERE id_alumno = ? AND id_asignatura = ?";
+    private final String queryAddTarea = "INSERT INTO tareas (id_asignatura, nombre_tarea, fecha_entrega) VALUES (?,?,?)";
+    private final String queryModTarea = "UPDATE tareas SET id_asignatura = ?, nombre_tarea = ?, fecha_entrega = ? WHERE id_tarea = ?";
     
     public List<Nota> getAllNotas(int id) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
@@ -157,5 +162,46 @@ public class ProfeDAO {
             return nota;
         },id);
         return notas;
+    }
+    
+    public Tarea addTarea(Tarea t) {
+        Connection con = null;
+        try {
+            con = DBConnection.getInstance().getConnection();
+            PreparedStatement stmt = con.prepareStatement(queryAddTarea, Statement.RETURN_GENERATED_KEYS);
+
+            stmt.setInt(1, t.getId_asignatura());
+            stmt.setString(2, t.getNombre_tarea());
+            stmt.setDate(3, new java.sql.Date(t.getFecha_entrega().getTime()));
+
+            stmt.executeUpdate();
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                t.setId_tarea(rs.getInt(1));
+            }
+
+            stmt.close();
+        } catch (Exception ex) {
+            Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex);
+            t = null;
+        } finally {
+            DBConnection.getInstance().cerrarConexion(con);
+        }
+
+        return t;
+    }
+
+    public Tarea modTarea(Tarea t) {
+        try {
+            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+            if (!(jtm.update(queryModTarea, t.getId_asignatura(), t.getNombre_tarea(), t.getFecha_entrega(), t.getId_tarea()) > 0)) {
+                t = null;
+            }
+        } catch (DataAccessException ex) {
+            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+            t = null;
+        }
+        return t;
     }
 }

@@ -76,6 +76,12 @@ public class AjaxMaker
             case 20:
                 errorMsg = Language.ERROR_BORRAR_ADMIN;
                 break;
+            case 21:
+                errorMsg = Language.ERROR_INSERTAR_TAREA;
+                break;
+            case 22:
+                errorMsg = Language.ERROR_MODIFICAR_TAREA;
+                break;
             default:
                 errorMsg = Language.ERROR_GENERIC;
         }
