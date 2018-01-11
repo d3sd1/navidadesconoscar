@@ -108,11 +108,11 @@
                 });
                 $('#notas tbody').on( 'click', 'tr.group', function () {
                     var currentOrder = $dataTable.order()[0];
-                    if ( currentOrder[0] === 2 && currentOrder[1] === 'asc' ) {
-                        $dataTable.order( [ 2, 'desc' ] ).draw();
+                    if ( currentOrder[0] === 1 && currentOrder[1] === 'asc' ) {
+                        $dataTable.order( [ 1, 'desc' ] ).draw();
                     }
                     else {
-                        $dataTable.order( [ 2, 'asc' ] ).draw();
+                        $dataTable.order( [ 1, 'asc' ] ).draw();
                     }
                 } );
                 $('.carousel').carousel();

@@ -16,7 +16,10 @@ public class ProfeDAO {
             + "JOIN profesores_asignaturas pa ON pa.id_asignatura = aa.id_asignatura "
             + "WHERE pa.id_profesor = ? "
             + "ORDER BY a.id";
-    private final String queryGetAllNotasCursos = "SELECT c.id AS id_curso, c.nombre AS nombre_curso, u.id, u.nombre, a.id AS id_asignatura, a.nombre AS nombre_asignatura, aa.nota "
+    // parsear el objeto en la clase nota pero que coja alumno asignatura y curso y se las pase a la clase nota. la clase nota se envia al servlet
+    //SELECT title AS "message.title", question AS "message.question", user_name AS "user.user_name", display_name AS "user.display_name" FROM message, user WHERE user_id = message_id
+    private final String queryGetAllNotasCursos = "SELECT c.id AS id_curso, c.nombre AS nombre_curso, u.id, u.nombre as nombre, a.id AS id_asignatura, a.nombre AS nombre_asignatura, aa.nota"
+            + " "
             + "FROM users u JOIN alumnos_asignaturas aa ON u.id = aa.id_alumno "
             + "JOIN asignaturas a ON a.id = aa.id_asignatura "
             + "JOIN profesores_asignaturas pa ON pa.id_asignatura = aa.id_asignatura "
