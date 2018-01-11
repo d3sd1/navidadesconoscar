@@ -106,16 +106,15 @@
                         } );
                     }
                 });
-                        // Order by the grouping
-    $('#notas tbody').on( 'click', 'tr.group', function () {
-        var currentOrder = table.order()[0];
-        if ( currentOrder[0] === 2 && currentOrder[1] === 'asc' ) {
-            table.order( [ 2, 'desc' ] ).draw();
-        }
-        else {
-            table.order( [ 2, 'asc' ] ).draw();
-        }
-    } );
+                $('#notas tbody').on( 'click', 'tr.group', function () {
+                    var currentOrder = $dataTable.order()[0];
+                    if ( currentOrder[0] === 2 && currentOrder[1] === 'asc' ) {
+                        $dataTable.order( [ 2, 'desc' ] ).draw();
+                    }
+                    else {
+                        $dataTable.order( [ 2, 'asc' ] ).draw();
+                    }
+                } );
                 $('.carousel').carousel();
                 $('.parallax').parallax();
                 $('select').material_select();
