@@ -32,4 +32,5 @@ public class Language {
     public static final String ERROR_BORRAR_ADMIN = "No se puede borrar ese usuario.";
     public static final String ERROR_INSERTAR_TAREA = "Ha ocurrido un error al crear la tarea.";
     public static final String ERROR_MODIFICAR_TAREA = "Ha ocurrido un error al modificar la tarea.";
+    public static final String ERROR_INSERTAR_TAREA_NO_ALUMNOS = "No se ha creado la tarea. La asignatura seleccionada no tiene alumnos.";
 }

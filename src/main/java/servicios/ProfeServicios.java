@@ -20,7 +20,7 @@ public class ProfeServicios {
         int id = dao.getId(email);
         return dao.getAllNotas(id);
     }
-    
+
     public List<Nota> getAllNotasCursosAlumnos(String email) {
         ProfeDAO dao = new ProfeDAO();
         int id = dao.getId(email);
@@ -39,40 +39,46 @@ public class ProfeServicios {
         } else {
             returnme = ajax.errorResponse(16);
         }
-        
+
         return returnme;
     }
-    
+
     public List<Nota> getAllNotasCursos(String email) {
         ProfeDAO dao = new ProfeDAO();
         int id = dao.getId(email);
         return dao.getAllNotasCursos(id);
     }
-    
-    public AjaxResponse addTarea(Tarea t){
+
+    public AjaxResponse addTarea(Tarea t) {
         ProfeDAO dao = new ProfeDAO();
         AjaxResponse returnme;
-        
-        t = dao.addTarea(t);
+        List<Integer> idAlumnos = dao.getIdAlumnos(t.getId_asignatura());
 
-        if (t != null) {
-            DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-            HashMap<String, String> datos = new HashMap<>();
-            datos.put(Constantes.PARAMETRO_ID_TAREA, String.valueOf(t.getId_tarea()));
-            datos.put(Constantes.PARAMETRO_ID_ASIGNATURA, String.valueOf(t.getId_asignatura()));
-            datos.put(Constantes.PARAMETRO_NOMBRE_TAREA, t.getNombre_tarea());
-            datos.put(Constantes.PARAMETRO_FECHA_ENTREGA, df.format(t.getFecha_entrega()));
-            returnme = ajax.successResponse(datos);
+        if (idAlumnos.size() > 0) {
+            t = dao.addTarea(t, idAlumnos);
+
+            if (t != null) {
+                DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                HashMap<String, String> datos = new HashMap<>();
+                datos.put(Constantes.PARAMETRO_ID_TAREA, String.valueOf(t.getId_tarea()));
+                datos.put(Constantes.PARAMETRO_ID_ASIGNATURA, String.valueOf(t.getId_asignatura()));
+                datos.put(Constantes.PARAMETRO_NOMBRE_TAREA, t.getNombre_tarea());
+                datos.put(Constantes.PARAMETRO_FECHA_ENTREGA, df.format(t.getFecha_entrega()));
+                returnme = ajax.successResponse(datos);
+            } else {
+                returnme = ajax.errorResponse(21);
+            }
         } else {
-            returnme = ajax.errorResponse(21);
+            returnme = ajax.errorResponse(23);
         }
+
         return returnme;
     }
-    
-    public AjaxResponse modTarea(Tarea t){
+
+    public AjaxResponse modTarea(Tarea t) {
         ProfeDAO dao = new ProfeDAO();
         AjaxResponse returnme;
-        
+
         t = dao.modTarea(t);
 
         if (t != null) {

@@ -32,13 +32,13 @@ import utils.Constantes;
  *
  * @author Miguel
  */
-@WebServlet(name = "CrudTareas", urlPatterns = {"/panel/profesor/tareas"})
+@WebServlet(name = "CrudTareas", urlPatterns = {"/panel/profesor/asignar_tarea"})
 public class CrudTareas extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/profesor/notas_cambiar.ftl");
+        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/profesor/asignar_tareas.ftl");
         HashMap root = new HashMap();
         root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
 
@@ -79,7 +79,6 @@ public class CrudTareas extends HttpServlet {
                     String cadenaFecha = request.getParameter("fecha_entrega");
                     LocalDate fecha_entrega = LocalDate.parse(cadenaFecha, dtf);
                     t.setId_tarea(Integer.parseInt(request.getParameter("id_tarea")));
-                    t.setId_asignatura(Integer.parseInt(request.getParameter("id_asignatura")));
                     t.setNombre_tarea(request.getParameter("nombre_tarea"));
                     t.setFecha_entrega(Date.from(fecha_entrega.atStartOfDay().toInstant(ZoneOffset.UTC)));
                     modTarea = ps.modTarea(t);

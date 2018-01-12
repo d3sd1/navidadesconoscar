@@ -82,6 +82,9 @@ public class AjaxMaker
             case 22:
                 errorMsg = Language.ERROR_MODIFICAR_TAREA;
                 break;
+            case 23:
+                errorMsg = Language.ERROR_INSERTAR_TAREA_NO_ALUMNOS;
+                break;
             default:
                 errorMsg = Language.ERROR_GENERIC;
         }
