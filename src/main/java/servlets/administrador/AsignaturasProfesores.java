@@ -38,8 +38,8 @@ public class AsignaturasProfesores extends HttpServlet {
         String accion = request.getParameter("accion");
 
         String objeto_json;
-        int id_profesor = 0;
-        String asignaturas = "";
+        int id_profesor;
+        String asignaturas;
 
         if (accion == null) {
             accion = "";
@@ -52,7 +52,7 @@ public class AsignaturasProfesores extends HttpServlet {
                     id_profesor = parseInt(request.getParameter("id"));
                     asignaturas = request.getParameter("asignaturas");
                     asignarProfeAsig = as.asignarProfeAsig(id_profesor, asignaturas);
-                } catch (NumberFormatException ex) {
+                } catch (Exception ex) {
                     asignarProfeAsig = ajax.errorResponse(0);
                 }
                 objeto_json = ajax.parseResponse(asignarProfeAsig);

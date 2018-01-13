@@ -51,7 +51,7 @@ public class AsignaturasUsuarios extends HttpServlet {
                     id_alumno = parseInt(request.getParameter("id"));
                     asignaturas = request.getParameter("asignaturas");
                     asignarAlumAsig = as.asignarAlumAsig(id_alumno, asignaturas);
-                } catch (NumberFormatException ex) {
+                } catch (Exception ex) {
                     asignarAlumAsig = ajax.errorResponse(0);
                 }
                 objeto_json = ajax.parseResponse(asignarAlumAsig);

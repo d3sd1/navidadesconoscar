@@ -46,8 +46,13 @@ public class CrudCursos extends HttpServlet {
 
         switch (accion) {
             case "insertar":
-                c.setNombre(request.getParameter("nombre"));
-                AjaxResponse addCurso = as.addCurso(c);
+                AjaxResponse addCurso;
+                try {
+                    c.setNombre(request.getParameter("nombre"));
+                    addCurso = as.addCurso(c);
+                } catch (Exception ex) {
+                    addCurso = ajax.errorResponse(0);
+                }
                 objeto_json = ajax.parseResponse(addCurso);
                 response.getWriter().print(objeto_json);
                 break;
@@ -58,7 +63,7 @@ public class CrudCursos extends HttpServlet {
                     c.setId(parseInt(request.getParameter("id")));
                     c.setNombre(request.getParameter("nombre"));
                     modCurso = as.modCurso(c);
-                } catch (NumberFormatException ex) {
+                } catch (Exception ex) {
                     modCurso = ajax.errorResponse(0);
                 }
                 objeto_json = ajax.parseResponse(modCurso);
