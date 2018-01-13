@@ -43,6 +43,16 @@ public class Utils {
     }
     public Date depurarParametroDate(String param)
     {
-        return (Date) depuradorParametros(param);
+        Object date = depuradorParametros(param);
+        Date returned;
+        if(date == "")
+        {
+            returned = new Date();
+        }
+        else
+        {
+            returned = (Date) date;
+        }
+        return returned;
     }
 }
