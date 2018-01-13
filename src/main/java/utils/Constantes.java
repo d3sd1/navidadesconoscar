@@ -21,4 +21,5 @@ public class Constantes {
     public static final String PARAMETRO_ID_ASIGNATURA = "id_asignatura";
     public static final String PARAMETRO_NOMBRE_TAREA = "nombre_tarea";
     public static final String PARAMETRO_FECHA_ENTREGA = "fecha_entrega";
+    public static final String PARAMETRO_COMPLETADO = "completado";
 }
