@@ -215,9 +215,10 @@ public class AdminServicios
         {
             try
             {
-                String clave = Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudPass());
+                Utils helper = new Utils();
+                String clave = helper.randomAlphaNumeric(Configuration.getInstance().getLongitudPass());
                 u.setClave(PasswordHash.getInstance().createHash(clave));
-                u.setCodigoActivacion(Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
+                u.setCodigoActivacion(helper.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
                 u = dao.addUser(u);
 
                 if (u != null)
