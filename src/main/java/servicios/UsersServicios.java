@@ -86,7 +86,8 @@ public class UsersServicios
 
         if (u != null && u.getEmail() != "")
         {
-            u.setCodigoActivacion(Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
+            Utils helper = new Utils();
+            u.setCodigoActivacion(helper.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
             if (dao.updateCodigo(u))
             {
                 MailServicios nuevoMail = new MailServicios();

@@ -22,12 +22,18 @@ import model.Tarea;
 import servicios.ProfeServicios;
 import servlets.Conectar;
 import utils.Constantes;
+import utils.Utils;
 
-@WebServlet(name = "CrudTareas", urlPatterns = {"/panel/profesor/asignar_tarea"})
-public class CrudTareas extends HttpServlet {
+@WebServlet(name = "CrudTareas", urlPatterns =
+{
+    "/panel/profesor/asignar_tarea"
+})
+public class CrudTareas extends HttpServlet
+{
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
 
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/profesor/asignar_tareas.ftl");
         HashMap root = new HashMap();
@@ -40,52 +46,64 @@ public class CrudTareas extends HttpServlet {
         String accion = request.getParameter("accion");
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-        if (accion == null) {
+        if (accion == null)
+        {
             accion = "";
         }
-
-        switch (accion) {
+        Utils helper = new Utils();
+        switch (accion)
+        {
             case "insertar":
                 AjaxResponse addTarea;
-                
-                try {
-                    String cadenaFecha = request.getParameter("fecha_entrega");
+
+                try
+                {
+                    String cadenaFecha = helper.depurarParametroString(request.getParameter("fecha_entrega"));
                     LocalDate fecha_entrega = LocalDate.parse(cadenaFecha, dtf);
                     t.getAsignatura().setId(Integer.parseInt(request.getParameter("id_asignatura")));
                     t.setNombre_tarea(request.getParameter("nombre_tarea"));
                     t.setFecha_entrega(Date.from(fecha_entrega.atStartOfDay().toInstant(ZoneOffset.UTC)));
                     addTarea = ps.addTarea(t, (String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO));
-                } catch (NumberFormatException ex) {
+                }
+                catch (NumberFormatException ex)
+                {
                     addTarea = ajax.errorResponse(0);
                 }
-                
+
                 objeto_json = ajax.parseResponse(addTarea);
                 response.getWriter().print(objeto_json);
                 break;
 
             case "modificar":
                 AjaxResponse modTarea;
-                
-                try {
+
+                try
+                {
                     String cadenaFecha = request.getParameter("fecha_entrega");
                     LocalDate fecha_entrega = LocalDate.parse(cadenaFecha, dtf);
                     t.setId_tarea(Integer.parseInt(request.getParameter("id_tarea")));
                     t.setNombre_tarea(request.getParameter("nombre_tarea"));
                     t.setFecha_entrega(Date.from(fecha_entrega.atStartOfDay().toInstant(ZoneOffset.UTC)));
                     modTarea = ps.modTarea(t);
-                } catch (NumberFormatException ex) {
+                }
+                catch (NumberFormatException ex)
+                {
                     modTarea = ajax.errorResponse(0);
                 }
-                
+
                 objeto_json = ajax.parseResponse(modTarea);
                 response.getWriter().print(objeto_json);
                 break;
 
             default:
-                try {
+                try
+                {
                     root.put("tareas", ps.getAllTareas((String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO)));
+                    root.put("asignaturas", ps.getAllAsignaturas());
                     temp.process(root, response.getWriter());
-                } catch (TemplateException ex) {
+                }
+                catch (TemplateException ex)
+                {
                     Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
                 }
         }
@@ -102,7 +120,8 @@ public class CrudTareas extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         processRequest(request, response);
     }
 
@@ -116,7 +135,8 @@ public class CrudTareas extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         processRequest(request, response);
     }
 
@@ -126,7 +146,8 @@ public class CrudTareas extends HttpServlet {
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo() {
+    public String getServletInfo()
+    {
         return "Short description";
     }// </editor-fold>
 

@@ -2,13 +2,16 @@ package servicios;
 
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
+import dao.AdminDAO;
 import dao.ProfeDAO;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import model.Asignatura;
 import model.Nota;
 import model.Tarea;
+import model.User;
 import utils.Constantes;
 
 public class ProfeServicios {
@@ -98,5 +101,10 @@ public class ProfeServicios {
     public List<Tarea> getAllTareas(String email){
         ProfeDAO dao = new ProfeDAO();
         return dao.getAllTareas(email);
+    }
+    public List<Asignatura> getAllAsignaturas()
+    {
+        AdminDAO dao = new AdminDAO();
+        return dao.getAllAsignaturas();
     }
 }

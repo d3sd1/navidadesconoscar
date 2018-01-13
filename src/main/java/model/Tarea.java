@@ -6,7 +6,9 @@ import java.util.Date;
 public class Tarea {
     private int id_tarea;
     private Asignatura asignatura;
+    private User profesor;
     private String nombre_tarea;
+    private String email_profesor;
     private Date fecha_entrega;
     private boolean completada;
 
@@ -52,6 +54,26 @@ public class Tarea {
     public void setCompletada(boolean completada)
     {
         this.completada = completada;
+    }
+
+    public User getProfesor()
+    {
+        return profesor;
+    }
+
+    public void setProfesor(User profesor)
+    {
+        this.profesor = profesor;
+    }
+
+    public String getEmail_profesor()
+    {
+        return email_profesor;
+    }
+
+    public void setEmail_profesor(String email_profesor)
+    {
+        this.email_profesor = email_profesor;
     }
     
     

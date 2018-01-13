@@ -22,10 +22,10 @@
                 <div class="nav-wrapper blue lighten-1">
                     <a href="#" class="brand-logo"><img alt="Logo" src="https://image.ibb.co/fXxOcG/logo.png" style="height: 50px"/></a>
                     <ul id="nav-mobile" class="right">
-                        <li class="active"><a href="/panel/administrador/usuarios">Control de usuarios</a></li>
-                        <li><a href="/panel/administrador/asignaturas">Control de asignaturas</a></li>
-                        <li><a href="/panel/administrador/asignaturas_usuarios">Asignar asignatura a alumno</a></li>
-                        <li><a href="/panel/administrador/asignaturas_profesores">Asignar asignatura a profesor</a></li>
+                        <li class="active"><a href="/panel/profesor/asignar_tarea">Asignar tarea</a></li>
+                        <li><a href="/panel/profesor/notas_curso">Ver notas mis cursos</a></li>
+                        <li><a href="/panel/profesor/notas_alumnado">Ver notas de mis alumnos</a></li>
+                        <li><a href="/panel/profesor/modificar_notas">Cambiar notas</a></li>
                         <li><a href="/panel/cambiar_clave">Cambiar contraseña</a></li>
                         <li><a href="/desconectar">Desconectar</a></li>
                         </ul>
@@ -33,12 +33,12 @@
                 </nav>
             </header>
         <div class="parallax-container">
-            <div class="parallax"><img src="http://aasantoangelgijon.com/wp-content/gallery/charla-como-cuidar-de-nuestros-padres-y-abuelos/charla_marzo13_08.jpg"></div>
+            <div class="parallax"><img src="http://elmanana.com.mx/imgs/noticias/original/bc588fb75c25eef_3fb2db6cccf4a23383383394b28b2b31"></div>
             </div>
         <div class="container" style="margin-top: 2em">
             <div class="row">
                 <div class="col s12">
-                    <a class="waves-effect waves-light btn right" onclick="addView()"><i class="material-icons right">person_add</i>Agregar usuario</a>
+                    <a class="waves-effect waves-light btn right" onclick="addView()"><i class="material-icons right">library_books</i>Agregar tarea</a>
                 </div>
                 <div class="col s12">
 
@@ -47,22 +47,18 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Activo</th>
-                                <th>Tipo</th>
+                                <th>Fecha de entrega</th>
                                 <th></th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            <#list users as user>
-                                <tr id="user-${user.getId()}">
-                                    <td>${user.getId()}</td>
-                                    <td>${user.getNombre()}</td>
-                                    <td>${user.getEmail()}</td>
-                                    <td>${user.getActivo()?string("Si","No")}</td>
-                                    <td><#switch user.getId_permiso()><#case 1>Administrador<#break><#case 2>Profesor<#break><#case 3>Alumno<#break><#default>Rango no identificado</#switch></td>
-                                    <td><a class='dropdown-button btn' href='#' onclick="markActualUser(${user.getId()})" data-activates='dropdown-${user.getId()}'>Acciones</a><ul id='dropdown-${user.getId()}' class='dropdown-content'><li><a onclick="editView()">Editar</a></li><li><a onclick="deleteConfirm()">Eliminar</a></li></ul></td>
+                            <#list tareas as tarea>
+                                <tr id="tarea-${tarea.getId_tarea()}">
+                                    <td>${tarea.getId_tarea()}</td>
+                                    <td>${tarea.getNombre_tarea()}</td>
+                                    <td>${tarea.getFecha_entrega()}</td>
+                                    <td><a class='dropdown-button btn' href='#' onclick="markActualTask(${tarea.getId_tarea()})" data-activates='dropdown-${tarea.getId_tarea()}'>Acciones</a><ul id='dropdown-${tarea.getId_tarea()}' class='dropdown-content'><li><a onclick="editView()">Editar</a></li><li><a onclick="deleteConfirm()">Eliminar</a></li></ul></td>
                                 </tr>
                             </#list>
                         </tbody>
@@ -96,29 +92,33 @@
         </div>
         <div id="manage" class="modal">
             <div class="modal-content">
-              <h4>Modificar usuario</h4>
+              <h4>Tarea</h4>
                 <div class="row">
                     <form class="col s12">
                         <input name="id" type="hidden">
                       <div class="row">
-                        <div class="input-field col s6">
-                          <input name="nombre" type="text" class="validate">
-                          <label for="first_name">Nombre</label>
+                        <div class="input-field col s12">
+                          <textarea name="nombre" class="materialize-textarea"></textarea>
+                          <label>Nombre de la tarea</label>
                         </div>
                         <div class="input-field col s6">
-                          <input name="mail" type="email" class="validate">
-                          <label>Email</label>
+                          <input name="fecha" type="text" class="datepicker">
+                          <label>Fecha de entrega</label>
                         </div>
-                          <div class="input-field col s12">
-                            <select name="tipo">
-                              <option value="" disabled selected>Tipo de usuario</option>
-                              <option value="1">Administrador</option>
-                              <option value="2">Profesor</option>
-                              <option value="3">Usuario</option>
-                            </select>
-                            <label>Tipo de usuario</label>
-                          </div>
+                        <div class="input-field col s6">
+                            <input name="hora" type="text" class="timepicker">
+                            <label>Hora de entrega</label>
                       </div>
+                      </div>
+                        <div class="input-field col s12">
+                          <select name="asignatura">
+                              <option value="" disabled selected>Selecciona una asignatura</option>
+                              <#list asignaturas as asignatura>
+                              <option value="${asignatura.getId()}">${asignatura.getNombre()}</option>
+                              </#list>
+                          </select>
+                          <label>Asignatura</label>
+                        </div>
                       
                       </div>
                     </form>
@@ -139,7 +139,7 @@
             </div>
         </div>
         <script>
-            var actualuser, $dataTable,actualAction;
+            var actualTask, $dataTable,actualAction;
             $(document).ready(function () {
                 $dataTable = $('#crud_usuarios').DataTable({
                     "language": {
@@ -155,6 +155,25 @@
                 $('.modal').modal({
                     dismissible: false
                 });
+                $('.datepicker').pickadate({
+                    selectMonths: true, // Creates a dropdown to control month
+                    selectYears: 15, // Creates a dropdown of 15 years to control year,
+                    today: 'Today',
+                    clear: 'Clear',
+                    close: 'Ok',
+                    closeOnSelect: false // Close upon selecting a date,
+                  });
+                $('.timepicker').pickatime({
+                    default: 'now', // Set default time: 'now', '1:30AM', '16:30'
+                    fromnow: 0,       // set default time to * milliseconds from now (using with default = 'now')
+                    twelvehour: false, // Use AM/PM or 24-hour format
+                    donetext: 'OK', // text for done-button
+                    cleartext: 'Clear', // text for clear-button
+                    canceltext: 'Cancel', // Text for cancel-button
+                    autoclose: false, // automatic close timepicker
+                    ampmclickable: true, // make AM PM clickable
+                    aftershow: function(){} //Function for after opening timepicker
+                  });
             });
             function action()
             {
@@ -171,9 +190,9 @@
                     console.error("action not found: " + actualAction);
                 }
             }
-            function markActualUser(userId)
+            function markActualTask(taskId)
             {
-                actualuser = userId;
+                actualTask = taskId;
             }
             function validateEmail(email) {
                 var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
@@ -208,22 +227,19 @@
             }
             function add()
             {
-                var email = $("#manage").find("input[name='mail']").val(),
-                    nombre = $("#manage").find("input[name='nombre']").val(),
-                    tipo = $("#manage").find("select[name='tipo']").val();
+                var nombre = $("#manage").find("input[name='nombre']").val(),
+                    fecha = $("#manage").find("input[name='fecha']").val(),
+                    hora = $("#manage").find("select[name='hora']").val(),
+                    asignatura = $("#manage").find("select[name='asignatura']").val();
                 if(email == "" || nombre == "" || tipo == "" || email == null || nombre == null || tipo == null)
                 {
                     Materialize.toast('<span>Por favor, rellena todos los campos.</span>', 5000, 'rounded');
                 }
-                else if(!validateEmail(email))
-                {
-                    Materialize.toast('<span>Por favor, introduce un email válido.</span>', 5000, 'rounded');
-                }
                 else
                 {
                     $.ajax({
-                        data: "accion=insertar&email=" + email + "&nombre=" + nombre + "&tipo=" + tipo,
-                        url: '/panel/administrador/usuarios',
+                        data: "accion=insertar&id_asignatura=" + asignatura + "&nombre_tarea=" + nombre + "&id_asignatura=" + new Date(fecha + " " + hora),
+                        url: '/panel/profesor/asignar_tarea',
                         type: 'post',
                         beforeSend: function () {
                             $('#manage').modal('close');
@@ -233,20 +249,8 @@
                             var info = JSON.parse(data);
                             if (info['success'])
                             {
-                                Materialize.toast('<span>Usuario añadido correctamente</span>', 5000, 'rounded');
-                                var uinfo = info["data"],
-                                    tipoUsuario = "Rango no identificado";
-                                switch(parseInt(uinfo["tipo"])){
-                                    case 1:
-                                        tipoUsuario = "Administrador";
-                                    break;
-                                    case 2:
-                                        tipoUsuario = "Profesor";
-                                    break;
-                                    case 3:
-                                        tipoUsuario = "Alumno";
-                                    break;
-                                }
+                                Materialize.toast('<span>Tarea añadida correctamente</span>', 5000, 'rounded');
+                                
                                 var newCell = $dataTable.row.add( [
                                     uinfo["id"],
                                     uinfo["nombre"],
@@ -259,7 +263,7 @@
                             }
                             else
                             {
-                                Materialize.toast('<span>Ha ocurrido un error al añadir el usuario: ' + info["reason"] + '</span>', 5000, 'rounded');
+                                Materialize.toast('<span>Ha ocurrido un error al añadir la tarea: ' + info["reason"] + '</span>', 5000, 'rounded');
                             }
                         },
                         error: function(e)
