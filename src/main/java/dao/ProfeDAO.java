@@ -14,6 +14,7 @@ import model.Nota;
 import model.Tarea;
 import model.User;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class ProfeDAO {
@@ -42,10 +43,11 @@ public class ProfeDAO {
             + "WHERE pa.id_profesor = ? ";
     private final String queryGetId = "SELECT id FROM users WHERE email = ?";
     private final String queryModNota = "UPDATE alumnos_asignaturas SET nota = ? WHERE id_alumno = ? AND id_asignatura = ?";
-    private final String queryAddTarea = "INSERT INTO tareas (id_asignatura, nombre_tarea, fecha_entrega) VALUES (?,?,?)";
+    private final String queryAddTarea = "INSERT INTO tareas (id_asignatura, nombre_tarea, fecha_entrega, email_profesor) VALUES (?,?,?,?)";
     private final String queryAddTareaAlumno = "INSERT INTO tareas_alumnos (id_tarea, id_alumno, completado) VALUES (?,?,0)";
     private final String queryModTarea = "UPDATE tareas SET nombre_tarea = ?, fecha_entrega = ? WHERE id_tarea = ?";
     private final String queryGetIdAlumnos = "SELECT id_alumno FROM alumnos_asignaturas WHERE id_asignatura = ?";
+    private final String queryGetAllTareas = "SELECT * FROM tareas WHERE email_profesor = ?";
 
     public List<Nota> getAllNotas(int id) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
@@ -156,7 +158,7 @@ public class ProfeDAO {
         return notas;
     }
 
-    public Tarea addTarea(Tarea t, List<Integer> idAlumnos) {
+    public Tarea addTarea(Tarea t, List<Integer> idAlumnos, String email) {
         Connection con = null;
         try {
             con = DBConnection.getInstance().getConnection();
@@ -167,6 +169,7 @@ public class ProfeDAO {
             stmt.setInt(1, t.getId_asignatura());
             stmt.setString(2, t.getNombre_tarea());
             stmt.setDate(3, new java.sql.Date(t.getFecha_entrega().getTime()));
+            stmt.setString(4, email);
 
             stmt.executeUpdate();
 
@@ -226,5 +229,12 @@ public class ProfeDAO {
             t = null;
         }
         return t;
+    }
+    
+    public List<Tarea> getAllTareas(String email) {
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        List<Tarea> tareas = jtm.query(queryGetAllTareas, new BeanPropertyRowMapper(Tarea.class), email);
+
+        return tareas;
     }
 }

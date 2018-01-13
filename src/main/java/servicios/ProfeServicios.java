@@ -49,13 +49,13 @@ public class ProfeServicios {
         return dao.getAllNotasCursos(id);
     }
 
-    public AjaxResponse addTarea(Tarea t) {
+    public AjaxResponse addTarea(Tarea t, String email) {
         ProfeDAO dao = new ProfeDAO();
         AjaxResponse returnme;
         List<Integer> idAlumnos = dao.getIdAlumnos(t.getId_asignatura());
 
         if (idAlumnos.size() > 0) {
-            t = dao.addTarea(t, idAlumnos);
+            t = dao.addTarea(t, idAlumnos, email);
 
             if (t != null) {
                 DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
@@ -93,5 +93,10 @@ public class ProfeServicios {
             returnme = ajax.errorResponse(22);
         }
         return returnme;
+    }
+    
+    public List<Tarea> getAllTareas(String email){
+        ProfeDAO dao = new ProfeDAO();
+        return dao.getAllTareas(email);
     }
 }

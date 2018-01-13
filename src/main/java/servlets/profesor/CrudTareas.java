@@ -63,7 +63,7 @@ public class CrudTareas extends HttpServlet {
                     t.setId_asignatura(Integer.parseInt(request.getParameter("id_asignatura")));
                     t.setNombre_tarea(request.getParameter("nombre_tarea"));
                     t.setFecha_entrega(Date.from(fecha_entrega.atStartOfDay().toInstant(ZoneOffset.UTC)));
-                    addTarea = ps.addTarea(t);
+                    addTarea = ps.addTarea(t, (String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO));
                 } catch (NumberFormatException ex) {
                     addTarea = ajax.errorResponse(0);
                 }
@@ -92,6 +92,7 @@ public class CrudTareas extends HttpServlet {
 
             default:
                 try {
+                    root.put("tareas", ps.getAllTareas((String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO)));
                     temp.process(root, response.getWriter());
                 } catch (TemplateException ex) {
                     Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
