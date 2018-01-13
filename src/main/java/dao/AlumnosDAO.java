@@ -22,7 +22,10 @@ public class AlumnosDAO {
             + "WHERE u.email = ?";
     private final String queryCompletarTarea = "UPDATE tareas_alumnos SET completado = 1 WHERE id_tarea = ? AND id_alumno = "
             + "(SELECT id FROM users WHERE email = ?)";
-    private final String queryGetTareaById = "SELECT * FROM tareas WHERE id_tarea = ?";
+    private final String queryGetTareaById = "SELECT t.* FROM tareas t "
+            + "JOIN tareas_alumnos ta ON t.id_tarea = ta.id_tarea "
+            + "WHERE ta.id_tarea = ? AND id_alumno = "
+            + "(SELECT id FROM users WHERE email = ?)";
     
     public List<Nota> getAllNotas(String email) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
@@ -50,11 +53,11 @@ public class AlumnosDAO {
         return completado;
     }
     
-    public Tarea getTareaById(int id) {
+    public Tarea getTareaById(int id, String email) {
         Tarea t;
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            t =(Tarea) jtm.queryForObject(queryGetTareaById, new Object[]{id}, new BeanPropertyRowMapper(Tarea.class));
+            t =(Tarea) jtm.queryForObject(queryGetTareaById, new Object[]{id, email}, new BeanPropertyRowMapper(Tarea.class));
         } catch (DataAccessException ex) {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             t = null;
