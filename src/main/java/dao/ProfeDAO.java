@@ -164,7 +164,7 @@ public class ProfeDAO {
 
             PreparedStatement stmt = con.prepareStatement(queryAddTarea, Statement.RETURN_GENERATED_KEYS);
 
-            stmt.setInt(1, t.getId_asignatura());
+            stmt.setInt(1, t.getAsignatura().getId());
             stmt.setString(2, t.getNombre_tarea());
             stmt.setDate(3, new java.sql.Date(t.getFecha_entrega().getTime()));
 

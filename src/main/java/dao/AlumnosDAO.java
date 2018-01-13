@@ -19,10 +19,11 @@ public class AlumnosDAO {
             + "JOIN users u ON aa.id_alumno = u.id "
             + "JOIN asignaturas a ON a.id = aa.id_asignatura "
             + "WHERE u.email = ? ";
-    private final String queryGetAllTareas = "SELECT ta.id_tarea, t.nombre_tarea, t.fecha_entrega, ta.completado "
+    private final String queryGetAllTareas = "SELECT ta.id_tarea, t.nombre_tarea, t.fecha_entrega, ta.completado, a.id, a.nombre "
             + "FROM tareas_alumnos ta "
             + "JOIN tareas t ON ta.id_tarea = t.id_tarea "
             + "JOIN users u ON u.id = ta.id_alumno "
+            + "JOIN asignaturas a ON t.id_asignatura = a.id "
             + "WHERE u.email = ?";
     private final String queryCompletarTarea = "UPDATE tareas_alumnos SET completado = 1 WHERE id_tarea = ? AND id_alumno = "
             + "(SELECT id FROM users WHERE email = ?)";
@@ -58,8 +59,20 @@ public class AlumnosDAO {
     
     public List<Tarea> getAllTareas(String email) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<Tarea> tareas = jtm.query(queryGetAllTareas, new BeanPropertyRowMapper(Tarea.class), email);
+        List<Tarea> tareas = jtm.query(queryGetAllTareas, (ResultSet rs, int rowNum)-> {
+            Tarea tarea = new Tarea();
+            tarea.setId_tarea(rs.getInt(1));
+            tarea.setNombre_tarea(rs.getString(2));
+            tarea.setFecha_entrega(rs.getDate(3));
+            tarea.setCompletada(rs.getBoolean(4));
 
+            Asignatura asignatura = new Asignatura();
+            asignatura.setId(rs.getInt(5));
+            asignatura.setNombre(rs.getString(6));
+            tarea.setAsignatura(asignatura);
+
+            return tarea;
+        }, email);
         return tareas;
     }
     

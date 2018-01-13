@@ -19,7 +19,7 @@ import servicios.AlumnosServicios;
 import servlets.Conectar;
 import utils.Constantes;
 
-@WebServlet(name = "VerTareas", urlPatterns = {"/panel/usuario/tareas"})
+@WebServlet(name = "VerTareas", urlPatterns = {"/panel/alumno/tareas"})
 public class VerTareas extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)

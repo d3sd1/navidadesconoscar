@@ -17,7 +17,7 @@ import utils.Constantes;
 
 @WebFilter(filterName = "RangoUsuario", urlPatterns =
 {
-    "/panel/usuario/*"
+    "/panel/alumno/*"
 })
 public class RangoUsuario implements Filter
 {

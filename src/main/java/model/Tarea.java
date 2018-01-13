@@ -1,22 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
 import java.util.Date;
 
 
-/**
- *
- * @author Miguel
- */
 public class Tarea {
     private int id_tarea;
-    private int id_asignatura;
+    private Asignatura asignatura;
     private String nombre_tarea;
     private Date fecha_entrega;
+    private boolean completada;
 
     public int getId_tarea() {
         return id_tarea;
@@ -24,14 +16,6 @@ public class Tarea {
 
     public void setId_tarea(int id_tarea) {
         this.id_tarea = id_tarea;
-    }
-
-    public int getId_asignatura() {
-        return id_asignatura;
-    }
-
-    public void setId_asignatura(int id_asignatura) {
-        this.id_asignatura = id_asignatura;
     }
 
     public String getNombre_tarea() {
@@ -48,6 +32,26 @@ public class Tarea {
 
     public void setFecha_entrega(Date fecha_entrega) {
         this.fecha_entrega = fecha_entrega;
+    }
+
+    public Asignatura getAsignatura()
+    {
+        return asignatura;
+    }
+
+    public void setAsignatura(Asignatura asignatura)
+    {
+        this.asignatura = asignatura;
+    }
+
+    public boolean isCompletada()
+    {
+        return completada;
+    }
+
+    public void setCompletada(boolean completada)
+    {
+        this.completada = completada;
     }
     
     

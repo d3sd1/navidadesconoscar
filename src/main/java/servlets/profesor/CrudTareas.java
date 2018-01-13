@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servlets.profesor;
 
 import ajax.AjaxMaker;
@@ -28,10 +23,6 @@ import servicios.ProfeServicios;
 import servlets.Conectar;
 import utils.Constantes;
 
-/**
- *
- * @author Miguel
- */
 @WebServlet(name = "CrudTareas", urlPatterns = {"/panel/profesor/asignar_tarea"})
 public class CrudTareas extends HttpServlet {
 
@@ -60,7 +51,7 @@ public class CrudTareas extends HttpServlet {
                 try {
                     String cadenaFecha = request.getParameter("fecha_entrega");
                     LocalDate fecha_entrega = LocalDate.parse(cadenaFecha, dtf);
-                    t.setId_asignatura(Integer.parseInt(request.getParameter("id_asignatura")));
+                    t.getAsignatura().setId(Integer.parseInt(request.getParameter("id_asignatura")));
                     t.setNombre_tarea(request.getParameter("nombre_tarea"));
                     t.setFecha_entrega(Date.from(fecha_entrega.atStartOfDay().toInstant(ZoneOffset.UTC)));
                     addTarea = ps.addTarea(t);

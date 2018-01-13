@@ -52,7 +52,7 @@ public class ProfeServicios {
     public AjaxResponse addTarea(Tarea t) {
         ProfeDAO dao = new ProfeDAO();
         AjaxResponse returnme;
-        List<Integer> idAlumnos = dao.getIdAlumnos(t.getId_asignatura());
+        List<Integer> idAlumnos = dao.getIdAlumnos(t.getAsignatura().getId());
 
         if (idAlumnos.size() > 0) {
             t = dao.addTarea(t, idAlumnos);
@@ -61,7 +61,7 @@ public class ProfeServicios {
                 DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
                 HashMap<String, String> datos = new HashMap<>();
                 datos.put(Constantes.PARAMETRO_ID_TAREA, String.valueOf(t.getId_tarea()));
-                datos.put(Constantes.PARAMETRO_ID_ASIGNATURA, String.valueOf(t.getId_asignatura()));
+                datos.put(Constantes.PARAMETRO_ID_ASIGNATURA, String.valueOf(t.getAsignatura().getId()));
                 datos.put(Constantes.PARAMETRO_NOMBRE_TAREA, t.getNombre_tarea());
                 datos.put(Constantes.PARAMETRO_FECHA_ENTREGA, df.format(t.getFecha_entrega()));
                 returnme = ajax.successResponse(datos);
@@ -85,7 +85,7 @@ public class ProfeServicios {
             DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
             HashMap<String, String> datos = new HashMap<>();
             datos.put(Constantes.PARAMETRO_ID_TAREA, String.valueOf(t.getId_tarea()));
-            datos.put(Constantes.PARAMETRO_ID_ASIGNATURA, String.valueOf(t.getId_asignatura()));
+            datos.put(Constantes.PARAMETRO_ID_ASIGNATURA, String.valueOf(t.getAsignatura().getId()));
             datos.put(Constantes.PARAMETRO_NOMBRE_TAREA, t.getNombre_tarea());
             datos.put(Constantes.PARAMETRO_FECHA_ENTREGA, df.format(t.getFecha_entrega()));
             returnme = ajax.successResponse(datos);

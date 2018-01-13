@@ -19,8 +19,8 @@
                 <div class="nav-wrapper blue lighten-1">
                     <a href="#" class="brand-logo"><img alt="Logo" src="https://image.ibb.co/fXxOcG/logo.png" style="height: 50px"/></a>
                     <ul id="nav-mobile" class="right">
-                        <li><a href="/panel/usuario/tareas">Mis tareas</a></li>
-                        <li class="active"><a href="/panel/usuario/notas">Mis notas</a></li>
+                        <li><a href="/panel/alumno/tareas">Mis tareas</a></li>
+                        <li class="active"><a href="/panel/alumno/notas">Mis notas</a></li>
                         <li><a href="/panel/cambiar_clave">Cambiar contraseña</a></li>
                         <li><a href="/desconectar">Desconectar</a></li>
                         </ul>
