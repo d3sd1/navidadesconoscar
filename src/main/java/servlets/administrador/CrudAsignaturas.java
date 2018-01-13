@@ -51,7 +51,7 @@ public class CrudAsignaturas extends HttpServlet {
                     a.setNombre(request.getParameter("nombre"));
                     a.setId_curso(parseInt(request.getParameter("id_curso")));
                     addAsig = as.addAsig(a);
-                } catch (NumberFormatException ex) {
+                } catch (Exception ex) {
                     addAsig = ajax.errorResponse(0);
                 }
                 objeto_json = ajax.parseResponse(addAsig);
@@ -65,7 +65,7 @@ public class CrudAsignaturas extends HttpServlet {
                     a.setNombre(request.getParameter("nombre"));
                     a.setId_curso(parseInt(request.getParameter("id_curso")));
                     modAsig = as.modAsig(a);
-                } catch (NumberFormatException ex) {
+                } catch (Exception ex) {
                     modAsig = ajax.errorResponse(0);
                 }
                 objeto_json = ajax.parseResponse(modAsig);
@@ -77,7 +77,7 @@ public class CrudAsignaturas extends HttpServlet {
                 try {
                     a.setId(parseInt(request.getParameter("id")));
                     delAsig2 = as.delAsig2(a);
-                } catch (NumberFormatException ex) {
+                } catch (Exception ex) {
                     delAsig2 = ajax.errorResponse(0);
                 }
                 objeto_json = ajax.parseResponse(delAsig2);
