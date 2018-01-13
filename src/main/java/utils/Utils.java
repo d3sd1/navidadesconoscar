@@ -1,9 +1,24 @@
 
 package utils;
 
+import config.Configuration;
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.Template;
+import java.io.IOException;
+import java.io.Writer;
 import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.ServletResponse;
+import jdk.internal.util.xml.impl.Pair;
 
 public class Utils {
 
@@ -31,7 +46,8 @@ public class Utils {
     }
     public int depurarParametroInt(String param)
     {
-        return (int)depuradorParametros(param);
+        String number = depuradorParametros(param).toString();
+        return number.equals("") ? 0:Integer.parseInt(number);
     }
     public String depurarParametroString(String param)
     {
@@ -39,7 +55,7 @@ public class Utils {
     }
     public boolean depurarParametroBoolean(String param)
     {
-        return (Boolean)depuradorParametros(param);
+        return Boolean.parseBoolean(depuradorParametros(param).toString());
     }
     public Date depurarParametroDate(String param)
     {
@@ -54,5 +70,45 @@ public class Utils {
             returned = (Date) date;
         }
         return returned;
+    }
+    public LocalDate depurarParametroLocalDate(String param)
+    {
+        
+        Object localDate = depuradorParametros(param);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(Constantes.FORMATO_FECHA);
+        LocalDate returned;
+        if(localDate == "")
+        {
+            returned = LocalDate.now();
+        }
+        else
+        {
+            returned = LocalDate.parse(localDate.toString(), dtf);
+        }
+        return returned;
+    }
+    /*
+        Método para mostrar plantillas. 
+        Transfiere los datos a la plantilla mediante el argumento de conveniencia,
+        basándose en ls valores key => val de cada objeto, en el parámetro inyectores.
+        Para agregar un inyector, el parámetro sería: new AbstractMap.SimpleEntry<>(clave, valor)
+    */
+    public void mostrarPlantilla(String templatePath, Writer writer, SimpleEntry... inyectores)
+    {
+        Template temp;
+        HashMap root = new HashMap();
+        for(SimpleEntry<Object, String> inyector : inyectores) {
+            root.put(inyector.getKey(), inyector.getValue());
+        }
+        try
+        {
+            temp = Configuration.getInstance().getFreeMarker().getTemplate(templatePath);
+            temp.process(root, writer);
+        }
+        catch (Exception ex)
+        {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 }

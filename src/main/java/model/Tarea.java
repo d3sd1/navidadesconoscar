@@ -12,6 +12,11 @@ public class Tarea {
     private Date fecha_entrega;
     private boolean completada;
 
+    public Tarea()
+    {
+        asignatura = new Asignatura();
+        profesor = new User();
+    }
     public int getId_tarea() {
         return id_tarea;
     }
