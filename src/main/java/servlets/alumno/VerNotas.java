@@ -18,7 +18,7 @@ import utils.Constantes;
 
 @WebServlet(name = "VerNotas", urlPatterns
         = {
-            "/panel/usuario/notas"
+            "/panel/alumno/notas"
         })
 public class VerNotas extends HttpServlet {
 

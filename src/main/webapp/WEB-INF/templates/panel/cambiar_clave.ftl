@@ -31,8 +31,8 @@
                         <li><a href="/panel/profesor/modificar_notas">Cambiar notas</a></li>
                         </#if>
                         <#if rango == "usuario">
-                        <li><a href="/panel/usuario/tareas">Mis tareas</a></li>
-                        <li><a href="/panel/usuario/notas">Mis notas</a></li>
+                        <li><a href="/panel/alumno/tareas">Mis tareas</a></li>
+                        <li><a href="/panel/alumno/notas">Mis notas</a></li>
                         </#if>
                         <li><a href="/panel/cambiar_clave">Cambiar contraseña</a></li>
                         <li><a href="/desconectar">Desconectar</a></li>

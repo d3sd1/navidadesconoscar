@@ -18,58 +18,70 @@ import utils.Language;
 import utils.PasswordHash;
 import utils.Utils;
 
-public class AdminServicios {
+public class AdminServicios
+{
 
     private final AjaxMaker ajax = new AjaxMaker();
 
-    public List<Asignatura> getAllAsignaturas() {
+    public List<Asignatura> getAllAsignaturas()
+    {
         AdminDAO dao = new AdminDAO();
         return dao.getAllAsignaturas();
     }
 
-    public AjaxResponse addAsig(Asignatura a) {
+    public AjaxResponse addAsig(Asignatura a)
+    {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
 
         a = dao.addAsig(a);
 
-        if (a != null) {
+        if (a != null)
+        {
             HashMap<String, String> datos = new HashMap<>();
             datos.put(Constantes.PARAMETRO_ID, String.valueOf(a.getId()));
             datos.put(Constantes.PARAMETRO_NOMBRE, a.getNombre());
             datos.put(Constantes.PARAMETRO_ID_CURSO, String.valueOf(a.getId_curso()));
             returnme = ajax.successResponse(datos);
-        } else {
+        }
+        else
+        {
             returnme = ajax.errorResponse(0);
         }
         return returnme;
     }
 
-    public AjaxResponse modAsig(Asignatura a) {
+    public AjaxResponse modAsig(Asignatura a)
+    {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
 
         a = dao.modAsig(a);
 
-        if (a != null) {
+        if (a != null)
+        {
             HashMap<String, String> datos = new HashMap<>();
             datos.put(Constantes.PARAMETRO_ID, String.valueOf(a.getId()));
             datos.put(Constantes.PARAMETRO_NOMBRE, a.getNombre());
             datos.put(Constantes.PARAMETRO_ID_CURSO, String.valueOf(a.getId_curso()));
             returnme = ajax.successResponse(datos);
-        } else {
+        }
+        else
+        {
             returnme = ajax.errorResponse(0);
         }
         return returnme;
     }
 
-    public AjaxResponse delAsig(Asignatura a) {
+    public AjaxResponse delAsig(Asignatura a)
+    {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
 
         int borrado = dao.delAsig(a);
 
-        switch (borrado) {
+        switch (borrado)
+        {
             case 0:
                 returnme = ajax.errorResponse(8);
                 break;
@@ -88,26 +100,32 @@ public class AdminServicios {
         return returnme;
     }
 
-    public AjaxResponse delAsig2(Asignatura a) {
+    public AjaxResponse delAsig2(Asignatura a)
+    {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
 
         boolean borrado = dao.delAsig2(a);
 
-        if (borrado) {
+        if (borrado)
+        {
             returnme = ajax.successResponse();
-        } else {
+        }
+        else
+        {
             returnme = ajax.errorResponse(9);
         }
         return returnme;
     }
 
-    public List<User> getAllProfes() {
+    public List<User> getAllProfes()
+    {
         AdminDAO dao = new AdminDAO();
         return dao.getAllProfes();
     }
 
-    public AjaxResponse asignarProfeAsig(int id_profe, String asignaturas) {
+    public AjaxResponse asignarProfeAsig(int id_profe, String asignaturas)
+    {
         AdminDAO dao = new AdminDAO();
         AjaxResponse returnme;
 
@@ -118,11 +136,15 @@ public class AdminServicios {
         De este modo... También se agiliza el proceso.
          */
         boolean errors = false;
-        if (dao.eliminarProfeAsig(id_profe)) {
-            if (!dao.asignarInsertandoProfeAsig(id_profe, id_asignaturas)) {
+        if (dao.eliminarProfeAsig(id_profe))
+        {
+            if (!dao.asignarInsertandoProfeAsig(id_profe, id_asignaturas))
+            {
                 errors = true;
             }
-        } else {
+        }
+        else
+        {
             errors = true;
         }
 
@@ -130,22 +152,26 @@ public class AdminServicios {
 
     }
 
-    public List<User> getAllAlumnos() {
+    public List<User> getAllAlumnos()
+    {
         AdminDAO dao = new AdminDAO();
         return dao.getAllAlumnos();
     }
 
-    public List getAsigAlumno() {
+    public List getAsigAlumno()
+    {
         AdminDAO dao = new AdminDAO();
         return dao.getAsignaturasAlumno();
     }
 
-    public List getAsigProfesor() {
+    public List getAsigProfesor()
+    {
         AdminDAO dao = new AdminDAO();
         return dao.getAsignaturasProfesor();
     }
 
-    public AjaxResponse asignarAlumAsig(int id_alumno, String asignaturas) {
+    public AjaxResponse asignarAlumAsig(int id_alumno, String asignaturas)
+    {
         AdminDAO dao = new AdminDAO();
         AjaxResponse returnme;
 
@@ -156,37 +182,46 @@ public class AdminServicios {
         De este modo... También se agiliza el proceso.
          */
         boolean errors = false;
-        if (dao.eliminarAlumAsig(id_alumno)) {
-            if (!dao.asignarInsertandoAlumAsig(id_alumno, id_asignaturas)) {
+        if (dao.eliminarAlumAsig(id_alumno))
+        {
+            if (!dao.asignarInsertandoAlumAsig(id_alumno, id_asignaturas))
+            {
                 errors = true;
             }
-        } else {
+        }
+        else
+        {
             errors = true;
         }
 
         return (!errors ? returnme = ajax.successResponse() : ajax.errorResponse(10));
     }
 
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers()
+    {
         AdminDAO dao = new AdminDAO();
         return dao.getAllUsers();
     }
 
-    public AjaxResponse addUser(User u) {
+    public AjaxResponse addUser(User u)
+    {
 
         AdminDAO dao = new AdminDAO();
         AjaxResponse returnme;
 
         boolean existe = dao.comprobarEmail(u.getEmail());
 
-        if (existe == false) {
-            try {
+        if (existe == false)
+        {
+            try
+            {
                 String clave = Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudPass());
                 u.setClave(PasswordHash.getInstance().createHash(clave));
                 u.setCodigoActivacion(Utils.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
                 u = dao.addUser(u);
 
-                if (u != null) {
+                if (u != null)
+                {
                     MailServicios nuevoMail = new MailServicios();
                     nuevoMail.mandarMail(u.getEmail(), Constantes.EMAIL_CONTENT_ACTIVAR_1
                             + Constantes.LINK_EMAIL_ACTIVAR + u.getCodigoActivacion()
@@ -200,50 +235,71 @@ public class AdminServicios {
                     datos.put(Constantes.PARAMETRO_EMAIL, u.getEmail());
                     datos.put(Constantes.PARAMETRO_TIPO, String.valueOf(u.getId_permiso()));
                     returnme = ajax.successResponse(datos);
-                } else {
+                }
+                else
+                {
                     returnme = ajax.errorResponse(12);
                 }
-            } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+            }
+            catch (NoSuchAlgorithmException | InvalidKeySpecException ex)
+            {
                 Logger.getLogger(UsersServicios.class.getName()).log(Level.SEVERE, null, ex);
                 returnme = ajax.errorResponse(0);
             }
-        } else {
+        }
+        else
+        {
             returnme = ajax.errorResponse(3);
         }
         return returnme;
     }
 
-    public AjaxResponse modUser(User u) {
+    public AjaxResponse modUser(User u)
+    {
         AdminDAO dao = new AdminDAO();
         AjaxResponse returnme;
 
         int permiso = dao.getPermiso(u.getId());
+        if (u.getId() == 1)
+        {
+            returnme = ajax.errorResponse(20);
+        }
+        else
+        {
+            boolean modificado = dao.modUser(u, permiso);
 
-        boolean modificado = dao.modUser(u, permiso);
-
-        if (modificado == true) {
-            HashMap<String, String> datos = new HashMap<>();
-            datos.put(Constantes.PARAMETRO_ID, String.valueOf(u.getId()));
-            datos.put(Constantes.PARAMETRO_NOMBRE, u.getNombre());
-            datos.put(Constantes.PARAMETRO_EMAIL, u.getEmail());
-            datos.put(Constantes.PARAMETRO_TIPO, String.valueOf(u.getId_permiso()));
-            returnme = ajax.successResponse(datos);
-        } else {
-            returnme = ajax.errorResponse(13);
+            if (modificado == true)
+            {
+                HashMap<String, String> datos = new HashMap<>();
+                datos.put(Constantes.PARAMETRO_ID, String.valueOf(u.getId()));
+                datos.put(Constantes.PARAMETRO_NOMBRE, u.getNombre());
+                datos.put(Constantes.PARAMETRO_EMAIL, u.getEmail());
+                datos.put(Constantes.PARAMETRO_TIPO, String.valueOf(u.getId_permiso()));
+                returnme = ajax.successResponse(datos);
+            }
+            else
+            {
+                returnme = ajax.errorResponse(13);
+            }
         }
         return returnme;
     }
 
-    public AjaxResponse delUser(User u) {
+    public AjaxResponse delUser(User u)
+    {
         AdminDAO dao = new AdminDAO();
         AjaxResponse returnme;
 
-        if (u.getId() == 1) {
+        if (u.getId() == 1)
+        {
             returnme = ajax.errorResponse(20);
-        } else {
+        }
+        else
+        {
             int borrado = dao.delUser(u);
 
-            switch (borrado) {
+            switch (borrado)
+            {
                 case 0:
                     returnme = ajax.errorResponse(14);
                     break;
@@ -263,58 +319,74 @@ public class AdminServicios {
         return returnme;
     }
 
-    public AjaxResponse delUser2(User u) {
+    public AjaxResponse delUser2(User u)
+    {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
-        
-        if (u.getId() == 1) {
+
+        if (u.getId() == 1)
+        {
             returnme = ajax.errorResponse(20);
-        } else {
+        }
+        else
+        {
             boolean borrado = dao.delUser2(u);
 
-            if (borrado == true) {
+            if (borrado == true)
+            {
                 returnme = ajax.successResponse();
-            } else {
+            }
+            else
+            {
                 returnme = ajax.errorResponse(15);
             }
         }
         return returnme;
     }
 
-    public List<Curso> getAllCursos() {
+    public List<Curso> getAllCursos()
+    {
         AdminDAO dao = new AdminDAO();
         return dao.getAllCursos();
     }
 
-    public AjaxResponse addCurso(Curso c) {
+    public AjaxResponse addCurso(Curso c)
+    {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
 
         c = dao.addCurso(c);
 
-        if (c != null) {
+        if (c != null)
+        {
             HashMap<String, String> datos = new HashMap<>();
             datos.put(Constantes.PARAMETRO_ID, String.valueOf(c.getId()));
             datos.put(Constantes.PARAMETRO_NOMBRE, c.getNombre());
             returnme = ajax.successResponse(datos);
-        } else {
+        }
+        else
+        {
             returnme = ajax.errorResponse(17);
         }
         return returnme;
     }
 
-    public AjaxResponse modCurso(Curso c) {
+    public AjaxResponse modCurso(Curso c)
+    {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
 
         c = dao.modCurso(c);
 
-        if (c != null) {
+        if (c != null)
+        {
             HashMap<String, String> datos = new HashMap<>();
             datos.put(Constantes.PARAMETRO_ID, String.valueOf(c.getId()));
             datos.put(Constantes.PARAMETRO_NOMBRE, c.getNombre());
             returnme = ajax.successResponse(datos);
-        } else {
+        }
+        else
+        {
             returnme = ajax.errorResponse(18);
         }
         return returnme;
