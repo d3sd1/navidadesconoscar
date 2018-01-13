@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servicios;
 
 import ajax.AjaxMaker;
@@ -15,10 +10,6 @@ import model.Nota;
 import model.Tarea;
 import utils.Constantes;
 
-/**
- *
- * @author Miguel
- */
 public class AlumnosServicios {
 
     private final AjaxMaker ajax = new AjaxMaker();

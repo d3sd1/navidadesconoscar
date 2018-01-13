@@ -1,20 +1,24 @@
 package dao;
 
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Asignatura;
+import model.Curso;
 import model.Nota;
 import model.Tarea;
+import model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class AlumnosDAO {
-    private final String queryGetAllNotas = "SELECT id_alumno, id_asignatura, a.nombre as nombre_asignatura, nota "
+    private final String queryGetAllNotas = "SELECT u.id, u.nombre, a.id, a.nombre, aa.nota "
             + "FROM alumnos_asignaturas aa "
             + "JOIN users u ON aa.id_alumno = u.id "
-            + "JOIN asignaturas a ON aa.id_asignatura = a.id "
-            + "WHERE u.email = ?";
+            + "JOIN asignaturas a ON a.id = aa.id_asignatura "
+            + "WHERE u.email = ? ";
     private final String queryGetAllTareas = "SELECT ta.id_tarea, t.nombre_tarea, t.fecha_entrega, ta.completado "
             + "FROM tareas_alumnos ta "
             + "JOIN tareas t ON ta.id_tarea = t.id_tarea "
@@ -29,7 +33,25 @@ public class AlumnosDAO {
     
     public List<Nota> getAllNotas(String email) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<Nota> alumnos = jtm.query(queryGetAllNotas, new BeanPropertyRowMapper(Nota.class), email);
+        List<Nota> alumnos = jtm.query(queryGetAllNotas, (ResultSet rs, int rowNum)
+                -> {
+            Nota nota = new Nota();
+
+            nota.setNota(rs.getDouble(5));
+
+            User alumno = new User();
+            alumno.setId(rs.getInt(1));
+            alumno.setNombre(rs.getString(2));
+            nota.setAlumno(alumno);
+
+            Asignatura asignatura = new Asignatura();
+
+            asignatura.setId(rs.getInt(3));
+            asignatura.setNombre(rs.getString(4));
+            nota.setAsignatura(asignatura);
+
+            return nota;
+        }, email);
 
         return alumnos;
     }

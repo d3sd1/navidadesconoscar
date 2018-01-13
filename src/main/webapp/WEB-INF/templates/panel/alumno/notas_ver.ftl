@@ -44,7 +44,7 @@
                         <tbody>
                         <#list notas as nota>
                             <tr>
-                                <td>${nota.getNombre_asignatura()}</td>
+                                <td>${nota.getAsignatura().getNombre()}</td>
                                 <td>${nota.getNota()}</td>
                         </#list>
                         </tbody>
