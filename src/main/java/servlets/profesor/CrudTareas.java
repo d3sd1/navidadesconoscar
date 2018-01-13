@@ -55,7 +55,7 @@ public class CrudTareas extends HttpServlet {
 
         switch (accion) {
             case "insertar":
-                AjaxResponse addTarea = null;
+                AjaxResponse addTarea;
                 
                 try {
                     String cadenaFecha = request.getParameter("fecha_entrega");
@@ -73,7 +73,7 @@ public class CrudTareas extends HttpServlet {
                 break;
 
             case "modificar":
-                AjaxResponse modTarea = null;
+                AjaxResponse modTarea;
                 
                 try {
                     String cadenaFecha = request.getParameter("fecha_entrega");

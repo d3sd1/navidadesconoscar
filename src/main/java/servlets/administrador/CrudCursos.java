@@ -21,15 +21,14 @@ import servlets.Conectar;
 import utils.Constantes;
 
 @WebServlet(name = "CrudCursos", urlPatterns
-        =
-        {
+        = {
             "/panel/administrador/cursos"
         })
 public class CrudCursos extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/administrador/crud_asignaturas.ftl");
         HashMap root = new HashMap();
         root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
@@ -41,13 +40,11 @@ public class CrudCursos extends HttpServlet {
         Curso c = new Curso();
         String objeto_json;
 
-        if (accion == null)
-        {
+        if (accion == null) {
             accion = "";
         }
 
-        switch (accion)
-        {
+        switch (accion) {
             case "insertar":
                 c.setNombre(request.getParameter("nombre"));
                 AjaxResponse addCurso = as.addCurso(c);
@@ -56,21 +53,23 @@ public class CrudCursos extends HttpServlet {
                 break;
 
             case "modificar":
-                c.setId(parseInt(request.getParameter("id")));
-                c.setNombre(request.getParameter("nombre"));
-                AjaxResponse modCurso = as.modCurso(c);
+                AjaxResponse modCurso;
+                try {
+                    c.setId(parseInt(request.getParameter("id")));
+                    c.setNombre(request.getParameter("nombre"));
+                    modCurso = as.modCurso(c);
+                } catch (NumberFormatException ex) {
+                    modCurso = ajax.errorResponse(0);
+                }
                 objeto_json = ajax.parseResponse(modCurso);
                 response.getWriter().print(objeto_json);
                 break;
 
             default:
                 root.put("cursos", as.getAllCursos());
-                try
-                {
+                try {
                     temp.process(root, response.getWriter());
-                }
-                catch (TemplateException ex)
-                {
+                } catch (TemplateException ex) {
                     Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
                 }
         }

@@ -21,16 +21,13 @@ import servlets.Conectar;
 import utils.Constantes;
 
 @WebServlet(name = "CrudAsignaturas", urlPatterns
-        =
-        {
+        = {
             "/panel/administrador/asignaturas"
         })
-public class CrudAsignaturas extends HttpServlet
-{
+public class CrudAsignaturas extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
 
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/administrador/crud_asignaturas.ftl");
         HashMap root = new HashMap();
@@ -40,59 +37,49 @@ public class CrudAsignaturas extends HttpServlet
         AjaxMaker ajax = new AjaxMaker();
 
         String accion = request.getParameter("accion");
-        String nombre = "";
-        int id_curso = 0, id = 0;
-        Asignatura a = null;
+        Asignatura a = new Asignatura();
         String objeto_json;
 
-        if (accion == null)
-        {
+        if (accion == null) {
             accion = "";
         }
-        else
-        {
-            a = new Asignatura();
-            nombre = request.getParameter("nombre");
-            try
-            {
-                id_curso = parseInt(request.getParameter("id_curso"));
-            }
-            catch(Exception e)
-            {
-                
-            }
-            try
-            {
-                id = parseInt(request.getParameter("id"));
-            }
-            catch(Exception e)
-            {
-                
-            }
-        }
 
-        switch (accion)
-        {
+        switch (accion) {
             case "insertar":
-                a.setNombre(nombre);
-                a.setId_curso(id_curso);
-                AjaxResponse addAsig = as.addAsig(a);
+                AjaxResponse addAsig;
+                try {
+                    a.setNombre(request.getParameter("nombre"));
+                    a.setId_curso(parseInt(request.getParameter("id_curso")));
+                    addAsig = as.addAsig(a);
+                } catch (NumberFormatException ex) {
+                    addAsig = ajax.errorResponse(0);
+                }
                 objeto_json = ajax.parseResponse(addAsig);
                 response.getWriter().print(objeto_json);
                 break;
 
             case "modificar":
-                a.setId(id);
-                a.setNombre(nombre);
-                a.setId_curso(id_curso);
-                AjaxResponse modAsig = as.modAsig(a);
+                AjaxResponse modAsig;
+                try {
+                    a.setId(parseInt(request.getParameter("id")));
+                    a.setNombre(request.getParameter("nombre"));
+                    a.setId_curso(parseInt(request.getParameter("id_curso")));
+                    modAsig = as.modAsig(a);
+                } catch (NumberFormatException ex) {
+                    modAsig = ajax.errorResponse(0);
+                }
                 objeto_json = ajax.parseResponse(modAsig);
                 response.getWriter().print(objeto_json);
                 break;
 
             case "borrar":
-                a.setId(id);
-                AjaxResponse delAsig2 = as.delAsig2(a);
+                AjaxResponse delAsig2;
+                try {
+                    a.setId(parseInt(request.getParameter("id")));
+                    delAsig2 = as.delAsig2(a);
+                } catch (NumberFormatException ex) {
+                    delAsig2 = ajax.errorResponse(0);
+                }
                 objeto_json = ajax.parseResponse(delAsig2);
                 response.getWriter().print(objeto_json);
                 break;
@@ -100,12 +87,9 @@ public class CrudAsignaturas extends HttpServlet
             default:
                 root.put("asignaturas", as.getAllAsignaturas());
                 root.put("cursos", as.getAllCursos());
-                try
-                {
+                try {
                     temp.process(root, response.getWriter());
-                }
-                catch (TemplateException ex)
-                {
+                } catch (TemplateException ex) {
                     Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
                 }
         }
@@ -123,8 +107,7 @@ public class CrudAsignaturas extends HttpServlet
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -138,8 +121,7 @@ public class CrudAsignaturas extends HttpServlet
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -149,8 +131,7 @@ public class CrudAsignaturas extends HttpServlet
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo()
-    {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

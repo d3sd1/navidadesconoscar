@@ -20,16 +20,13 @@ import servlets.Conectar;
 import utils.Constantes;
 
 @WebServlet(name = "AsignaturasProfesores", urlPatterns
-        =
-        {
+        = {
             "/panel/administrador/asignaturas_profesores"
         })
-public class AsignaturasProfesores extends HttpServlet
-{
+public class AsignaturasProfesores extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
 
         Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/administrador/asignaturas_profesores.ftl");
         HashMap root = new HashMap();
@@ -44,34 +41,31 @@ public class AsignaturasProfesores extends HttpServlet
         int id_profesor = 0;
         String asignaturas = "";
 
-        if (accion == null)
-        {
+        if (accion == null) {
             accion = "";
         }
-        else
-        {
-            id_profesor = parseInt(request.getParameter("id"));
-            asignaturas = request.getParameter("asignaturas");
-        }
 
-        switch (accion)
-        {
+        switch (accion) {
             case "asignar":
-                AjaxResponse asignarProfeAsig = as.asignarProfeAsig(id_profesor, asignaturas);
+                AjaxResponse asignarProfeAsig;
+                try {
+                    id_profesor = parseInt(request.getParameter("id"));
+                    asignaturas = request.getParameter("asignaturas");
+                    asignarProfeAsig = as.asignarProfeAsig(id_profesor, asignaturas);
+                } catch (NumberFormatException ex) {
+                    asignarProfeAsig = ajax.errorResponse(0);
+                }
                 objeto_json = ajax.parseResponse(asignarProfeAsig);
                 response.getWriter().print(objeto_json);
                 break;
 
             default:
-                try
-                {
+                try {
                     root.put("profesores", as.getAllProfes());
                     root.put("asignaturas", as.getAllAsignaturas());
                     root.put("asignaturas_profesores", as.getAsigProfesor());
                     temp.process(root, response.getWriter());
-                }
-                catch (TemplateException ex)
-                {
+                } catch (TemplateException ex) {
                     Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
                 }
         }
@@ -89,8 +83,7 @@ public class AsignaturasProfesores extends HttpServlet
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -104,8 +97,7 @@ public class AsignaturasProfesores extends HttpServlet
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -115,8 +107,7 @@ public class AsignaturasProfesores extends HttpServlet
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo()
-    {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 
