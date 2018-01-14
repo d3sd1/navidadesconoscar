@@ -25,10 +25,10 @@ public class VerTareas extends HttpServlet {
         AjaxMaker ajax = new AjaxMaker();
 
         String alumno = request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO).toString();
-        String accion = helper.depurarParametroString(request.getParameter("accion"));
+        String accion = helper.depurarParametroString(request.getParameter(Constantes.PARAMETRO_ACCION));
 
         Tarea t = new Tarea();
-        t.setId_tarea(helper.depurarParametroInt(request.getParameter("id_tarea")));
+        t.setId_tarea(helper.depurarParametroInt(request.getParameter(Constantes.PARAMETRO_ID_TAREA)));
         
         AjaxResponse resp;
 
