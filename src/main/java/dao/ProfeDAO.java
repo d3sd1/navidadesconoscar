@@ -247,15 +247,17 @@ public class ProfeDAO {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
             
-            PreparedStatement stmt = con.prepareStatement(queryDelTarea);
+            PreparedStatement stmt = con.prepareStatement(queryDelTareaAlumno);
             stmt.setInt(1, t.getId_tarea());
+            stmt.executeUpdate();
             
-            stmt = con.prepareStatement(queryDelTareaAlumno);
+            stmt = con.prepareStatement(queryDelTarea);
             stmt.setInt(1, t.getId_tarea());
+            stmt.executeUpdate();
             
-            eliminado = true;
             con.commit();
             stmt.close();
+            eliminado = true;
         } catch (Exception ex) {
             Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex);
             eliminado = false;

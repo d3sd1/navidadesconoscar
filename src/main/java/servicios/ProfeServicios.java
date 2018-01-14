@@ -11,7 +11,6 @@ import java.util.List;
 import model.Asignatura;
 import model.Nota;
 import model.Tarea;
-import model.User;
 import utils.Constantes;
 
 public class ProfeServicios {

@@ -56,6 +56,7 @@ public class CrudTareas extends HttpServlet
             case "eliminar":
                 resp = ps.delTarea(t);
                 response.getWriter().print(ajax.parseResponse(resp));
+                break;
 
             default:
                 helper.mostrarPlantilla("/panel/profesor/asignar_tareas.ftl", response.getWriter(),
