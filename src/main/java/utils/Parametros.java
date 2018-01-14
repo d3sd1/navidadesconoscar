@@ -15,4 +15,8 @@ public class Parametros {
     public static final String FECHA_ENTREGA = "fecha_entrega";
     public static final String COMPLETADO = "completado";
     public static final String NOMBRE_ASIGNATURA = "nombre_asignatura";
+    public static final String ACCION_COMPLETAR = "completar";
+    public static final String CAMBIARPASS = "cambiarpass";
+    public static final String CAMBIARPASS_ACTUAL = "passactual";
+    public static final String CAMBIARPASS_NUEVA = "nuevapass";
 }

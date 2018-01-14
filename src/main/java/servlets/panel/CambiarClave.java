@@ -2,13 +2,7 @@ package servlets.panel;
 
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
-import config.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import servicios.UsersServicios;
 import utils.Constantes;
+import utils.Parametros;
+import utils.Utils;
 
 @WebServlet(name = "CambiarClave", urlPatterns
         =
@@ -29,24 +25,18 @@ public class CambiarClave extends HttpServlet
             throws ServletException, IOException
     {
 
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/cambiar_clave.ftl");
-        HashMap root = new HashMap();
-        root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
 
         UsersServicios us = new UsersServicios();
         AjaxMaker ajax = new AjaxMaker();
+        Utils helper = new Utils();
 
-        String accion = request.getParameter("accion");
-        if (accion == null)
-        {
-            accion = "";
-        }
+        String accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
 
         switch (accion)
         {
-            case "cambiarpass":
-                String passActual = request.getParameter("passactual");
-                String nuevaPass = request.getParameter("nuevapass");
+            case Parametros.CAMBIARPASS:
+                String passActual = request.getParameter(Parametros.CAMBIARPASS_ACTUAL);
+                String nuevaPass = request.getParameter(Parametros.CAMBIARPASS_NUEVA);
                 String email = (String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO);
                 AjaxResponse cambiarPass = us.cambiarPass(passActual, nuevaPass, email);
                 String objeto_json = ajax.parseResponse(cambiarPass);
@@ -54,14 +44,7 @@ public class CambiarClave extends HttpServlet
                 break;
 
             default:
-                try
-                {
-                    temp.process(root, response.getWriter());
-                }
-                catch (TemplateException ex)
-                {
-                    Logger.getLogger(CambiarClave.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            helper.mostrarPlantilla("/panel/cambiar_clave.ftl", response.getWriter());
         }
 
     }
