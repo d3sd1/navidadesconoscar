@@ -11,7 +11,6 @@ import java.util.List;
 import model.Asignatura;
 import model.Nota;
 import model.Tarea;
-import model.User;
 import utils.Constantes;
 
 public class ProfeServicios {
@@ -85,7 +84,7 @@ public class ProfeServicios {
         t = dao.modTarea(t);
 
         if (t != null) {
-            DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+            DateFormat df = new SimpleDateFormat(Constantes.FORMATO_FECHA);
             HashMap<String, String> datos = new HashMap<>();
             datos.put(Constantes.PARAMETRO_ID_TAREA, String.valueOf(t.getId_tarea()));
             datos.put(Constantes.PARAMETRO_ID_ASIGNATURA, String.valueOf(t.getAsignatura().getId()));

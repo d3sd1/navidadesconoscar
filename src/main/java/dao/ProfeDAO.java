@@ -14,7 +14,6 @@ import model.Nota;
 import model.Tarea;
 import model.User;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class ProfeDAO {
@@ -47,7 +46,9 @@ public class ProfeDAO {
     private final String queryAddTareaAlumno = "INSERT INTO tareas_alumnos (id_tarea, id_alumno, completado) VALUES (?,?,0)";
     private final String queryModTarea = "UPDATE tareas SET nombre_tarea = ?, fecha_entrega = ? WHERE id_tarea = ?";
     private final String queryGetIdAlumnos = "SELECT id_alumno FROM alumnos_asignaturas WHERE id_asignatura = ?";
-    private final String queryGetAllTareas = "SELECT * FROM tareas WHERE email_profesor = ?";
+    private final String queryGetAllTareas = "SELECT t.nombre_tarea, t.fecha_entrega, t.email_profesor, a.id, a.nombre, t.id_tarea FROM tareas t "
+            + "JOIN asignaturas a ON a.id=t.id_asignatura"
+            + " WHERE email_profesor = ?";
 
     public List<Nota> getAllNotas(int id) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
@@ -233,7 +234,17 @@ public class ProfeDAO {
     
     public List<Tarea> getAllTareas(String email) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<Tarea> tareas = jtm.query(queryGetAllTareas, new BeanPropertyRowMapper(Tarea.class), email);
+        List<Tarea> tareas = jtm.query(queryGetAllTareas, (ResultSet rs, int rowNum) -> {
+            Tarea tarea = new Tarea();
+            tarea.setNombre_tarea(rs.getString(1));
+            tarea.setFecha_entrega(new java.util.Date(rs.getTimestamp(2).getTime()));
+            tarea.setEmail_profesor(rs.getString(3));
+            tarea.getAsignatura().setId(rs.getInt(4));
+            tarea.getAsignatura().setNombre(rs.getString(5));
+            tarea.setId_tarea(rs.getInt(6));
+
+            return tarea;
+        }, email);
 
         return tareas;
     }

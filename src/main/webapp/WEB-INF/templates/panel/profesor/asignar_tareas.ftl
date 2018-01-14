@@ -47,6 +47,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre</th>
+                                <th>Asignatura</th>
                                 <th>Fecha de entrega</th>
                                 <th></th>
                             </tr>
@@ -57,6 +58,7 @@
                                 <tr id="tarea-${tarea.getId_tarea()}">
                                     <td>${tarea.getId_tarea()}</td>
                                     <td>${tarea.getNombre_tarea()}</td>
+                                    <td data-id="${tarea.getAsignatura().getId()}">${tarea.getAsignatura().getNombre()}</td>
                                     <td>${tarea.getFecha_entrega()?datetime?string('dd-MM-yyyy')}</td>
                                     <td><a class='dropdown-button btn' href='#' onclick="markActualTask(${tarea.getId_tarea()})" data-activates='dropdown-${tarea.getId_tarea()}'>Acciones</a><ul id='dropdown-${tarea.getId_tarea()}' class='dropdown-content'><li><a onclick="editView()">Editar</a></li><li><a onclick="deleteConfirm()">Eliminar</a></li></ul></td>
                                 </tr>
@@ -135,7 +137,7 @@
             </div>
         </div>
         <script>
-            var actualTask, $dataTable,actualAction;
+            var actualTask, $dataTable,actualAction, $datePicker;
             $(document).ready(function () {
                 $dataTable = $('#crud_usuarios').DataTable({
                     "language": {
@@ -151,7 +153,7 @@
                 $('.modal').modal({
                     dismissible: false
                 });
-                $('.datepicker').pickadate({
+                $datePicker = $('.datepicker').pickadate({
                     selectMonths: true, // Creates a dropdown to control month
                     selectYears: 15, // Creates a dropdown of 15 years to control year,
                     today: 'Hoy',
@@ -159,18 +161,6 @@
                     close: 'Aceptar',
                     closeOnSelect: false,
                     format: 'dd-mm-yyyy'
-                  });
-                $('.timepicker').pickatime({
-                    default: 'now', // Set default time: 'now', '1:30AM', '16:30'
-                    fromnow: 0,       // set default time to * milliseconds from now (using with default = 'now')
-                    twelvehour: false, // Use AM/PM or 24-hour format
-                    donetext: 'Aceptar', // text for done-button
-                    cleartext: 'Limpiar', // text for clear-button
-                    canceltext: 'Cancelar', // Text for cancel-button
-                    autoclose: false, // automatic close timepicker
-                    ampmclickable: true, // make AM PM clickable
-                    aftershow: function(){},
-                    format: 'HH:mm'
                   });
             });
             function action()
@@ -278,28 +268,15 @@
             function editView()
             {
                 actualAction = "edit";
-                var nombre = $('#tarea-' + actualuser).children().eq(1).text(),
-                email = $('#tarea-' + actualuser).children().eq(2).text(),
-                id = $('#tarea-' + actualuser).children().eq(0).text(),
-                tipoTxt = $('#tarea-' + actualuser).children().eq(4).text(),
-                tipo = 0;
-                switch(tipoTxt)
-                {
-                    case "Administrador":
-                        tipo = 1;
-                    break;
-                    case "Profesor":
-                        tipo = 2;
-                    break;
-                    case "Alumno":
-                        tipo = 3;
-                    break;
-                }
-                $("#manage").find("input[name='mail']").val(email);
+                var nombre = $('#tarea-' + actualTask).children().eq(1).text(),
+                fecha = $('#tarea-' + actualTask).children().eq(3).text(),
+                id = $('#tarea-' + actualTask).children().eq(0).text(),
+                asignatura = $('#tarea-' + actualTask).children().eq(2).attr("data-id");
+                $("#manage").find("textarea[name='nombre']").val(nombre);
+                $("#manage").find("input[name='fecha']").val(fecha);
                 $("#manage").find("input[name='id']").val(id);
-                $("#manage").find("input[name='nombre']").val(nombre);
-                $("#manage ").find("select[name='tipo']").find('option[value="' + tipo + '"]').attr('selected', 'selected');
-                $("#manage ").find("select[name='tipo']").material_select();
+                $("#manage").find("select[name='asignatura']").find('option[value="' + asignatura + '"]').attr('selected', 'selected');
+                $("#manage").find("select[name='asignatura']").material_select();
                 Materialize.updateTextFields();
                 $("#manage").modal("open");
                         
@@ -307,23 +284,20 @@
             }
             function edit()
             {
-                var email = $("#manage").find("input[name='mail']").val(),
+                var nombre = $("#manage").find("textarea[name='nombre']").val(),
+                    fecha = $("#manage").find("input[name='fecha']").val(),
                     id = $("#manage").find("input[name='id']").val(),
-                    nombre = $("#manage").find("input[name='nombre']").val(),
-                    tipo = $("#manage").find("select[name='tipo']").val();
-                if(email == "" || nombre == "" || tipo == "" || email == null || nombre == null || tipo == null)
+                    asignatura = $("#manage").find("select[name='asignatura']").val();
+                if(nombre == "" || fecha == "" || id == "" || asignatura == ""|| nombre == null || fecha == null || id == null || asignatura == null)
                 {
                     Materialize.toast('<span>Por favor, rellena todos los campos.</span>', 5000, 'rounded');
                 }
-                else if(!validateEmail(email))
-                {
-                    Materialize.toast('<span>Por favor, introduce un email válido.</span>', 5000, 'rounded');
-                }
                 else
                 {
+                    console.log("accion=modificar&id=" + id + "&id_asignatura=" + asignatura + "&nombre_tarea=" + nombre + "&fecha_entrega=" + fecha);
                     $.ajax({
-                        data: "accion=modificar&id=" + id + "&email=" + email + "&nombre=" + nombre + "&tipo=" + tipo,
-                        url: '/panel/administrador/usuarios',
+                        data: "accion=modificar&id=" + id + "&id_asignatura=" + asignatura + "&nombre_tarea=" + nombre + "&fecha_entrega=" + fecha,
+                        url: '/panel/profesor/asignar_tarea',
                         type: 'post',
                         beforeSend: function () {
                             $('#manage').modal('close');
@@ -333,34 +307,20 @@
                             var info = JSON.parse(data);
                             if (info['success'])
                             {
-                                Materialize.toast('<span>Usuario modificado correctamente</span>', 5000, 'rounded');
-                                var uinfo = info["data"],
-                                    tipoUsuario = "Rango no identificado";
-                                switch(parseInt(uinfo["tipo"])){
-                                    case 1:
-                                        tipoUsuario = "Administrador";
-                                    break;
-                                    case 2:
-                                        tipoUsuario = "Profesor";
-                                    break;
-                                    case 3:
-                                        tipoUsuario = "Alumno";
-                                    break;
-                                }
+                                Materialize.toast('<span>Tarea modificada correctamente</span>', 5000, 'rounded');
+                                var uinfo = info["data"];
                                 $dataTable.row('#tarea-' + uinfo["id"]).remove();
                                 var newCell = $dataTable.row.add( [
-                                    uinfo["id"],
-                                    uinfo["nombre"],
-                                    uinfo["email"],
-                                    (uinfo["activo"] == "true" ? "Si":"No"),
-                                    tipoUsuario,
-                                    "<a class='dropdown-button btn' href='#' onclick='markActualUser(" + uinfo["id"] + ")' data-activates='dropdown-" + uinfo["id"] + "'>Acciones</a><ul id='dropdown-" + uinfo["id"] + "' class='dropdown-content'><li><a onclick='editView()'>Editar</a></li><li><a onclick='deleteConfirm()'>Eliminar</a></li></ul>"
-                                     ] ).draw().node();
+                                    uinfo["id_tarea"],
+                                    uinfo["nombre_tarea"],
+                                    uinfo["fecha_entrega"],
+                                    "<a class='dropdown-button btn' href='#' onclick='markActualTask(" + uinfo["id_tarea"] + ")' data-activates='dropdown-" + uinfo["id_tarea"] + "'>Acciones</a><ul id='dropdown-" + uinfo["id_tarea"] + "' class='dropdown-content'><li><a onclick='editView()'>Editar</a></li><li><a onclick='deleteConfirm()'>Eliminar</a></li></ul>"
+                                    ] ).draw().node();
                                 $(newCell).attr("id","tarea-" + info["id"]);
                             }
                             else
                             {
-                                Materialize.toast('<span>Ha ocurrido un error al modificar el usuario: ' + info["reason"] + '</span>', 5000, 'rounded');
+                                Materialize.toast('<span>Ha ocurrido un error al modificar la tarea: ' + info["reason"] + '</span>', 5000, 'rounded');
                             }
                         },
                         error: function(e)
