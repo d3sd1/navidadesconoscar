@@ -91,6 +91,9 @@ public class AjaxMaker
             case 25:
                 errorMsg = Language.ERROR_COMPLETAR_TAREA_TIEMPO;
                 break;
+            case 26:
+                errorMsg = Language.ERROR_BORRAR_TAREA;
+                break;
             default:
                 errorMsg = Language.ERROR_GENERIC;
         }

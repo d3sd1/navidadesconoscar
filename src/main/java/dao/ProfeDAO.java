@@ -48,6 +48,8 @@ public class ProfeDAO {
     private final String queryModTarea = "UPDATE tareas SET nombre_tarea = ?, fecha_entrega = ? WHERE id_tarea = ?";
     private final String queryGetIdAlumnos = "SELECT id_alumno FROM alumnos_asignaturas WHERE id_asignatura = ?";
     private final String queryGetAllTareas = "SELECT * FROM tareas WHERE email_profesor = ?";
+    private final String queryDelTarea = "DELETE FROM tareas WHERE id_tarea = ?";
+    private final String queryDelTareaAlumno = "DELETE FROM tareas_alumnos WHERE id_tarea = ? AND id_alumno = '*'";
 
     public List<Nota> getAllNotas(int id) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
@@ -236,5 +238,37 @@ public class ProfeDAO {
         List<Tarea> tareas = jtm.query(queryGetAllTareas, new BeanPropertyRowMapper(Tarea.class), email);
 
         return tareas;
+    }
+    
+    public boolean delTarea (Tarea t){
+        Connection con = null;
+        boolean eliminado;
+        try {
+            con = DBConnection.getInstance().getConnection();
+            con.setAutoCommit(false);
+            
+            PreparedStatement stmt = con.prepareStatement(queryDelTarea);
+            stmt.setInt(1, t.getId_tarea());
+            
+            stmt = con.prepareStatement(queryDelTareaAlumno);
+            stmt.setInt(1, t.getId_tarea());
+            
+            eliminado = true;
+            con.commit();
+            stmt.close();
+        } catch (Exception ex) {
+            Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex);
+            eliminado = false;
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (SQLException ex1) {
+                Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } finally {
+            DBConnection.getInstance().cerrarConexion(con);
+        }
+        return eliminado;
     }
 }

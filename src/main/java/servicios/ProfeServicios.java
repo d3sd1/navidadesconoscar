@@ -98,6 +98,20 @@ public class ProfeServicios {
         return returnme;
     }
     
+    public AjaxResponse delTarea (Tarea t){
+        ProfeDAO dao = new ProfeDAO();
+        AjaxResponse returnme;
+        
+        boolean eliminado = dao.delTarea(t);
+        
+        if(eliminado){
+            returnme = ajax.successResponse();
+        }else{
+            returnme = ajax.errorResponse(26);
+        }
+        return returnme;
+    }
+    
     public List<Tarea> getAllTareas(String email){
         ProfeDAO dao = new ProfeDAO();
         return dao.getAllTareas(email);
