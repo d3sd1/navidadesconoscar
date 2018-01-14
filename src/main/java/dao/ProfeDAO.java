@@ -46,15 +46,11 @@ public class ProfeDAO {
     private final String queryAddTareaAlumno = "INSERT INTO tareas_alumnos (id_tarea, id_alumno, completado) VALUES (?,?,0)";
     private final String queryModTarea = "UPDATE tareas SET nombre_tarea = ?, fecha_entrega = ? WHERE id_tarea = ?";
     private final String queryGetIdAlumnos = "SELECT id_alumno FROM alumnos_asignaturas WHERE id_asignatura = ?";
-<<<<<<< HEAD
     private final String queryGetAllTareas = "SELECT t.nombre_tarea, t.fecha_entrega, t.email_profesor, a.id, a.nombre, t.id_tarea FROM tareas t "
             + "JOIN asignaturas a ON a.id=t.id_asignatura"
             + " WHERE email_profesor = ?";
-=======
-    private final String queryGetAllTareas = "SELECT * FROM tareas WHERE email_profesor = ?";
     private final String queryDelTarea = "DELETE FROM tareas WHERE id_tarea = ?";
     private final String queryDelTareaAlumno = "DELETE FROM tareas_alumnos WHERE id_tarea = ? AND id_alumno = '*'";
->>>>>>> cc7a596c470f971fa2c7a85f68412726bd9ba030
 
     public List<Nota> getAllNotas(int id) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());

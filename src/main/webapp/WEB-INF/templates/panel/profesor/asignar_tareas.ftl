@@ -128,8 +128,8 @@
         </div>
         <div id="deleteConfirm" class="modal">
             <div class="modal-content">
-              <h4>Eliminar usuario</h4>
-              <p>¿Seguro que deseas eliminar el usuario?</p>
+              <h4>Eliminar tarea</h4>
+              <p>¿Seguro que deseas eliminar la tarea?</p>
             </div>
             <div class="modal-footer">
               <a class="modal-action modal-close waves-effect waves-green btn-flat">No</a>
@@ -294,9 +294,8 @@
                 }
                 else
                 {
-                    console.log("accion=modificar&id=" + id + "&id_asignatura=" + asignatura + "&nombre_tarea=" + nombre + "&fecha_entrega=" + fecha);
                     $.ajax({
-                        data: "accion=modificar&id=" + id + "&id_asignatura=" + asignatura + "&nombre_tarea=" + nombre + "&fecha_entrega=" + fecha,
+                        data: "accion=modificar&id=" + id + "&nombre_tarea=" + nombre + "&fecha_entrega=" + fecha,
                         url: '/panel/profesor/asignar_tarea',
                         type: 'post',
                         beforeSend: function () {
@@ -343,8 +342,8 @@
             function del()
             {
                 $.ajax({
-                    data: "accion=borrar&id=" + actualuser,
-                    url: '/panel/administrador/usuarios',
+                    data: "accion=eliminar&id_tarea=" + actualTask,
+                    url: '/panel/profesor/asignar_tarea',
                     type: 'post',
                     beforeSend: function () {
                         $('#deleteConfirm').modal('close');
@@ -354,12 +353,12 @@
                         var info = JSON.parse(data);
                         if (info['success'])
                         {
-                            Materialize.toast('<span>Usuario eliminado correctamente</span>', 5000, 'rounded');
-                            $dataTable.row('#tarea-' + actualuser).remove().draw();
+                            Materialize.toast('<span>Tarea eliminada correctamente</span>', 5000, 'rounded');
+                            $dataTable.row('#tarea-' + actualTask).remove().draw();
                         }
                         else
                         {
-                            Materialize.toast('<span>Ha ocurrido un error al eliminar el usuario: ' + info["reason"] + '</span>', 5000, 'rounded');
+                            Materialize.toast('<span>Ha ocurrido un error al eliminar la tarea: ' + info["reason"] + '</span>', 5000, 'rounded');
                         }
                     },
                     error: function(e)
