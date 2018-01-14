@@ -97,7 +97,7 @@
                     <form class="col s12">
                         <input name="id" type="hidden">
                       <div class="row">
-                        <div class="input-field col s12">
+                        <div class="input-field col s6">
                           <textarea name="nombre" class="materialize-textarea"></textarea>
                           <label>Nombre de la tarea</label>
                         </div>
@@ -105,10 +105,6 @@
                           <input name="fecha" type="text" class="datepicker">
                           <label>Fecha de entrega</label>
                         </div>
-                        <div class="input-field col s6">
-                            <input name="hora" type="text" class="timepicker">
-                            <label>Hora de entrega</label>
-                      </div>
                       </div>
                         <div class="input-field col s12">
                           <select name="asignatura">
@@ -161,7 +157,8 @@
                     today: 'Hoy',
                     clear: 'Limpiar',
                     close: 'Aceptar',
-                    closeOnSelect: false // Close upon selecting a date,
+                    closeOnSelect: false,
+                    format: 'dd-mm-yyyy'
                   });
                 $('.timepicker').pickatime({
                     default: 'now', // Set default time: 'now', '1:30AM', '16:30'
@@ -172,7 +169,8 @@
                     canceltext: 'Cancelar', // Text for cancel-button
                     autoclose: false, // automatic close timepicker
                     ampmclickable: true, // make AM PM clickable
-                    aftershow: function(){} //Function for after opening timepicker
+                    aftershow: function(){},
+                    format: 'HH:mm'
                   });
             });
             function action()
@@ -194,10 +192,6 @@
             {
                 actualTask = taskId;
             }
-            function validateEmail(email) {
-                var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-                return regex.test(email);
-            }
             /* ADD */
             function addView()
             {
@@ -207,6 +201,11 @@
             function closeView()
             {
                 $("#manage input").each(
+                    function( index, element ){
+                        $(element).val("");
+                    }
+                );
+                $("#manage textarea").each(
                     function( index, element ){
                         $(element).val("");
                     }
@@ -229,17 +228,15 @@
             {
                 var nombre = $("#manage").find("textarea[name='nombre']").val(),
                     fecha = $("#manage").find("input[name='fecha']").val(),
-                    hora = $("#manage").find("input[name='hora']").val(),
                     asignatura = $("#manage").find("select[name='asignatura']").val();
-                if(nombre == "" || fecha == "" || hora == "" || asignatura == "" || nombre == null || fecha == null || hora == null || asignatura == null)
+                if(nombre == "" || fecha == "" || asignatura == "" || nombre == null || fecha == null || asignatura == null)
                 {
                     Materialize.toast('<span>Por favor, rellena todos los campos.</span>', 5000, 'rounded');
                 }
                 else
                 {
-                    console.log("accion=insertar&id_asignatura=" + asignatura + "&nombre_tarea=" + nombre + "&fecha_entrega=" + fecha + " " + hora);
                     $.ajax({
-                        data: "accion=insertar&id_asignatura=" + asignatura + "&nombre_tarea=" + nombre + "&fecha_entrega=" + fecha + " " + hora,
+                        data: "accion=insertar&id_asignatura=" + asignatura + "&nombre_tarea=" + nombre + "&fecha_entrega=" + fecha ,
                         url: '/panel/profesor/asignar_tarea',
                         type: 'post',
                         beforeSend: function () {
@@ -253,10 +250,10 @@
                                 Materialize.toast('<span>Tarea añadida correctamente</span>', 5000, 'rounded');
                                 var uinfo = info["data"];
                                 var newCell = $dataTable.row.add( [
-                                    uinfo["id"],
+                                    uinfo["id_tarea"],
                                     uinfo["nombre_tarea"],
                                     uinfo["fecha_entrega"],
-                                    "<a class='dropdown-button btn' href='#' onclick='markActualTask(" + uinfo["id"] + ")' data-activates='dropdown-" + uinfo["id"] + "'>Acciones</a><ul id='dropdown-" + uinfo["id"] + "' class='dropdown-content'><li><a onclick='editView()'>Editar</a></li><li><a onclick='deleteConfirm()'>Eliminar</a></li></ul>"
+                                    "<a class='dropdown-button btn' href='#' onclick='markActualTask(" + uinfo["id_tarea"] + ")' data-activates='dropdown-" + uinfo["id_tarea"] + "'>Acciones</a><ul id='dropdown-" + uinfo["id_tarea"] + "' class='dropdown-content'><li><a onclick='editView()'>Editar</a></li><li><a onclick='deleteConfirm()'>Eliminar</a></li></ul>"
                                     ] ).draw().node();
                                 $(newCell).attr("id","tarea-" + info["id"]);
                             }
