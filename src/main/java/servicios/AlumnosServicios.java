@@ -24,7 +24,10 @@ public class AlumnosServicios {
         return dao.getAllTareas(email);
     }
 
-    public AjaxResponse completarTarea(Tarea t, String email) {
+    public AjaxResponse completarTarea(int id_tarea, String email) {
+        Tarea t = new Tarea();
+        t.setId_tarea(id_tarea);
+        
         AjaxResponse returnme;
         AlumnosDAO dao = new AlumnosDAO();
         Date fecha_actual = new Date();

@@ -33,21 +33,19 @@ public class VerTareas extends HttpServlet
         String alumno = request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO).toString();
         String accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
 
-        Tarea t = new Tarea();
-        t.setId_tarea(helper.depurarParametroInt(request.getParameter(Parametros.ID_TAREA)));
-
-        AjaxResponse resp;
-
+        int id_tarea = helper.depurarParametroInt(request.getParameter(Parametros.ID_TAREA));
+        
         switch (accion)
         {
             case "completar":
-                resp = as.completarTarea(t, alumno);
+                AjaxResponse resp;
+                resp = as.completarTarea(id_tarea, alumno);
                 response.getWriter().print(ajax.parseResponse(resp));
                 break;
 
             default:
                 helper.mostrarPlantilla("/panel/alumno/tareas.ftl", response.getWriter(),
-                        new AbstractMap.SimpleEntry<>("tareas", as.getAllTareas(alumno))
+                    new AbstractMap.SimpleEntry<>("tareas", as.getAllTareas(alumno))
                 );
         }
     }
