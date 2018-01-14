@@ -49,8 +49,7 @@ public class AdminDAO {
     private final String queryDelTarea = "DELETE FROM tareas WHERE id_asignatura = ?";
     private final String queryDelTareaAlumno = "DELETE FROM tareas_alumnos "
             + "WHERE id_tarea IN "
-            + "(SELECT id_tarea FROM tareas WHERE id_asignatura = ?)"
-            + "AND id_alumno = '*'";
+            + "(SELECT id_tarea FROM tareas WHERE id_asignatura = ?)";
 
     public List<Asignatura> getAllAsignaturas() {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
@@ -150,11 +149,11 @@ public class AdminDAO {
             stmt.setInt(1, a.getId());
             stmt.executeUpdate();
             
-            stmt = con.prepareStatement(queryDelTarea);
+            stmt = con.prepareStatement(queryDelTareaAlumno);
             stmt.setInt(1, a.getId());
             stmt.executeUpdate();
             
-            stmt = con.prepareStatement(queryDelTareaAlumno);
+            stmt = con.prepareStatement(queryDelTarea);
             stmt.setInt(1, a.getId());
             stmt.executeUpdate();
 

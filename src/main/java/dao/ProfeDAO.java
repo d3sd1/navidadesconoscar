@@ -51,7 +51,7 @@ public class ProfeDAO {
             + "JOIN asignaturas a ON a.id=t.id_asignatura"
             + " WHERE email_profesor = ?";
     private final String queryDelTarea = "DELETE FROM tareas WHERE id_tarea = ?";
-    private final String queryDelTareaAlumno = "DELETE FROM tareas_alumnos WHERE id_tarea = ? AND id_alumno = '*'";
+    private final String queryDelTareaAlumno = "DELETE FROM tareas_alumnos WHERE id_tarea = ?";
 
     public List<Nota> getAllNotas(int id) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
