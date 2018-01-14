@@ -2,23 +2,17 @@
 package utils;
 
 import config.Configuration;
-import freemarker.core.ParseException;
-import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
-import java.io.IOException;
 import java.io.Writer;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletResponse;
-import jdk.internal.util.xml.impl.Pair;
 
 public class Utils {
 
