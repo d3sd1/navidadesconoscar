@@ -2,13 +2,8 @@ package servlets.alumno;
 
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
-import config.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.AbstractMap;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,52 +11,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Tarea;
 import servicios.AlumnosServicios;
-import servlets.Conectar;
 import utils.Constantes;
+import utils.Utils;
 
 @WebServlet(name = "VerTareas", urlPatterns = {"/panel/alumno/tareas"})
 public class VerTareas extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/alumno/tareas.ftl");
 
-        HashMap root = new HashMap();
-        root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
-
+        Utils helper = new Utils();
         AlumnosServicios as = new AlumnosServicios();
         AjaxMaker ajax = new AjaxMaker();
-        String objeto_json;
-        String accion = request.getParameter("accion");
 
-        if (accion == null) {
-            accion = "";
-        }
+        String alumno = request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO).toString();
+        String accion = helper.depurarParametroString(request.getParameter("accion"));
+
+        Tarea t = new Tarea();
+        t.setId_tarea(helper.depurarParametroInt(request.getParameter("id_tarea")));
+        
+        AjaxResponse resp;
 
         switch (accion) {
             case "completar":
-                AjaxResponse completarTarea = null;
-                
-                try {
-                    Tarea t = new Tarea();
-                    t.setId_tarea(Integer.parseInt(request.getParameter("id_tarea")));
-                    String email = (String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO);
-                    completarTarea = as.completarTarea(t, email);
-                } catch (NumberFormatException ex) {
-                    completarTarea = ajax.errorResponse(0);
-                }
-                
-                objeto_json = ajax.parseResponse(completarTarea);
-                response.getWriter().print(objeto_json);
+                resp = as.completarTarea(t, alumno);
+                response.getWriter().print(ajax.parseResponse(resp));
                 break;
 
             default:
-                try {
-                    root.put("tareas", as.getAllTareas((String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO)));
-                    temp.process(root, response.getWriter());
-                } catch (TemplateException ex) {
-                    Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                helper.mostrarPlantilla("/panel/alumno/tareas.ftl", response.getWriter(),
+                        new AbstractMap.SimpleEntry<>("tareas", as.getAllTareas(alumno))
+                );
         }
     }
 
