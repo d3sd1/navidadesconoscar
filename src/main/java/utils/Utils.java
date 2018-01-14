@@ -43,6 +43,11 @@ public class Utils {
         String number = depuradorParametros(param).toString();
         return number.equals("") ? 0:Integer.parseInt(number);
     }
+    public double depurarParametroDouble(String param)
+    {
+        String number = depuradorParametros(param).toString();
+        return number.equals("") ? 0:Double.parseDouble(number);
+    }
     public String depurarParametroString(String param)
     {
         return depuradorParametros(param).toString();

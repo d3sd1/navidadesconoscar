@@ -1,20 +1,15 @@
 package servlets.profesor;
 
-import config.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.AbstractMap;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import servicios.ProfeServicios;
-import servlets.Conectar;
 import utils.Constantes;
+import utils.Utils;
 
 @WebServlet(name = "VerNotasCurso", urlPatterns
         = {
@@ -24,19 +19,14 @@ public class VerNotasCurso extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/profesor/notas_curso.ftl");
-        HashMap root = new HashMap();
-        root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
 
         String email = (String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO);
         ProfeServicios ps = new ProfeServicios();
         
-        root.put("notas", ps.getAllNotasCursos(email));
-        try {
-            temp.process(root, response.getWriter());
-        } catch (TemplateException ex) {
-            Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Utils helper = new Utils();
+        helper.mostrarPlantilla("/panel/profesor/notas_curso.ftl", response.getWriter(),
+            new AbstractMap.SimpleEntry<>("notas", ps.getAllNotasCursos(email))
+        );
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

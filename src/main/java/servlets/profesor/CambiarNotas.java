@@ -7,6 +7,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import static java.lang.Integer.parseInt;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,8 +20,8 @@ import model.Asignatura;
 import model.Nota;
 import model.User;
 import servicios.ProfeServicios;
-import servlets.Conectar;
-import utils.Constantes;
+import utils.Parametros;
+import utils.Utils;
 
 @WebServlet(name = "CambiarNotas", urlPatterns
         = {
@@ -30,67 +31,32 @@ public class CambiarNotas extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/profesor/notas_cambiar.ftl");
-        HashMap root = new HashMap();
-        root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
-
-        String accion = request.getParameter("accion");
+        
+        Utils helper = new Utils();
+        String accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
         ProfeServicios ps = new ProfeServicios();
         AjaxMaker ajax = new AjaxMaker();
-        String objeto_json;
         
-        if (accion == null) {
-            accion = "";
-        }
-
         switch (accion) {
-            case "modificar":
+            case Parametros.ACCION_MODIFICAR:
                 Nota n = new Nota();
                 AjaxResponse modNota;
-                try
-                {
-                    if(request.getParameter("id_alumno") == null || request.getParameter("id_asignatura") == null || request.getParameter("nota") == null)
-                    {
-                        throw new NullPointerException();
-                    }
-                    else
-                    {
-                        User alumno = new User();
-                        alumno.setId(parseInt(request.getParameter("id_alumno")));
-                        n.setAlumno(alumno);
-                        Asignatura asignatura = new Asignatura();
-                        asignatura.setId(parseInt(request.getParameter("id_asignatura")));
-                        n.setAsignatura(asignatura);
-                        double nota = parseInt(request.getParameter("nota"));
-                        if(nota < 0)
-                        {
-                            nota = 0;
-                        }
-                        else if(nota > 10)
-                        {
-                            nota = 10;
-                        }
-                        n.setNota(nota);
-                        modNota = ps.modNota(n);
-                        objeto_json = ajax.parseResponse(modNota);
-                    }
-                }
-                catch(NumberFormatException | NullPointerException e)
-                {
-                    objeto_json = ajax.parseResponse(ajax.errorResponse());
-                }
                 
-                response.getWriter().print(objeto_json);
+                int id_alumno = helper.depurarParametroInt(request.getParameter(Parametros.ID_ALUMNO));
+                int id_asignatura = helper.depurarParametroInt(request.getParameter(Parametros.ID_ASIGNATURA));
+                double nota = helper.depurarParametroDouble(request.getParameter(Parametros.NOTA));
+                
+                n.getAlumno().setId(id_alumno);
+                n.getAsignatura().setId(id_asignatura);
+                n.setNota(nota);
+                
+                modNota = ps.modNota(n);
+                
+                response.getWriter().print(ajax.parseResponse(modNota));
                 break;
 
             default:
-                try {
-                    String email = (String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO);
-                    root.put("notas", ps.getAllNotasCursosAlumnos(email));
-                    temp.process(root, response.getWriter());
-                } catch (TemplateException ex) {
-                    Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                helper.mostrarPlantilla("/panel/profesor/notas_cambiar.ftl", response.getWriter());
         }
 
     }

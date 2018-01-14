@@ -5,6 +5,12 @@ public class Nota {
     private Curso curso;
     private double nota;
 
+    public Nota()
+    {
+        asignatura = new Asignatura();
+        alumno = new User();
+        curso = new Curso();
+    }
     public User getAlumno()
     {
         return alumno;
@@ -42,6 +48,14 @@ public class Nota {
 
     public void setNota(double nota)
     {
+        if(nota < 0)
+        {
+            nota = 0;
+        }
+        else if(nota > 10)
+        {
+            nota = 10;
+        }
         this.nota = nota;
     }
 
