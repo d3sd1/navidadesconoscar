@@ -60,14 +60,17 @@ public class Utils {
     public Date depurarParametroDate(String param)
     {
         Object date = depuradorParametros(param);
-        Date returned;
-        if(date == "")
+        Date returned = new Date();
+        if(!date.toString().equals(""))
         {
-            returned = new Date();
-        }
-        else
-        {
-            returned = (Date) date;
+            try
+            {
+                returned = (Date) date;
+            }
+            catch(Exception e)
+            {
+                
+            }
         }
         return returned;
     }
@@ -76,14 +79,17 @@ public class Utils {
         
         Object localDate = depuradorParametros(param);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(Constantes.FORMATO_FECHA);
-        LocalDate returned;
-        if(localDate == "")
+        LocalDate returned = LocalDate.now();
+        if(!localDate.toString().equals(""))
         {
-            returned = LocalDate.now();
-        }
-        else
-        {
-            returned = LocalDate.parse(localDate.toString(), dtf);
+            try
+            {
+                returned = LocalDate.parse(localDate.toString(), dtf);
+            }
+            catch(Exception e)
+            {
+                
+            }
         }
         return returned;
     }

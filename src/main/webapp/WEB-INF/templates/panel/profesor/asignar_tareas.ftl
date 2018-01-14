@@ -158,18 +158,18 @@
                 $('.datepicker').pickadate({
                     selectMonths: true, // Creates a dropdown to control month
                     selectYears: 15, // Creates a dropdown of 15 years to control year,
-                    today: 'Today',
-                    clear: 'Clear',
-                    close: 'Ok',
+                    today: 'Hoy',
+                    clear: 'Limpiar',
+                    close: 'Aceptar',
                     closeOnSelect: false // Close upon selecting a date,
                   });
                 $('.timepicker').pickatime({
                     default: 'now', // Set default time: 'now', '1:30AM', '16:30'
                     fromnow: 0,       // set default time to * milliseconds from now (using with default = 'now')
                     twelvehour: false, // Use AM/PM or 24-hour format
-                    donetext: 'OK', // text for done-button
-                    cleartext: 'Clear', // text for clear-button
-                    canceltext: 'Cancel', // Text for cancel-button
+                    donetext: 'Aceptar', // text for done-button
+                    cleartext: 'Limpiar', // text for clear-button
+                    canceltext: 'Cancelar', // Text for cancel-button
                     autoclose: false, // automatic close timepicker
                     ampmclickable: true, // make AM PM clickable
                     aftershow: function(){} //Function for after opening timepicker
@@ -227,18 +227,19 @@
             }
             function add()
             {
-                var nombre = $("#manage").find("input[name='nombre']").val(),
+                var nombre = $("#manage").find("textarea[name='nombre']").val(),
                     fecha = $("#manage").find("input[name='fecha']").val(),
-                    hora = $("#manage").find("select[name='hora']").val(),
+                    hora = $("#manage").find("input[name='hora']").val(),
                     asignatura = $("#manage").find("select[name='asignatura']").val();
-                if(email == "" || nombre == "" || tipo == "" || email == null || nombre == null || tipo == null)
+                if(nombre == "" || fecha == "" || hora == "" || asignatura == "" || nombre == null || fecha == null || hora == null || asignatura == null)
                 {
                     Materialize.toast('<span>Por favor, rellena todos los campos.</span>', 5000, 'rounded');
                 }
                 else
                 {
+                    console.log("accion=insertar&id_asignatura=" + asignatura + "&nombre_tarea=" + nombre + "&fecha_entrega=" + fecha + " " + hora);
                     $.ajax({
-                        data: "accion=insertar&id_asignatura=" + asignatura + "&nombre_tarea=" + nombre + "&id_asignatura=" + new Date(fecha + " " + hora),
+                        data: "accion=insertar&id_asignatura=" + asignatura + "&nombre_tarea=" + nombre + "&fecha_entrega=" + fecha + " " + hora,
                         url: '/panel/profesor/asignar_tarea',
                         type: 'post',
                         beforeSend: function () {
@@ -250,16 +251,14 @@
                             if (info['success'])
                             {
                                 Materialize.toast('<span>Tarea añadida correctamente</span>', 5000, 'rounded');
-                                
+                                var uinfo = info["data"];
                                 var newCell = $dataTable.row.add( [
                                     uinfo["id"],
-                                    uinfo["nombre"],
-                                    uinfo["email"],
-                                    (uinfo["activo"] == "true" ? "Si":"No"),
-                                    tipoUsuario,
-                                    "<a class='dropdown-button btn' href='#' onclick='markActualUser(" + uinfo["id"] + ")' data-activates='dropdown-" + uinfo["id"] + "'>Acciones</a><ul id='dropdown-" + uinfo["id"] + "' class='dropdown-content'><li><a onclick='editView()'>Editar</a></li><li><a onclick='deleteConfirm()'>Eliminar</a></li></ul>"
-                                     ] ).draw().node();
-                                $(newCell).attr("id","user-" + info["id"]);
+                                    uinfo["nombre_tarea"],
+                                    uinfo["fecha_entrega"],
+                                    "<a class='dropdown-button btn' href='#' onclick='markActualTask(" + uinfo["id"] + ")' data-activates='dropdown-" + uinfo["id"] + "'>Acciones</a><ul id='dropdown-" + uinfo["id"] + "' class='dropdown-content'><li><a onclick='editView()'>Editar</a></li><li><a onclick='deleteConfirm()'>Eliminar</a></li></ul>"
+                                    ] ).draw().node();
+                                $(newCell).attr("id","tarea-" + info["id"]);
                             }
                             else
                             {
@@ -282,10 +281,10 @@
             function editView()
             {
                 actualAction = "edit";
-                var nombre = $('#user-' + actualuser).children().eq(1).text(),
-                email = $('#user-' + actualuser).children().eq(2).text(),
-                id = $('#user-' + actualuser).children().eq(0).text(),
-                tipoTxt = $('#user-' + actualuser).children().eq(4).text(),
+                var nombre = $('#tarea-' + actualuser).children().eq(1).text(),
+                email = $('#tarea-' + actualuser).children().eq(2).text(),
+                id = $('#tarea-' + actualuser).children().eq(0).text(),
+                tipoTxt = $('#tarea-' + actualuser).children().eq(4).text(),
                 tipo = 0;
                 switch(tipoTxt)
                 {
@@ -351,7 +350,7 @@
                                         tipoUsuario = "Alumno";
                                     break;
                                 }
-                                $dataTable.row('#user-' + uinfo["id"]).remove();
+                                $dataTable.row('#tarea-' + uinfo["id"]).remove();
                                 var newCell = $dataTable.row.add( [
                                     uinfo["id"],
                                     uinfo["nombre"],
@@ -360,7 +359,7 @@
                                     tipoUsuario,
                                     "<a class='dropdown-button btn' href='#' onclick='markActualUser(" + uinfo["id"] + ")' data-activates='dropdown-" + uinfo["id"] + "'>Acciones</a><ul id='dropdown-" + uinfo["id"] + "' class='dropdown-content'><li><a onclick='editView()'>Editar</a></li><li><a onclick='deleteConfirm()'>Eliminar</a></li></ul>"
                                      ] ).draw().node();
-                                $(newCell).attr("id","user-" + info["id"]);
+                                $(newCell).attr("id","tarea-" + info["id"]);
                             }
                             else
                             {
@@ -399,7 +398,7 @@
                         if (info['success'])
                         {
                             Materialize.toast('<span>Usuario eliminado correctamente</span>', 5000, 'rounded');
-                            $dataTable.row('#user-' + actualuser).remove().draw();
+                            $dataTable.row('#tarea-' + actualuser).remove().draw();
                         }
                         else
                         {

@@ -28,39 +28,34 @@ public class CrudTareas extends HttpServlet
             throws ServletException, IOException
     {
         ProfeServicios ps = new ProfeServicios();
-        AjaxMaker ajax = new AjaxMaker();
-        
         Utils helper = new Utils();
-        String  objeto_json,
-                profesor = request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO).toString(),
-                accion = helper.depurarParametroString(request.getParameter("accion"));
+        String  profesor = request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO).toString(),
+                accion = helper.depurarParametroString(request.getParameter(Constantes.PARAMETRO_ACCION));
         
         /* Para peticiones ajax */
         AjaxResponse resp;
         Tarea t = new Tarea();
-        LocalDate fecha_entrega = helper.depurarParametroLocalDate(request.getParameter("fecha_entrega"));
-        t.getAsignatura().setId(helper.depurarParametroInt(request.getParameter("id_asignatura")));
-        t.setNombre_tarea(helper.depurarParametroString(request.getParameter("nombre_tarea")));
+        AjaxMaker ajax = new AjaxMaker();
+        LocalDate fecha_entrega = helper.depurarParametroLocalDate(request.getParameter(Constantes.PARAMETRO_FECHA_ENTREGA));
+        t.getAsignatura().setId(helper.depurarParametroInt(request.getParameter(Constantes.PARAMETRO_ID_ASIGNATURA)));
+        t.setNombre_tarea(helper.depurarParametroString(request.getParameter(Constantes.PARAMETRO_NOMBRE_TAREA)));
         t.setFecha_entrega(Date.from(fecha_entrega.atStartOfDay().toInstant(ZoneOffset.UTC)));
         switch (accion)
         {
             case "insertar":
                 resp = ps.addTarea(t, profesor);
-                objeto_json = ajax.parseResponse(resp);
-                response.getWriter().print(objeto_json);
+                response.getWriter().print(ajax.parseResponse(resp));
                 break;
 
             case "modificar":
                 resp = ps.modTarea(t);
-
-                objeto_json = ajax.parseResponse(resp);
-                response.getWriter().print(objeto_json);
+                response.getWriter().print(ajax.parseResponse(resp));
                 break;
 
             default:
                 helper.mostrarPlantilla("/panel/profesor/asignar_tareas.ftl", response.getWriter(),
-                        new AbstractMap.SimpleEntry<>("tareas", ps.getAllTareas(profesor)),
-                        new AbstractMap.SimpleEntry<>("asignaturas", ps.getAllAsignaturas())
+                    new AbstractMap.SimpleEntry<>("tareas", ps.getAllTareas(profesor)),
+                    new AbstractMap.SimpleEntry<>("asignaturas", ps.getAllAsignaturas())
                 );
         }
     }
