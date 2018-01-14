@@ -227,7 +227,7 @@ public class ProfeDAO {
                 t = null;
             }
         } catch (DataAccessException ex) {
-            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex);
             t = null;
         }
         return t;
