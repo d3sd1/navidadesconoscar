@@ -90,6 +90,7 @@ public class ProfeServicios {
             datos.put(Constantes.PARAMETRO_ID_ASIGNATURA, String.valueOf(t.getAsignatura().getId()));
             datos.put(Constantes.PARAMETRO_NOMBRE_TAREA, t.getNombre_tarea());
             datos.put(Constantes.PARAMETRO_FECHA_ENTREGA, df.format(t.getFecha_entrega()));
+            datos.put(Constantes.PARAMETRO_NOMBRE_ASIGNATURA, dao.getNombreAsignatura(t.getAsignatura().getId()));
             returnme = ajax.successResponse(datos);
         } else {
             returnme = ajax.errorResponse(22);

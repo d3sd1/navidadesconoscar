@@ -41,6 +41,7 @@ public class ProfeDAO {
             + "JOIN cursos c ON c.id = a.id_curso "
             + "WHERE pa.id_profesor = ? ";
     private final String queryGetId = "SELECT id FROM users WHERE email = ?";
+    private final String queryGetAsignaturaNombre = "SELECT nombre FROM asignaturas WHERE id = ?";
     private final String queryModNota = "UPDATE alumnos_asignaturas SET nota = ? WHERE id_alumno = ? AND id_asignatura = ?";
     private final String queryAddTarea = "INSERT INTO tareas (id_asignatura, nombre_tarea, fecha_entrega, email_profesor) VALUES (?,?,?,?)";
     private final String queryAddTareaAlumno = "INSERT INTO tareas_alumnos (id_tarea, id_alumno, completado) VALUES (?,?,0)";
@@ -91,6 +92,19 @@ public class ProfeDAO {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return id;
+    }
+    
+    public String getNombreAsignatura(int id) {
+        System.out.println("ID: " + id);
+        String nombre = "";
+        try {
+            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+            nombre = jtm.queryForObject(queryGetAsignaturaNombre, String.class, id);
+
+        } catch (DataAccessException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return nombre;
     }
 
     public boolean modNota(Nota n) {

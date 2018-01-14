@@ -295,7 +295,7 @@
                 else
                 {
                     $.ajax({
-                        data: "accion=modificar&id=" + id + "&nombre_tarea=" + nombre + "&fecha_entrega=" + fecha,
+                        data: "accion=modificar&id_tarea=" + id + "&nombre_tarea=" + nombre + "&fecha_entrega=" + fecha + "&id_asignatura=" + asignatura,
                         url: '/panel/profesor/asignar_tarea',
                         type: 'post',
                         beforeSend: function () {
@@ -308,14 +308,15 @@
                             {
                                 Materialize.toast('<span>Tarea modificada correctamente</span>', 5000, 'rounded');
                                 var uinfo = info["data"];
-                                $dataTable.row('#tarea-' + uinfo["id"]).remove();
+                                $dataTable.row('#tarea-' + uinfo["id_tarea"]).remove();
                                 var newCell = $dataTable.row.add( [
                                     uinfo["id_tarea"],
                                     uinfo["nombre_tarea"],
+                                    uinfo["nombre_asignatura"],
                                     uinfo["fecha_entrega"],
                                     "<a class='dropdown-button btn' href='#' onclick='markActualTask(" + uinfo["id_tarea"] + ")' data-activates='dropdown-" + uinfo["id_tarea"] + "'>Acciones</a><ul id='dropdown-" + uinfo["id_tarea"] + "' class='dropdown-content'><li><a onclick='editView()'>Editar</a></li><li><a onclick='deleteConfirm()'>Eliminar</a></li></ul>"
                                     ] ).draw().node();
-                                $(newCell).attr("id","tarea-" + info["id"]);
+                                $(newCell).attr("id","tarea-" + info["id_tarea"]);
                             }
                             else
                             {
