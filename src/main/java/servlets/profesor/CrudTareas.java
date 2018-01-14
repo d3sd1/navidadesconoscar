@@ -57,7 +57,6 @@ public class CrudTareas extends HttpServlet
                 resp = ps.delTarea(t);
                 response.getWriter().print(ajax.parseResponse(resp));
                 break;
-
             default:
                 helper.mostrarPlantilla("/panel/profesor/asignar_tareas.ftl", response.getWriter(),
                     new AbstractMap.SimpleEntry<>("tareas", ps.getAllTareas(profesor)),

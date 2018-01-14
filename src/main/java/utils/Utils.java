@@ -88,7 +88,7 @@ public class Utils {
             }
             catch(Exception e)
             {
-                System.out.println("EXCEPCION " + e);
+                
             }
         }
         return returned;

@@ -84,12 +84,13 @@ public class ProfeServicios {
         t = dao.modTarea(t);
 
         if (t != null) {
-            DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+            DateFormat df = new SimpleDateFormat(Constantes.FORMATO_FECHA);
             HashMap<String, String> datos = new HashMap<>();
             datos.put(Constantes.PARAMETRO_ID_TAREA, String.valueOf(t.getId_tarea()));
             datos.put(Constantes.PARAMETRO_ID_ASIGNATURA, String.valueOf(t.getAsignatura().getId()));
             datos.put(Constantes.PARAMETRO_NOMBRE_TAREA, t.getNombre_tarea());
             datos.put(Constantes.PARAMETRO_FECHA_ENTREGA, df.format(t.getFecha_entrega()));
+            datos.put(Constantes.PARAMETRO_NOMBRE_ASIGNATURA, dao.getNombreAsignatura(t.getAsignatura().getId()));
             returnme = ajax.successResponse(datos);
         } else {
             returnme = ajax.errorResponse(22);
