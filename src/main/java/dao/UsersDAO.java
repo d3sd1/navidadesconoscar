@@ -1,6 +1,5 @@
 package dao;
 
-import java.util.logging.Level;
 import model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;

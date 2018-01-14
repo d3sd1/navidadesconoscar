@@ -1,9 +1,6 @@
 package ajax;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
-import model.User;
 
 public class PaginateResponse {
     private int draw;

@@ -2,12 +2,7 @@ package servlets;
 
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
-import config.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;

@@ -2,7 +2,6 @@ package dao;
 
 import java.sql.ResultSet;
 import java.util.List;
-import java.util.logging.Level;
 import model.Asignatura;
 import model.Nota;
 import model.Tarea;

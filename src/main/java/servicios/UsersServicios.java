@@ -6,7 +6,6 @@ import config.Configuration;
 import dao.UsersDAO;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.logging.Level;
 import model.User;
 import utils.Constantes;
 import utils.Language;

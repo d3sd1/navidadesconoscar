@@ -3,8 +3,6 @@ package ajax;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import model.User;
 import utils.Language;
 
 public class AjaxMaker
