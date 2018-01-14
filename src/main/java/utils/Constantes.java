@@ -2,7 +2,7 @@
 package utils;
 
 public class Constantes {
-    public static final String LINK_EMAIL_ACTIVAR = "http://localhost:8080/conectar?accion=activarUsuario&codigo=";
+    public static final String LINK_EMAIL_ACTIVAR = "http://localhost:8080/conectar?accion=activar_usuario&codigo=";
     public static final String LINK_EMAIL_NUEVA_PASS = "http://localhost:8080/recuperarclave/paso2?codigo=";
     public static final String SESSION_NOMBRE_USUARIO = "nombreUsuario";
     public static final String SESSION_RANGO_USUARIO = "rangoUsuario";

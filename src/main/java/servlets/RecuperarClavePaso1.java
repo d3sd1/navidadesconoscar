@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import servicios.UsersServicios;
+import utils.Parametros;
+import utils.Utils;
 
 @WebServlet(name = "RecuperarClavePaso1", urlPatterns =
 {
@@ -26,33 +28,21 @@ public class RecuperarClavePaso1 extends HttpServlet
             throws ServletException, IOException
     {
 
-        String accion = request.getParameter("accion");
-        if (accion == null)
-        {
-            accion = "";
-        }
-
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/recuperar_clave_paso_1.ftl");
         UsersServicios us = new UsersServicios();
         AjaxMaker ajax = new AjaxMaker();
+        Utils helper = new Utils();
 
+        String accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
         switch (accion)
         {
-            case "mandarmail":
-                AjaxResponse mandarMail = us.mandarMail(request.getParameter("email"));
+            case Parametros.ACCION_MANDARMAIL:
+                AjaxResponse mandarMail = us.mandarMail(request.getParameter(Parametros.EMAIL));
                 String objeto_json = ajax.parseResponse(mandarMail);
                 response.getWriter().print(objeto_json);
                 break;
 
             default:
-                try
-                {
-                    temp.process(null, response.getWriter());
-                }
-                catch (TemplateException ex)
-                {
-                    Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                helper.mostrarPlantilla("/recuperar_clave_paso_1.ftl", response.getWriter());
         }
     }
 

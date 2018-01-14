@@ -2,13 +2,9 @@ package servlets;
 
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
-import config.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import servicios.UsersServicios;
 import utils.Constantes;
 import utils.Language;
+import utils.Parametros;
+import utils.Utils;
 
 @WebServlet(name = "Conectar", urlPatterns =
 {
@@ -29,21 +27,17 @@ public class Conectar extends HttpServlet
             throws ServletException, IOException
     {
 
-        String accion = request.getParameter("accion");
-        if (accion == null)
-        {
-            accion = "";
-        }
-
         UsersServicios us = new UsersServicios();
         AjaxMaker ajax = new AjaxMaker();
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/conectar.ftl");
-
+        Utils helper = new Utils();
+        
+        String accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
+        
         switch (accion)
         {
-            case "conectar":
-                String mail = request.getParameter("mail");
-                String pass = request.getParameter("pass");
+            case Parametros.ACCION_CONECTAR:
+                String mail = helper.depurarParametroString(request.getParameter(Parametros.EMAIL));
+                String pass = helper.depurarParametroString(request.getParameter(Parametros.PASS));
                 AjaxResponse conectar = us.login(mail, pass);
                 if (conectar.isSuccess())
                 {
@@ -52,50 +46,36 @@ public class Conectar extends HttpServlet
                     String rango = us.getRango(mail);
                     request.getSession().setAttribute(Constantes.SESSION_RANGO_USUARIO, rango);
                 }
-                String objeto_json = ajax.parseResponse(conectar);
-                response.getWriter().print(objeto_json);
+                response.getWriter().print(ajax.parseResponse(conectar));
                 break;
 
-            case "activarUsuario":
-                String codigo = request.getParameter("codigo");
+            case Parametros.ACCION_ACTIVARUSER:
+                String codigo = helper.depurarParametroString(request.getParameter(Parametros.CODIGO));
                 int userActivado = us.activar(codigo);
-                HashMap root = new HashMap();
-
+                String mensaje = "",mensaje2 = "";
                 switch (userActivado)
                 {
                     case 1:
-                        root.put("mensaje", Language.CUENTA_ACTIVADA);
-                        root.put("mensaje2", Language.CUENTA_ACTIVADA_2);
+                        mensaje = Language.CUENTA_ACTIVADA;
+                        mensaje2 = Language.CUENTA_ACTIVADA_2;
                         break;
                     case 2:
-                        root.put("mensaje", Language.YA_ACTIVADA);
-                        root.put("mensaje2", Language.CUENTA_ACTIVADA_2);
+                        mensaje = Language.YA_ACTIVADA;
+                        mensaje2 = Language.CUENTA_ACTIVADA_2;
                         break;
                     case -1:
-                        root.put("mensaje", Language.ERROR_ACTIVAR);
-                        root.put("mensaje2", Language.ERROR_ACTIVAR_2);
+                        mensaje = Language.ERROR_ACTIVAR;
+                        mensaje2 = Language.ERROR_ACTIVAR_2;
                         break;
                 }
-
-                try
-                {
-                    temp.process(root, response.getWriter());
-                }
-                catch (TemplateException ex)
-                {
-                    Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                helper.mostrarPlantilla("/conectar.ftl", response.getWriter(),
+                    new AbstractMap.SimpleEntry<>("mensaje", mensaje),
+                    new AbstractMap.SimpleEntry<>("mensaje2", mensaje2)
+                );
 
                 break;
             default:
-                try
-                {
-                    temp.process(null, response.getWriter());
-                }
-                catch (TemplateException ex)
-                {
-                    Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                helper.mostrarPlantilla("/conectar.ftl", response.getWriter());
         }
     }
 

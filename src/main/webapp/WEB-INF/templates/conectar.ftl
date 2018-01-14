@@ -32,11 +32,22 @@
         <div class="parallax-container valign-wrapper" style="height: 100vh;">
             <div class="parallax"><img alt="Fondo" src="https://preview.ibb.co/jdvn4w/bg.jpg"/></div>
             <div class="row center-align" style="width: 50%; z-index: 2">
+                <#if mensaje??>
+                    <div class="col s6 offset-s3">
+                        <div class="card blue-grey darken-1">
+                          <div class="card-content white-text">
+                            <span class="card-title">${mensaje}</span>
+                            <p>${mensaje2}</p>
+                          </div>
+                        </div>
+                  </div>
+                </#if>
+                  
                 <div class="col s12 card-panel blue-grey lighten-5" style="padding: 20px; ">
                     <form id="formLogin">
                         <div class="row">
                             <div class="input-field col s12">
-                                <input name="mail" type="email" class="validate">
+                                <input name="email" type="email" class="validate">
                                 <label for="email">Email</label>
                                 </div>
                             </div>

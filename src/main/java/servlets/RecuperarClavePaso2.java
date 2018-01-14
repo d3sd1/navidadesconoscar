@@ -6,6 +6,7 @@ import config.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import servicios.UsersServicios;
+import utils.Parametros;
+import utils.Utils;
 
 @WebServlet(name = "RecuperarClavePaso2", urlPatterns =
 {
@@ -26,33 +29,24 @@ public class RecuperarClavePaso2 extends HttpServlet
             throws ServletException, IOException
     {
 
-        String accion = request.getParameter("accion");
-        if (accion == null)
-        {
-            accion = "";
-        }
-
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/recuperar_clave_paso_2.ftl");
         UsersServicios us = new UsersServicios();
         AjaxMaker ajax = new AjaxMaker();
+        Utils helper = new Utils();
+        
+        String accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
 
         switch (accion)
         {
-            case "restaurar":
-                AjaxResponse restaurarPass = us.restaurarPass(request.getParameter("nuevacontra"), request.getParameter("codigo"));
+            case Parametros.ACCION_RESTAURAR:
+                String nuevaContra = helper.depurarParametroString(request.getParameter(Parametros.NUEVACONTRA));
+                String codigo = helper.depurarParametroString(request.getParameter(Parametros.CODIGO));
+                AjaxResponse restaurarPass = us.restaurarPass(nuevaContra, codigo);
                 String objeto_json = ajax.parseResponse(restaurarPass);
                 response.getWriter().print(objeto_json);
                 break;
 
             default:
-                try
-                {
-                    temp.process(null, response.getWriter());
-                }
-                catch (TemplateException ex)
-                {
-                    Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                helper.mostrarPlantilla("/recuperar_clave_paso_2.ftl", response.getWriter());
         }
     }
 

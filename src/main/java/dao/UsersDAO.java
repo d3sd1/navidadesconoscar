@@ -49,7 +49,6 @@ public class UsersDAO
         }
         catch (DataAccessException ex)
         {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             u = null;
         }
         return u;
