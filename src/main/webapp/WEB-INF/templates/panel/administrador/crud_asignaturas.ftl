@@ -16,7 +16,7 @@
                     <ul id="nav-mobile" class="right">
                         <li><a href="/panel/administrador/usuarios">Control de usuarios</a></li>
                         <li class="active"><a href="/panel/administrador/asignaturas">Control de asignaturas</a></li>
-                        <li><a href="/panel/administrador/asignaturas_usuarios">Asignar asignatura a alumno</a></li>
+                        <li><a href="/panel/administrador/asignaturas_alumnos">Asignar asignatura a alumno</a></li>
                         <li><a href="/panel/administrador/asignaturas_profesores">Asignar asignatura a profesor</a></li>
                         <li><a href="/panel/cambiar_clave">Cambiar contraseña</a></li>
                         <li><a href="/desconectar">Desconectar</a></li>
@@ -67,7 +67,6 @@
                         </tbody>
 
                         <tbody>
-                        <!-- usuarios aqui -->
                         </tbody>
                     </table>
                 </div>
@@ -105,8 +104,8 @@
         </div>
         <div id="deleteConfirm" class="modal">
             <div class="modal-content">
-              <h4>Eliminar usuario</h4>
-              <p>¿Seguro que deseas eliminar el usuario?</p>
+              <h4>Eliminar asignatura</h4>
+              <p>¿Seguro que deseas eliminar la asignatura?</p>
             </div>
             <div class="modal-footer">
               <a class="modal-action modal-close waves-effect waves-green btn-flat">No</a>

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Asignatura;
 import model.Curso;
 import model.User;
@@ -244,7 +243,6 @@ public class AdminServicios
             }
             catch (NoSuchAlgorithmException | InvalidKeySpecException ex)
             {
-                Logger.getLogger(UsersServicios.class.getName()).log(Level.SEVERE, null, ex);
                 returnme = ajax.errorResponse(0);
             }
         }

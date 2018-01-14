@@ -16,7 +16,7 @@ import utils.Utils;
 
 @WebServlet(name = "AsignaturasUsuarios", urlPatterns
         = {
-            "/panel/administrador/asignaturas_usuarios"
+            "/panel/administrador/asignaturas_alumnos"
         })
 public class AsignaturasAlumnos extends HttpServlet {
 

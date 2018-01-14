@@ -3,6 +3,7 @@ package servlets.panel;
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
 import java.io.IOException;
+import java.util.AbstractMap;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -44,7 +45,9 @@ public class CambiarClave extends HttpServlet
                 break;
 
             default:
-            helper.mostrarPlantilla("/panel/cambiar_clave.ftl", response.getWriter());
+            helper.mostrarPlantilla("/panel/cambiar_clave.ftl", response.getWriter(),
+                new AbstractMap.SimpleEntry<>("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO))
+            );
         }
 
     }

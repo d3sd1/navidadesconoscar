@@ -1,7 +1,6 @@
 package dao;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -67,7 +66,6 @@ public class UsersDAO
         }
         catch (DataAccessException ex)
         {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             valido = -1;
         }
 
@@ -88,7 +86,6 @@ public class UsersDAO
         }
         catch (DataAccessException ex)
         {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             valido = false;
         }
 
@@ -109,7 +106,6 @@ public class UsersDAO
         }
         catch (DataAccessException ex)
         {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             valido = false;
         }
 
@@ -127,7 +123,7 @@ public class UsersDAO
         }
         catch (DataAccessException ex)
         {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
         return permiso;
     }
@@ -146,7 +142,6 @@ public class UsersDAO
         }
         catch (DataAccessException ex)
         {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             valido = false;
         }
 

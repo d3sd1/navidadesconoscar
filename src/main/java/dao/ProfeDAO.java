@@ -89,7 +89,6 @@ public class ProfeDAO {
             id = jtm.queryForObject(queryGetId, int.class, email);
 
         } catch (DataAccessException ex) {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return id;
     }
@@ -102,7 +101,7 @@ public class ProfeDAO {
             nombre = jtm.queryForObject(queryGetAsignaturaNombre, String.class, id);
 
         } catch (DataAccessException ex) {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
         return nombre;
     }
@@ -115,7 +114,6 @@ public class ProfeDAO {
                 modificado = true;
             }
         } catch (DataAccessException ex) {
-            Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex);
             modificado = false;
         }
         return modificado;
@@ -207,14 +205,13 @@ public class ProfeDAO {
             con.commit();
             stmt.close();
         } catch (Exception ex) {
-            Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex);
             t = null;
             try {
                 if (con != null) {
                     con.rollback();
                 }
             } catch (SQLException ex1) {
-                Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex1);
+                
             }
         } finally {
             DBConnection.getInstance().cerrarConexion(con);
@@ -230,7 +227,7 @@ public class ProfeDAO {
             idAlumnos =(List<Integer>) jtm.queryForList(queryGetIdAlumnos, Integer.class, idAsignatura);
 
         } catch (DataAccessException ex) {
-            Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
         return idAlumnos;
     }
@@ -242,7 +239,6 @@ public class ProfeDAO {
                 t = null;
             }
         } catch (DataAccessException ex) {
-            Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex);
             t = null;
         }
         return t;
@@ -284,14 +280,13 @@ public class ProfeDAO {
             stmt.close();
             eliminado = true;
         } catch (Exception ex) {
-            Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex);
             eliminado = false;
             try {
                 if (con != null) {
                     con.rollback();
                 }
             } catch (SQLException ex1) {
-                Logger.getLogger(ProfeDAO.class.getName()).log(Level.SEVERE, null, ex1);
+                
             }
         } finally {
             DBConnection.getInstance().cerrarConexion(con);

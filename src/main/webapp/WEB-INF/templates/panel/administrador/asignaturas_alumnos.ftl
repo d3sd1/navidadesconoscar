@@ -27,7 +27,7 @@
                     <ul id="nav-mobile" class="right">
                         <li><a href="/panel/administrador/usuarios">Control de usuarios</a></li>
                         <li><a href="/panel/administrador/asignaturas">Control de asignaturas</a></li>
-                        <li class="active"><a href="/panel/administrador/asignaturas_usuarios">Asignar asignatura a alumno</a></li>
+                        <li class="active"><a href="/panel/administrador/asignaturas_alumnos">Asignar asignatura a alumno</a></li>
                         <li><a href="/panel/administrador/asignaturas_profesores">Asignar asignatura a profesor</a></li>
                         <li><a href="/panel/cambiar_clave">Cambiar contraseña</a></li>
                         <li><a href="/desconectar">Desconectar</a></li>
@@ -117,7 +117,15 @@
                     }
                     paginacion(actualIndex,length,true);
                 }
-                
+                else if(actualIndex != 0)
+                {
+                    actualIndex = actualIndex-length;
+                    if(actualIndex < 0)
+                    {
+                        actualIndex = 0;
+                    }
+                    paginacion(actualIndex,length,true);
+                }
             }
             function mostrarSiguientes()
             {
@@ -131,7 +139,7 @@
             {
                 $.ajax({
                     data: "accion=getalumnos&start=" + start + "&length=" + length,
-                    url: '/panel/administrador/asignaturas_usuarios',
+                    url: '/panel/administrador/asignaturas_alumnos',
                     type: 'post',
                     beforeSend: function () {
                         if(mostrarMensajes)
@@ -184,7 +192,7 @@
             {
                 $.ajax({
                     data: "accion=asignar&id=" + id_alumno + "&asignaturas=" + $("#alumno_" + id_alumno + " select[name='asignaturas']").val().toString(),
-                    url: '/panel/administrador/asignaturas_usuarios',
+                    url: '/panel/administrador/asignaturas_alumnos',
                     type: 'post',
                     beforeSend: function () {
                         $('#loading').modal('open');

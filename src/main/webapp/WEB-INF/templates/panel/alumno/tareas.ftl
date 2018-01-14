@@ -115,9 +115,9 @@
                         if (info['success'])
                         {
                             Materialize.toast('<span>¡Has marcado la tarea como completada!</span>', 5000, 'rounded');
-                            var nombre = $('#tarea-' + idTarea).eq(0),
-                                asignatura = $('#tarea-' + idTarea).eq(1),
-                                fecha = $('#tarea-' + idTarea).eq(2);
+                            var nombre = $('#tarea-' + idTarea).eq(0).children("td").eq(0).text(),
+                                asignatura = $('#tarea-' + idTarea).eq(0).children("td").eq(1).text(),
+                                fecha = $('#tarea-' + idTarea).eq(0).children("td").eq(2).text();
                             $dataTable.row('#tarea-' + idTarea).remove().draw();
                             $dataTable.row.add( [
                                 nombre,

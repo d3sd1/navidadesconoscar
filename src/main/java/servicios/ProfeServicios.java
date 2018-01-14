@@ -112,11 +112,16 @@ public class ProfeServicios
         return returnme;
     }
 
-    public AjaxResponse modTarea(Tarea t)
+    public AjaxResponse modTarea(int id_tarea, String nombre_tarea, Date fecha_entrega, int id_asignatura)
     {
         ProfeDAO dao = new ProfeDAO();
         AjaxResponse returnme;
 
+        Tarea t = new Tarea();
+        t.setNombre_tarea(nombre_tarea);
+        t.setFecha_entrega(fecha_entrega);
+        t.setId_tarea(id_tarea);
+        t.getAsignatura().setId(id_asignatura);
         t = dao.modTarea(t);
 
         if (t != null)
@@ -127,6 +132,7 @@ public class ProfeServicios
             datos.put(Parametros.ID_ASIGNATURA, String.valueOf(t.getAsignatura().getId()));
             datos.put(Parametros.NOMBRE_TAREA, t.getNombre_tarea());
             datos.put(Parametros.FECHA_ENTREGA, df.format(t.getFecha_entrega()));
+            System.out.println("ID ASIG: " + t.getAsignatura().getId());
             datos.put(Parametros.NOMBRE_ASIGNATURA, dao.getNombreAsignatura(t.getAsignatura().getId()));
             returnme = ajax.successResponse(datos);
         }
@@ -137,11 +143,12 @@ public class ProfeServicios
         return returnme;
     }
 
-    public AjaxResponse delTarea(Tarea t)
+    public AjaxResponse delTarea(int id_tarea)
     {
         ProfeDAO dao = new ProfeDAO();
         AjaxResponse returnme;
-
+        Tarea t = new Tarea();
+        t.setId_tarea(id_tarea);
         boolean eliminado = dao.delTarea(t);
 
         if (eliminado)

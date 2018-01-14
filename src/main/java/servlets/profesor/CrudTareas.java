@@ -4,13 +4,14 @@ import ajax.AjaxMaker;
 import ajax.AjaxResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.AbstractMap;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.Tarea;
 import servicios.ProfeServicios;
 import utils.Constantes;
 import utils.Parametros;
@@ -33,9 +34,8 @@ public class CrudTareas extends HttpServlet
         
         /* Para peticiones ajax */
         AjaxResponse resp;
-        Tarea t = new Tarea();
         AjaxMaker ajax = new AjaxMaker();
-        LocalDate fecha_entrega = helper.depurarParametroLocalDate(request.getParameter(Parametros.FECHA_ENTREGA));
+        Date fecha_entrega = helper.depurarParametroDate(request.getParameter(Parametros.FECHA_ENTREGA));
         int id_asignatura = helper.depurarParametroInt(request.getParameter(Parametros.ID_ASIGNATURA));
         String nombre_tarea = helper.depurarParametroString(request.getParameter(Parametros.NOMBRE_TAREA));
         int id_tarea = helper.depurarParametroInt(request.getParameter(Parametros.ID_TAREA));
@@ -43,17 +43,18 @@ public class CrudTareas extends HttpServlet
         switch (accion)
         {
             case "insertar":
-                resp = ps.agregarTarea(id_asignatura, fecha_entrega, nombre_tarea, id_tarea, profesor);
+                LocalDate insertDate = fecha_entrega.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                resp = ps.agregarTarea(id_asignatura, insertDate, nombre_tarea, id_tarea, profesor);
                 response.getWriter().print(ajax.parseResponse(resp));
                 break;
 
             case "modificar":
-                resp = ps.modTarea(t);
+                resp = ps.modTarea(id_tarea,nombre_tarea,fecha_entrega,id_asignatura);
                 response.getWriter().print(ajax.parseResponse(resp));
                 break;
                 
             case "eliminar":
-                resp = ps.delTarea(t);
+                resp = ps.delTarea(id_tarea);
                 response.getWriter().print(ajax.parseResponse(resp));
                 break;
             default:

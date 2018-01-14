@@ -21,7 +21,7 @@
                         <#if rango == "administrador">
                         <li><a href="/panel/administrador/usuarios">Control de usuarios</a></li>
                         <li><a href="/panel/administrador/asignaturas">Control de asignaturas</a></li>
-                        <li><a href="/panel/administrador/asignaturas_usuarios">Asignar asignatura a alumno</a></li>
+                        <li><a href="/panel/administrador/asignaturas_alumnos">Asignar asignatura a alumno</a></li>
                         <li><a href="/panel/administrador/asignaturas_profesores">Asignar asignatura a profesor</a></li>
                         </#if>
                         <#if rango == "profesor">
@@ -34,7 +34,7 @@
                         <li><a href="/panel/alumno/tareas">Mis tareas</a></li>
                         <li><a href="/panel/alumno/notas">Mis notas</a></li>
                         </#if>
-                        <li><a href="/panel/cambiar_clave">Cambiar contraseña</a></li>
+                        <li class="active"><a href="/panel/cambiar_clave">Cambiar contraseña</a></li>
                         <li><a href="/desconectar">Desconectar</a></li>
                         </ul>
                     </div>

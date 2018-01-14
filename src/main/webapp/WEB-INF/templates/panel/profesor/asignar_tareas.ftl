@@ -305,6 +305,7 @@
                         },
                         success: function (data) {
                             var info = JSON.parse(data);
+                                console.log(info);
                             if (info['success'])
                             {
                                 Materialize.toast('<span>Tarea modificada correctamente</span>', 5000, 'rounded');

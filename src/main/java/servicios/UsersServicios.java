@@ -7,7 +7,6 @@ import dao.UsersDAO;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.User;
 import utils.Constantes;
 import utils.Language;
@@ -134,7 +133,6 @@ public class UsersServicios
             }
             catch (NoSuchAlgorithmException | InvalidKeySpecException ex)
             {
-                Logger.getLogger(UsersServicios.class.getName()).log(Level.SEVERE, null, ex);
                 returnme = ajax.errorResponse(0);
             }
         }
@@ -197,7 +195,6 @@ public class UsersServicios
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException | NullPointerException ex)
         {
-            Logger.getLogger(UsersServicios.class.getName()).log(Level.SEVERE, null, ex);
             returnme = ajax.errorResponse(0);
         }
         return returnme;

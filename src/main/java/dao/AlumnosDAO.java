@@ -3,9 +3,7 @@ package dao;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Asignatura;
-import model.Curso;
 import model.Nota;
 import model.Tarea;
 import model.User;
@@ -82,7 +80,6 @@ public class AlumnosDAO {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
             completado = jtm.update(queryCompletarTarea, t.getId_tarea(), email) > 0;
         } catch (DataAccessException ex) {
-            Logger.getLogger(AlumnosDAO.class.getName()).log(Level.SEVERE, null, ex);
             completado = false;
         }
         return completado;
@@ -94,7 +91,6 @@ public class AlumnosDAO {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
             t =(Tarea) jtm.queryForObject(queryGetTareaById, new Object[]{id, email}, new BeanPropertyRowMapper(Tarea.class));
         } catch (DataAccessException ex) {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             t = null;
         }
         return t;

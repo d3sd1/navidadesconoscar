@@ -2,24 +2,14 @@ package servlets.administrador;
 
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
-import config.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import java.io.IOException;
-import static java.lang.Integer.parseInt;
 import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.Asignatura;
 import servicios.AdminServicios;
-import servlets.Conectar;
-import utils.Constantes;
 import utils.Parametros;
 import utils.Utils;
 

@@ -2,24 +2,16 @@ package servlets.profesor;
 
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
-import config.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import java.io.IOException;
-import static java.lang.Integer.parseInt;
 import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.Asignatura;
 import model.Nota;
-import model.User;
 import servicios.ProfeServicios;
+import utils.Constantes;
 import utils.Parametros;
 import utils.Utils;
 
@@ -34,6 +26,7 @@ public class CambiarNotas extends HttpServlet {
         
         Utils helper = new Utils();
         String accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
+        String profe = request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO).toString();
         ProfeServicios ps = new ProfeServicios();
         AjaxMaker ajax = new AjaxMaker();
         
@@ -56,7 +49,9 @@ public class CambiarNotas extends HttpServlet {
                 break;
 
             default:
-                helper.mostrarPlantilla("/panel/profesor/notas_cambiar.ftl", response.getWriter());
+                helper.mostrarPlantilla("/panel/profesor/notas_cambiar.ftl", response.getWriter(),
+                    new AbstractMap.SimpleEntry<>("notas", ps.getAllNotas(profe))
+                );
         }
 
     }
