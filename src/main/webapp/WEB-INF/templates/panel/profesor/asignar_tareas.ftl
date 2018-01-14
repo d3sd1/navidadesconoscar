@@ -57,7 +57,7 @@
                                 <tr id="tarea-${tarea.getId_tarea()}">
                                     <td>${tarea.getId_tarea()}</td>
                                     <td>${tarea.getNombre_tarea()}</td>
-                                    <td>${tarea.getFecha_entrega()}</td>
+                                    <td>${tarea.getFecha_entrega()?datetime?string('dd-MM-yyyy')}</td>
                                     <td><a class='dropdown-button btn' href='#' onclick="markActualTask(${tarea.getId_tarea()})" data-activates='dropdown-${tarea.getId_tarea()}'>Acciones</a><ul id='dropdown-${tarea.getId_tarea()}' class='dropdown-content'><li><a onclick="editView()">Editar</a></li><li><a onclick="deleteConfirm()">Eliminar</a></li></ul></td>
                                 </tr>
                             </#list>
