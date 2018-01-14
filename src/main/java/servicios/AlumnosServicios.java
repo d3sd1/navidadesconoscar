@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import model.Nota;
 import model.Tarea;
-import utils.Constantes;
+import utils.Parametros;
 
 public class AlumnosServicios {
 
@@ -39,7 +39,7 @@ public class AlumnosServicios {
 
                 if (completado == true) {
                     HashMap<String, String> datos = new HashMap<>();
-                    datos.put(Constantes.PARAMETRO_COMPLETADO, String.valueOf(completado));
+                    datos.put(Parametros.COMPLETADO, String.valueOf(completado));
                     returnme = ajax.successResponse(datos);
                 } else {
                     returnme = ajax.errorResponse(24);

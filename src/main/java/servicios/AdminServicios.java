@@ -16,6 +16,7 @@ import model.Curso;
 import model.User;
 import utils.Constantes;
 import utils.Language;
+import utils.Parametros;
 import utils.PasswordHash;
 import utils.Utils;
 
@@ -40,9 +41,9 @@ public class AdminServicios
         if (a != null)
         {
             HashMap<String, String> datos = new HashMap<>();
-            datos.put(Constantes.PARAMETRO_ID, String.valueOf(a.getId()));
-            datos.put(Constantes.PARAMETRO_NOMBRE, a.getNombre());
-            datos.put(Constantes.PARAMETRO_ID_CURSO, String.valueOf(a.getId_curso()));
+            datos.put(Parametros.ID, String.valueOf(a.getId()));
+            datos.put(Parametros.NOMBRE, a.getNombre());
+            datos.put(Parametros.ID_CURSO, String.valueOf(a.getId_curso()));
             returnme = ajax.successResponse(datos);
         }
         else
@@ -62,9 +63,9 @@ public class AdminServicios
         if (a != null)
         {
             HashMap<String, String> datos = new HashMap<>();
-            datos.put(Constantes.PARAMETRO_ID, String.valueOf(a.getId()));
-            datos.put(Constantes.PARAMETRO_NOMBRE, a.getNombre());
-            datos.put(Constantes.PARAMETRO_ID_CURSO, String.valueOf(a.getId_curso()));
+            datos.put(Parametros.ID, String.valueOf(a.getId()));
+            datos.put(Parametros.NOMBRE, a.getNombre());
+            datos.put(Parametros.ID_CURSO, String.valueOf(a.getId_curso()));
             returnme = ajax.successResponse(datos);
         }
         else
@@ -242,10 +243,10 @@ public class AdminServicios
                             Language.ASUNTO_EMAIL_ACTIVAR);
 
                     HashMap<String, String> datos = new HashMap<>();
-                    datos.put(Constantes.PARAMETRO_ID, String.valueOf(u.getId()));
-                    datos.put(Constantes.PARAMETRO_NOMBRE, u.getNombre());
-                    datos.put(Constantes.PARAMETRO_EMAIL, u.getEmail());
-                    datos.put(Constantes.PARAMETRO_TIPO, String.valueOf(u.getId_permiso()));
+                    datos.put(Parametros.ID, String.valueOf(u.getId()));
+                    datos.put(Parametros.NOMBRE, u.getNombre());
+                    datos.put(Parametros.EMAIL, u.getEmail());
+                    datos.put(Parametros.TIPO, String.valueOf(u.getId_permiso()));
                     returnme = ajax.successResponse(datos);
                 }
                 else
@@ -283,10 +284,10 @@ public class AdminServicios
             if (modificado == true)
             {
                 HashMap<String, String> datos = new HashMap<>();
-                datos.put(Constantes.PARAMETRO_ID, String.valueOf(u.getId()));
-                datos.put(Constantes.PARAMETRO_NOMBRE, u.getNombre());
-                datos.put(Constantes.PARAMETRO_EMAIL, u.getEmail());
-                datos.put(Constantes.PARAMETRO_TIPO, String.valueOf(u.getId_permiso()));
+                datos.put(Parametros.ID, String.valueOf(u.getId()));
+                datos.put(Parametros.NOMBRE, u.getNombre());
+                datos.put(Parametros.EMAIL, u.getEmail());
+                datos.put(Parametros.TIPO, String.valueOf(u.getId_permiso()));
                 returnme = ajax.successResponse(datos);
             }
             else
@@ -372,8 +373,8 @@ public class AdminServicios
         if (c != null)
         {
             HashMap<String, String> datos = new HashMap<>();
-            datos.put(Constantes.PARAMETRO_ID, String.valueOf(c.getId()));
-            datos.put(Constantes.PARAMETRO_NOMBRE, c.getNombre());
+            datos.put(Parametros.ID, String.valueOf(c.getId()));
+            datos.put(Parametros.NOMBRE, c.getNombre());
             returnme = ajax.successResponse(datos);
         }
         else
@@ -393,8 +394,8 @@ public class AdminServicios
         if (c != null)
         {
             HashMap<String, String> datos = new HashMap<>();
-            datos.put(Constantes.PARAMETRO_ID, String.valueOf(c.getId()));
-            datos.put(Constantes.PARAMETRO_NOMBRE, c.getNombre());
+            datos.put(Parametros.ID, String.valueOf(c.getId()));
+            datos.put(Parametros.NOMBRE, c.getNombre());
             returnme = ajax.successResponse(datos);
         }
         else

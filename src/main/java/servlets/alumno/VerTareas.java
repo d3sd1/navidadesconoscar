@@ -12,27 +12,34 @@ import javax.servlet.http.HttpServletResponse;
 import model.Tarea;
 import servicios.AlumnosServicios;
 import utils.Constantes;
+import utils.Parametros;
 import utils.Utils;
 
-@WebServlet(name = "VerTareas", urlPatterns = {"/panel/alumno/tareas"})
-public class VerTareas extends HttpServlet {
+@WebServlet(name = "VerTareas", urlPatterns =
+{
+    "/panel/alumno/tareas"
+})
+public class VerTareas extends HttpServlet
+{
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
 
         Utils helper = new Utils();
         AlumnosServicios as = new AlumnosServicios();
         AjaxMaker ajax = new AjaxMaker();
 
         String alumno = request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO).toString();
-        String accion = helper.depurarParametroString(request.getParameter(Constantes.PARAMETRO_ACCION));
+        String accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
 
         Tarea t = new Tarea();
-        t.setId_tarea(helper.depurarParametroInt(request.getParameter(Constantes.PARAMETRO_ID_TAREA)));
-        
+        t.setId_tarea(helper.depurarParametroInt(request.getParameter(Parametros.ID_TAREA)));
+
         AjaxResponse resp;
 
-        switch (accion) {
+        switch (accion)
+        {
             case "completar":
                 resp = as.completarTarea(t, alumno);
                 response.getWriter().print(ajax.parseResponse(resp));
@@ -56,7 +63,8 @@ public class VerTareas extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         processRequest(request, response);
     }
 
@@ -70,7 +78,8 @@ public class VerTareas extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         processRequest(request, response);
     }
 
@@ -80,7 +89,8 @@ public class VerTareas extends HttpServlet {
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo() {
+    public String getServletInfo()
+    {
         return "Short description";
     }// </editor-fold>
 

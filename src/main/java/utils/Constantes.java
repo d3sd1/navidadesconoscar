@@ -12,19 +12,5 @@ public class Constantes {
     public static final String EMAIL_CONTENT_NUEVA_PASS_1 = "<html><body><h1>Solicitud de <strong>cambio de contraseña</strong></h1><p>Hemos recibido tu solicitud para cambiar de contraseña.</p><p>Haz click en el siguiente enlace.</p><a href='";
     public static final String EMAIL_CONTENT_NUEVA_PASS_2 = "'>Cambiar contraseña</a></body></html>";
     
-    public static final String PARAMETRO_ACCION = "accion";
-    public static final String PARAMETRO_ID = "id";
-    public static final String PARAMETRO_NOMBRE = "nombre";
-    public static final String PARAMETRO_ID_CURSO = "id_curso";
-    public static final String PARAMETRO_EMAIL = "email";
-    public static final String PARAMETRO_TIPO = "tipo";
-    public static final String PARAMETRO_NOTA = "nota";
-    public static final String PARAMETRO_ID_TAREA = "id_tarea";
-    public static final String PARAMETRO_ID_ASIGNATURA = "id_asignatura";
-    public static final String PARAMETRO_NOMBRE_TAREA = "nombre_tarea";
-    public static final String PARAMETRO_FECHA_ENTREGA = "fecha_entrega";
-    public static final String PARAMETRO_COMPLETADO = "completado";
-    public static final String PARAMETRO_NOMBRE_ASIGNATURA = "nombre_asignatura";
-    
     public static final String FORMATO_FECHA = "dd-MM-yyyy";
 }

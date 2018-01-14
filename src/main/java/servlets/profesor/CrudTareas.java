@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import model.Tarea;
 import servicios.ProfeServicios;
 import utils.Constantes;
+import utils.Parametros;
 import utils.Utils;
 
 @WebServlet(name = "CrudTareas", urlPatterns =
@@ -30,21 +31,21 @@ public class CrudTareas extends HttpServlet
         ProfeServicios ps = new ProfeServicios();
         Utils helper = new Utils();
         String  profesor = request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO).toString(),
-                accion = helper.depurarParametroString(request.getParameter(Constantes.PARAMETRO_ACCION));
+                accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
         
         /* Para peticiones ajax */
         AjaxResponse resp;
         Tarea t = new Tarea();
         AjaxMaker ajax = new AjaxMaker();
-        LocalDate fecha_entrega = helper.depurarParametroLocalDate(request.getParameter(Constantes.PARAMETRO_FECHA_ENTREGA));
-        t.getAsignatura().setId(helper.depurarParametroInt(request.getParameter(Constantes.PARAMETRO_ID_ASIGNATURA)));
-        t.setNombre_tarea(helper.depurarParametroString(request.getParameter(Constantes.PARAMETRO_NOMBRE_TAREA)));
-        t.setFecha_entrega(Date.from(fecha_entrega.atStartOfDay().toInstant(ZoneOffset.UTC)));
-        t.setId_tarea(helper.depurarParametroInt(request.getParameter(Constantes.PARAMETRO_ID_TAREA)));
+        LocalDate fecha_entrega = helper.depurarParametroLocalDate(request.getParameter(Parametros.FECHA_ENTREGA));
+        int id_asignatura = helper.depurarParametroInt(request.getParameter(Parametros.ID_ASIGNATURA));
+        String nombre_tarea = helper.depurarParametroString(request.getParameter(Parametros.NOMBRE_TAREA));
+        int id_tarea = helper.depurarParametroInt(request.getParameter(Parametros.ID_TAREA));
+        
         switch (accion)
         {
             case "insertar":
-                resp = ps.addTarea(t, profesor);
+                resp = ps.agregarTarea(id_asignatura, fecha_entrega, nombre_tarea, id_tarea, profesor);
                 response.getWriter().print(ajax.parseResponse(resp));
                 break;
 

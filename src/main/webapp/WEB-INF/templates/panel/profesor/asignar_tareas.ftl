@@ -242,6 +242,7 @@
                                 var newCell = $dataTable.row.add( [
                                     uinfo["id_tarea"],
                                     uinfo["nombre_tarea"],
+                                    uinfo["nombre_asignatura"],
                                     uinfo["fecha_entrega"],
                                     "<a class='dropdown-button btn' href='#' onclick='markActualTask(" + uinfo["id_tarea"] + ")' data-activates='dropdown-" + uinfo["id_tarea"] + "'>Acciones</a><ul id='dropdown-" + uinfo["id_tarea"] + "' class='dropdown-content'><li><a onclick='editView()'>Editar</a></li><li><a onclick='deleteConfirm()'>Eliminar</a></li></ul>"
                                     ] ).draw().node();
