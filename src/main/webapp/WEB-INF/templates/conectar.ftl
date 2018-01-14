@@ -1,3 +1,4 @@
+<#ftl encoding="ISO-8859-1">
 <!DOCTYPE html>
 <html>
     <head>

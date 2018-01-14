@@ -47,6 +47,8 @@ public class DBConnection {
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.addDataSourceProperty("characterEncoding","utf-8");
+        config.addDataSourceProperty("useUnicode","true");
 
         HikariDataSource datasource = new HikariDataSource(config);
         return datasource;

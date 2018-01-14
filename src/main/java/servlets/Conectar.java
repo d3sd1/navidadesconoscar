@@ -25,6 +25,7 @@ public class Conectar extends HttpServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
+        request.setCharacterEncoding("ISO-8859-1");
 
         UsersServicios us = new UsersServicios();
         AjaxMaker ajax = new AjaxMaker();

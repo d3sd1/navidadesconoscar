@@ -5,7 +5,7 @@ public class Language {
     public static final String ASUNTO_EMAIL_NUEVA_PASS = "Cambio de contraseña";
     public static final String USUARIO_REGISTRADO = "Usuario registrado con éxito.";
     public static final String CUENTA_ACTIVADA = "Tu cuenta ha sido activada.";
-    public static final String CUENTA_ACTIVADA_2 = "Ahora puedes iniciar sesión.";
+    public static final String CUENTA_ACTIVADA_2 = "Ahora puedes iniciar sesion.";
     public static final String YA_ACTIVADA = "No necesitas volver a activar tu cuenta.";
     public static final String ERROR_GENERIC = "Ha ocurrido un error inesperado.";
     public static final String ERROR_USER_PASS = "Usuario y contraseña incorrectos.";
@@ -14,7 +14,7 @@ public class Language {
     public static final String ERROR_EMAIL_NOEXISTE = "El email no existe.";
     public static final String ERROR_PASSOLVIDADA_GENERICO = "Se produjo un error al enviar el email de recuperación de cuenta.";
     public static final String ERROR_ACTIVAR = "Ha ocurrido un error al activar tu cuenta.";
-    public static final String ERROR_ACTIVAR_2 = "Inténtalo de nuevo más tarde.";
+    public static final String ERROR_ACTIVAR_2 = "Intentalo de nuevo mas tarde.";
     public static final String ERROR_PASSOLVIDADA_CODIGOINVALIDO = "El código introducido es inválido.";
     public static final String ERROR_NUEVAPASS_PASSINVALIDA = "La contraseña introducida es incorrecta.";
     public static final String ERROR_INTEGRIDAD_ASIGNATURAS = "No se ha podido borrar la asignatura porque tiene notas, profesores o alumnos asociados a ella.";
