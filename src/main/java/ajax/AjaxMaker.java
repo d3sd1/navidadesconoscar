@@ -1,7 +1,10 @@
 package ajax;
 
 import com.google.gson.Gson;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import model.User;
 import utils.Language;
 
 public class AjaxMaker
@@ -99,7 +102,7 @@ public class AjaxMaker
         }
         return errorMsg;
     }
-    public String parseResponse(AjaxResponse resp)
+    public String parseResponse(Object resp)
     {
         return new Gson().toJson(resp);
     }
@@ -122,5 +125,9 @@ public class AjaxMaker
     public AjaxResponse successResponse(HashMap<String, String> data)
     {
         return new AjaxResponse(true,"",0,data);
+    }
+    public PaginateResponse paginateResponse(ArrayList<ArrayList<String>> users, int total)
+    {
+        return new PaginateResponse(1,total,total,users);
     }
 }

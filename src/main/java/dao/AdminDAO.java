@@ -1,12 +1,15 @@
 package dao;
 
 import static java.lang.Integer.parseInt;
+import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +31,8 @@ public class AdminDAO {
     private final String queryDelNota = "DELETE FROM alumnos_asignaturas WHERE id_asignatura = ?";
     private final String queryDelAsigProfe = "DELETE FROM profesores_asignaturas WHERE id_asignatura = ?";
     private final String queryGetAllAlumnos = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 3";
+    private final String queryGetTotalAlumnos = "SELECT COUNT(*) FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 3";
+    private final String queryGetAlumnosPaginados = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 3 LIMIT ?,?";
     private final String queryGetAllProfes = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 2";
     private final String queryAsignarProfeAsig = "INSERT INTO profesores_asignaturas (id_profesor, id_asignatura) VALUES (?,?)";
     private final String queryEliminarProfeAsig = "DELETE FROM profesores_asignaturas WHERE id_profesor = ?";
@@ -184,6 +189,27 @@ public class AdminDAO {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
         List<User> alumnos = jtm.query(queryGetAllAlumnos, new BeanPropertyRowMapper(User.class));
         return alumnos;
+    }
+    
+    public int getTotalAlumnos() {
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        int total = jtm.queryForObject(queryGetTotalAlumnos, Integer.class);
+        return total;
+    }
+    
+    public ArrayList<ArrayList<String>> getAlumnos(int start, int length) {
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        List<User> alumnos = jtm.query(queryGetAlumnosPaginados, new BeanPropertyRowMapper(User.class),start,length);
+        ArrayList<ArrayList<String>> devolver = new ArrayList<>();
+        for (User alumno : alumnos) {
+            ArrayList<String> actualAlumno = new ArrayList<>();
+            actualAlumno.add(alumno.getId() + "");
+            actualAlumno.add(alumno.getNombre());
+            actualAlumno.add(alumno.getEmail());
+            actualAlumno.add(Boolean.toString(alumno.getActivo()));
+            devolver.add(actualAlumno);
+        }
+        return devolver;
     }
 
     public List<User> getAllProfes() {

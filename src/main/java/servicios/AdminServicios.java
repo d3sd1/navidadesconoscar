@@ -6,6 +6,7 @@ import config.Configuration;
 import dao.AdminDAO;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -156,6 +157,16 @@ public class AdminServicios
     {
         AdminDAO dao = new AdminDAO();
         return dao.getAllAlumnos();
+    }
+    public ArrayList<ArrayList<String>> getAlumnos(int start, int length)
+    {
+        AdminDAO dao = new AdminDAO();
+        return dao.getAlumnos(start,length);
+    }
+    public int getTotalAlumnos()
+    {
+        AdminDAO dao = new AdminDAO();
+        return dao.getTotalAlumnos();
     }
 
     public List getAsigAlumno()

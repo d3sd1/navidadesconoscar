@@ -2,12 +2,15 @@ package servlets.administrador;
 
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
+import ajax.PaginateResponse;
 import config.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import static java.lang.Integer.parseInt;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -18,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import servicios.AdminServicios;
 import servlets.Conectar;
 import utils.Constantes;
+import utils.Utils;
 
 @WebServlet(name = "AsignaturasUsuarios", urlPatterns
         = {
@@ -43,6 +47,7 @@ public class AsignaturasUsuarios extends HttpServlet {
         if (accion == null) {
             accion = "";
         }
+        Utils helper = new Utils();
 
         switch (accion) {
             case "asignar":
@@ -51,15 +56,20 @@ public class AsignaturasUsuarios extends HttpServlet {
                     id_alumno = parseInt(request.getParameter("id"));
                     asignaturas = request.getParameter("asignaturas");
                     asignarAlumAsig = as.asignarAlumAsig(id_alumno, asignaturas);
-                } catch (Exception ex) {
+                } catch (NumberFormatException ex) {
                     asignarAlumAsig = ajax.errorResponse(0);
                 }
                 objeto_json = ajax.parseResponse(asignarAlumAsig);
                 response.getWriter().print(objeto_json);
                 break;
+            case "getalumnos":
+                int start = helper.depurarParametroInt(request.getParameter("start"));
+                int length = helper.depurarParametroInt(request.getParameter("length"));
+                PaginateResponse resp = ajax.paginateResponse(as.getAlumnos(start,length), as.getTotalAlumnos());
+                response.getWriter().print(ajax.parseResponse(resp));
+            break;
             default:
                 try {
-                    root.put("alumnos", as.getAllAlumnos());
                     root.put("asignaturas", as.getAllAsignaturas());
                     root.put("asignaturas_alumnos", as.getAsigAlumno());
                     temp.process(root, response.getWriter());

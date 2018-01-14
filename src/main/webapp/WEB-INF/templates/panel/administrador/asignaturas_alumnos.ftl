@@ -10,6 +10,14 @@
         <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta charset="UTF-8">
+        <style>
+            .dataTables_filter {
+                display: none; 
+            }
+            .dataTables_length {
+                display: none
+            }
+        </style>
         </head>
     <body>
         <header>
@@ -29,11 +37,22 @@
             </header>
         <div class="parallax-container">
             <div class="parallax"><img src="http://blogs.aljazeera.net/File/GetImageCustom/85463f0a-dae9-4669-96c6-65eb4747db8e/1600/533"></div>
+        </div>
+        <div class="row" style="margin-top: 2em">
+            <div class="col s12 center-align">
+                Mostrando registros desde <span id="from">0</span> hasta <span id="to">0</span>
             </div>
+            <div class="col s6 center-align">
+                <a class="waves-effect waves-light btn" onclick="mostrarAnteriores()"><i class="material-icons left">arrow_back</i>Anterior</a>
+            </div>
+            <div class="col s6 center-align">
+                <a class="waves-effect waves-light btn" onclick="mostrarSiguientes()"><i class="material-icons right">arrow_forward</i>Siguiente</a>
+            </div>
+        </div>
         <div class="container" style="margin-top: 2em">
             <div class="row">
                 <div class="col s12">
-                    <table class="responsive-table centered highlight bordered scrollspy initdatatable" id="asignaturas_alumnos">
+                    <table class="bordered" id="asignaturas_alumnos">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -45,36 +64,13 @@
                                 </tr>
                             </thead>
                         <tbody>
-                            <#list alumnos as alumno>
-                            <tr id="alumno_${alumno.getId()}">
-                                <td>${alumno.getId()}</td>
-                                <td>${alumno.getNombre()}</th>
-                                <td>${alumno.getEmail()}</td>
-                                <td>${alumno.getActivo()?string('Si', 'No')}</td>
-                                <td>
-                                    <select name="asignaturas" multiple>
-                                        <option value="" disabled selected>Seleccionar asignaturas</option>
-                                    <#list asignaturas as asignatura>
-                                        <option value="${asignatura.getId()}">${asignatura.getNombre()}</option>
-                                    </#list>
-                                        </select>
-                                    <label>Seleccionar asignaturas</label>
-                                    </td>
-                                <td><a class="waves-effect waves-light btn" onclick="asignAsig(${alumno.getId()})">Guardar</a></td>
-                                </tr>
-
-                        </#list>
-                            </tbody>
+                        </tbody>
                         </table>
                     </div>
                 </div>
             </div>
             <!-- Marcar como activas las asignaturas que ya estén asignadas al alumno correspondiente -->
-        <#list asignaturas_alumnos as asignatura_alumno>
-        <script>
-            $('#alumno_${asignatura_alumno.id_alumno} select[name="asignaturas"] option[value="${asignatura_alumno.id_asignatura}"]').attr('selected','selected');
-        </script>
-        </#list>
+
         <footer class="page-footer cyan accent-4">
             <div class="container">
                 <div class="row">
@@ -99,19 +95,91 @@
                 </div>
             </div>
         <script>
+            /* está hecho a mano ya que datatable no funcionaba y se quedaba stuckeada al cargar otra página, mientras el ajax funcionaba bien */
+            var actualIndex = 0, length = 5, totalRecords = 0;
             $(document).ready(function () {
-                $('#asignaturas_alumnos').DataTable({
-                    "language": {
-                        "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
-                    }
-                });
                 $('.parallax').parallax();
                 $('.carousel').carousel();
                 $('select').material_select();
                 $('.modal').modal({
                     dismissible: false
                 });
+                paginacion(0,length,false);
             });
+            function mostrarAnteriores()
+            {
+                if(actualIndex-length > 0)
+                {
+                    actualIndex = actualIndex-length;
+                    if(actualIndex < 0)
+                    {
+                        actualIndex = 0;
+                    }
+                    paginacion(actualIndex,length,true);
+                }
+                
+            }
+            function mostrarSiguientes()
+            {
+                if(actualIndex+length < totalRecords)
+                {
+                    actualIndex = actualIndex+length;
+                    paginacion(actualIndex,length,true);
+                }
+            }
+            function paginacion(start,length,mostrarMensajes = true)
+            {
+                $.ajax({
+                    data: "accion=getalumnos&start=" + start + "&length=" + length,
+                    url: '/panel/administrador/asignaturas_usuarios',
+                    type: 'post',
+                    beforeSend: function () {
+                        if(mostrarMensajes)
+                        {
+                            $('#loading').modal('open');
+                        }
+                    },
+                    success: function (data) {
+                        var info = JSON.parse(data);
+                            console.log(info);
+                        totalRecords = info["recordsTotal"];
+                        $("#asignaturas_alumnos").find("tbody").html("");
+                        for(var actualRow in info["data"])
+                        {
+                            var actual = info["data"][actualRow],
+                                id = actual[0],
+                                nombre = actual[1],
+                                email = actual[2],
+                                activo = actual[3];
+                            $("#asignaturas_alumnos").find("tbody").append('<tr id="alumno_'+id+'"><td>' + id + '</td><td>' + nombre + '</td><td>' + email + '</td><td>' + activo + '</td><td><select name="asignaturas" multiple><option value="" disabled selected>Seleccionar asignaturas</option><#list asignaturas as asignatura><option value="${asignatura.getId()}">${asignatura.getNombre()}</option></#list></select><label>Seleccionar asignaturas</label></td><td><a class="waves-effect waves-light btn" onclick="asignAsig('+id+')">Guardar</a></td></tr>');
+                        }
+                        if(mostrarMensajes)
+                        {
+                            Materialize.toast("Paginado correctamente.", 4000);    
+                        }
+                        $("#from").text(actualIndex);
+                        $("#to").text(actualIndex+length);
+                        <#list asignaturas_alumnos as asignatura_alumno>
+                        $('#alumno_${asignatura_alumno.id_alumno} select[name="asignaturas"] option[value="${asignatura_alumno.id_asignatura}"]').attr('selected','selected');
+                        </#list>
+                        $('select').material_select();
+                    },
+                    error: function(e)
+                    {
+                        if(mostrarMensajes)
+                        {
+                            Materialize.toast("Ha ocurrido un error al procesar la petición.", 4000);    
+                        }
+                    },
+                    complete: function(c)
+                    {
+                        if(mostrarMensajes)
+                        {
+                            $('#loading').modal('close');
+                        }
+                    }
+                });
+            }
             function asignAsig(id_alumno)
             {
                 $.ajax({
