@@ -35,4 +35,5 @@ public class Language {
     public static final String ERROR_INSERTAR_TAREA_NO_ALUMNOS = "No se ha creado la tarea. La asignatura seleccionada no tiene alumnos.";
     public static final String ERROR_COMPLETAR_TAREA = "Ha ocurrido un error al completar la tarea.";
     public static final String ERROR_COMPLETAR_TAREA_TIEMPO = "No se puede completar la tarea. Se ha superado la fecha de entrega.";
+    public static final String ERROR_BORRAR_TAREA = "Ha ocurrido un error al eliminar la tarea.";
 }

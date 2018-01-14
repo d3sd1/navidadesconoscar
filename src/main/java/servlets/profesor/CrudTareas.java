@@ -40,6 +40,7 @@ public class CrudTareas extends HttpServlet
         t.getAsignatura().setId(helper.depurarParametroInt(request.getParameter(Constantes.PARAMETRO_ID_ASIGNATURA)));
         t.setNombre_tarea(helper.depurarParametroString(request.getParameter(Constantes.PARAMETRO_NOMBRE_TAREA)));
         t.setFecha_entrega(Date.from(fecha_entrega.atStartOfDay().toInstant(ZoneOffset.UTC)));
+        t.setId_tarea(helper.depurarParametroInt(request.getParameter(Constantes.PARAMETRO_ID_TAREA)));
         switch (accion)
         {
             case "insertar":
@@ -51,6 +52,10 @@ public class CrudTareas extends HttpServlet
                 resp = ps.modTarea(t);
                 response.getWriter().print(ajax.parseResponse(resp));
                 break;
+                
+            case "eliminar":
+                resp = ps.delTarea(t);
+                response.getWriter().print(ajax.parseResponse(resp));
 
             default:
                 helper.mostrarPlantilla("/panel/profesor/asignar_tareas.ftl", response.getWriter(),
