@@ -2,22 +2,17 @@ package servlets.administrador;
 
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
-import config.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import java.io.IOException;
 import static java.lang.Integer.parseInt;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.AbstractMap;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import servicios.AdminServicios;
-import servlets.Conectar;
-import utils.Constantes;
+import utils.Parametros;
+import utils.Utils;
 
 @WebServlet(name = "AsignaturasProfesores", urlPatterns
         = {
@@ -27,47 +22,27 @@ public class AsignaturasProfesores extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/administrador/asignaturas_profesores.ftl");
-        HashMap root = new HashMap();
-        root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
-
+        Utils helper = new Utils();
         AdminServicios as = new AdminServicios();
         AjaxMaker ajax = new AjaxMaker();
 
-        String accion = request.getParameter("accion");
-
-        String objeto_json;
-        int id_profesor;
-        String asignaturas;
-
-        if (accion == null) {
-            accion = "";
-        }
+        String accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
 
         switch (accion) {
-            case "asignar":
-                AjaxResponse asignarProfeAsig;
-                try {
-                    id_profesor = parseInt(request.getParameter("id"));
-                    asignaturas = request.getParameter("asignaturas");
-                    asignarProfeAsig = as.asignarProfeAsig(id_profesor, asignaturas);
-                } catch (Exception ex) {
-                    asignarProfeAsig = ajax.errorResponse(0);
-                }
-                objeto_json = ajax.parseResponse(asignarProfeAsig);
-                response.getWriter().print(objeto_json);
+            case Parametros.ACCION_ASIGNAR:
+                int id_profesor = parseInt(request.getParameter(Parametros.ID));
+                String asignaturas = request.getParameter(Parametros.ASIGNATURAS);
+                AjaxResponse asignarProfeAsig = as.asignarProfeAsig(id_profesor, asignaturas);
+                
+                response.getWriter().print(ajax.parseResponse(asignarProfeAsig));
                 break;
 
             default:
-                try {
-                    root.put("profesores", as.getAllProfes());
-                    root.put("asignaturas", as.getAllAsignaturas());
-                    root.put("asignaturas_profesores", as.getAsigProfesor());
-                    temp.process(root, response.getWriter());
-                } catch (TemplateException ex) {
-                    Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                helper.mostrarPlantilla("/panel/administrador/asignaturas_profesores.ftl", response.getWriter(),
+                    new AbstractMap.SimpleEntry<>("profesores", as.getAllProfes()),
+                    new AbstractMap.SimpleEntry<>("asignaturas", as.getAllAsignaturas()),
+                    new AbstractMap.SimpleEntry<>("asignaturas_profesores", as.getAsigProfesor())
+                );
         }
 
     }

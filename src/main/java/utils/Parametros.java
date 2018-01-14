@@ -26,6 +26,13 @@ public class Parametros {
     public static final String ACCION_CONECTAR = "conectar";
     public static final String ACCION_ACTIVARUSER = "activar_usuario";
     public static final String ACCION_MODIFICAR = "modificar";
+    public static final String ACCION_ASIGNAR = "asignar";
+    public static final String ACCION_INSERTAR = "insertar";
+    public static final String ACCION_BORRAR = "borrar";
     public static final String NUEVACONTRA = "nuevacontra";
+    public static final String ASIGNATURAS = "asignaturas";
+    public static final String INICIO = "start";
+    public static final String CANTIDAD = "length";
+    public static final String ACCION_GETALUMNOS = "getalumnos";
     public static final String CODIGO = "codigo";
 }

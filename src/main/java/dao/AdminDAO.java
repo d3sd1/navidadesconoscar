@@ -122,24 +122,8 @@ public class AdminDAO {
         return a;
     }
 
-    public int delAsig(Asignatura a) {
-        int borrado = -1;
-        try {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryDelAsig, a.getId()) > 0) {
-                borrado = 1;
-            }
-        } catch (DataIntegrityViolationException ex) {
-            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            borrado = 0;
-        } catch (DataAccessException ex) {
-            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            borrado = -1;
-        }
-        return borrado;
-    }
 
-    public boolean delAsig2(Asignatura a) {
+    public boolean delAsig(Asignatura a) {
         Connection con = null;
         boolean borrado = false;
         try {
@@ -488,56 +472,7 @@ public class AdminDAO {
         return permiso;
     }
     
-    public int delUser(User u){
-        Connection con = null;
-        int borrado = -1;
-        try {
-            con = DBConnection.getInstance().getConnection();
-            con.setAutoCommit(false);
-            
-            PreparedStatement stmt = con.prepareStatement(queryDelUserPermiso);
-            stmt.setInt(1, u.getId());
-            stmt.executeUpdate();
-
-            stmt = con.prepareStatement(queryDelUser);
-            stmt.setInt(1, u.getId());
-            stmt.executeUpdate();
-            
-            borrado = 1;
-            
-            con.commit();
-            stmt.close();
-            
-        } catch (SQLIntegrityConstraintViolationException ex) {
-            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            
-            borrado = 0;
-            
-            try {
-                if (con != null) {
-                    con.rollback();
-                }
-            } catch (SQLException ex1) {
-                Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            borrado = -1;
-            
-            try {
-                if (con != null) {
-                    con.rollback();
-                }
-            } catch (SQLException ex1) {
-                Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex1);
-            }
-        } finally {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return borrado;
-    }
-    
-    public boolean delUser2(User u) {
+    public boolean delUser(User u) {
         Connection con = null;
         boolean borrado = false;
         try {

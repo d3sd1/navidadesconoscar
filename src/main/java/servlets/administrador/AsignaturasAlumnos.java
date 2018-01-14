@@ -3,79 +3,49 @@ package servlets.administrador;
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
 import ajax.PaginateResponse;
-import config.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import java.io.IOException;
-import static java.lang.Integer.parseInt;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.AbstractMap;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import servicios.AdminServicios;
-import servlets.Conectar;
-import utils.Constantes;
+import utils.Parametros;
 import utils.Utils;
 
 @WebServlet(name = "AsignaturasUsuarios", urlPatterns
         = {
             "/panel/administrador/asignaturas_usuarios"
         })
-public class AsignaturasUsuarios extends HttpServlet {
+public class AsignaturasAlumnos extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/administrador/asignaturas_alumnos.ftl");
-        HashMap root = new HashMap();
-        root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
-
         AdminServicios as = new AdminServicios();
         AjaxMaker ajax = new AjaxMaker();
-
-        String accion = request.getParameter("accion");
-
-        String objeto_json;
-        int id_alumno = 0;
-        String asignaturas = "";
-
-        if (accion == null) {
-            accion = "";
-        }
         Utils helper = new Utils();
 
+        String accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
+
         switch (accion) {
-            case "asignar":
-                AjaxResponse asignarAlumAsig;
-                try {
-                    id_alumno = parseInt(request.getParameter("id"));
-                    asignaturas = request.getParameter("asignaturas");
-                    asignarAlumAsig = as.asignarAlumAsig(id_alumno, asignaturas);
-                } catch (NumberFormatException ex) {
-                    asignarAlumAsig = ajax.errorResponse(0);
-                }
-                objeto_json = ajax.parseResponse(asignarAlumAsig);
-                response.getWriter().print(objeto_json);
+            case Parametros.ACCION_ASIGNAR:
+                int id_alumno = helper.depurarParametroInt(request.getParameter(Parametros.ID));
+                String asignaturas = helper.depurarParametroString(request.getParameter(Parametros.ASIGNATURAS));
+                AjaxResponse asignarAlumAsig = as.asignarAlumAsig(id_alumno, asignaturas);
+                response.getWriter().print(ajax.parseResponse(asignarAlumAsig));
                 break;
-            case "getalumnos":
-                int start = helper.depurarParametroInt(request.getParameter("start"));
-                int length = helper.depurarParametroInt(request.getParameter("length"));
+            case Parametros.ACCION_GETALUMNOS:
+                int start = helper.depurarParametroInt(request.getParameter(Parametros.INICIO));
+                int length = helper.depurarParametroInt(request.getParameter(Parametros.CANTIDAD));
                 PaginateResponse resp = ajax.paginateResponse(as.getAlumnos(start,length), as.getTotalAlumnos());
                 response.getWriter().print(ajax.parseResponse(resp));
             break;
             default:
-                try {
-                    root.put("asignaturas", as.getAllAsignaturas());
-                    root.put("asignaturas_alumnos", as.getAsigAlumno());
-                    temp.process(root, response.getWriter());
-                } catch (TemplateException ex) {
-                    Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                helper.mostrarPlantilla("/panel/administrador/asignaturas_alumnos.ftl", response.getWriter(),
+                    new AbstractMap.SimpleEntry<>("asignaturas", as.getAllAsignaturas()),
+                    new AbstractMap.SimpleEntry<>("asignaturas_alumnos", as.getAsigAlumno())
+                );
         }
     }
 

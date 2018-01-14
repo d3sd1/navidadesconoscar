@@ -31,11 +31,16 @@ public class AdminServicios
         return dao.getAllAsignaturas();
     }
 
-    public AjaxResponse addAsig(Asignatura a)
+    public AjaxResponse addAsig(int id_curso, String nombre)
     {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
-
+        
+        Asignatura a = new Asignatura();
+        
+        a.setNombre(nombre);
+        a.setId_curso(id_curso);
+        
         a = dao.addAsig(a);
 
         if (a != null)
@@ -53,11 +58,16 @@ public class AdminServicios
         return returnme;
     }
 
-    public AjaxResponse modAsig(Asignatura a)
+    public AjaxResponse modAsig(int id, String nombre, int id_curso)
     {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
-
+        Asignatura a = new Asignatura();
+        
+        a.setId(id);
+        a.setNombre(nombre);
+        a.setId_curso(id_curso);
+        
         a = dao.modAsig(a);
 
         if (a != null)
@@ -75,39 +85,13 @@ public class AdminServicios
         return returnme;
     }
 
-    public AjaxResponse delAsig(Asignatura a)
+    public AjaxResponse delAsig(int id_asignatura)
     {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
-
-        int borrado = dao.delAsig(a);
-
-        switch (borrado)
-        {
-            case 0:
-                returnme = ajax.errorResponse(8);
-                break;
-
-            case 1:
-                returnme = ajax.successResponse();
-                break;
-
-            case -1:
-                returnme = ajax.errorResponse(9);
-                break;
-
-            default:
-                returnme = ajax.errorResponse(0);
-        }
-        return returnme;
-    }
-
-    public AjaxResponse delAsig2(Asignatura a)
-    {
-        AjaxResponse returnme;
-        AdminDAO dao = new AdminDAO();
-
-        boolean borrado = dao.delAsig2(a);
+        Asignatura a = new Asignatura();
+        a.setId(id_asignatura);
+        boolean borrado = dao.delAsig(a);
 
         if (borrado)
         {
@@ -215,11 +199,15 @@ public class AdminServicios
         return dao.getAllUsers();
     }
 
-    public AjaxResponse addUser(User u)
+    public AjaxResponse addUser(String email, String nombre, int id_permiso)
     {
 
         AdminDAO dao = new AdminDAO();
         AjaxResponse returnme;
+        User u = new User();
+        u.setEmail(email);
+        u.setNombre(nombre);
+        u.setId_permiso(id_permiso);
 
         boolean existe = dao.comprobarEmail(u.getEmail());
 
@@ -267,10 +255,15 @@ public class AdminServicios
         return returnme;
     }
 
-    public AjaxResponse modUser(User u)
+    public AjaxResponse modUser(int id, String email, String nombre, int id_permiso)
     {
         AdminDAO dao = new AdminDAO();
         AjaxResponse returnme;
+        User u = new User();
+        u.setId(id);
+        u.setEmail(email);
+        u.setNombre(nombre);
+        u.setId_permiso(id_permiso);
 
         int permiso = dao.getPermiso(u.getId());
         if (u.getId() == 1)
@@ -298,52 +291,22 @@ public class AdminServicios
         return returnme;
     }
 
-    public AjaxResponse delUser(User u)
-    {
-        AdminDAO dao = new AdminDAO();
-        AjaxResponse returnme;
 
+    public AjaxResponse delUser(int id)
+    {
+        AjaxResponse returnme;
+        AdminDAO dao = new AdminDAO();
+
+        User u = new User();
+        u.setId(id);
+        
         if (u.getId() == 1)
         {
             returnme = ajax.errorResponse(20);
         }
         else
         {
-            int borrado = dao.delUser(u);
-
-            switch (borrado)
-            {
-                case 0:
-                    returnme = ajax.errorResponse(14);
-                    break;
-
-                case 1:
-                    returnme = ajax.successResponse();
-                    break;
-
-                case -1:
-                    returnme = ajax.errorResponse(15);
-                    break;
-
-                default:
-                    returnme = ajax.errorResponse(0);
-            }
-        }
-        return returnme;
-    }
-
-    public AjaxResponse delUser2(User u)
-    {
-        AjaxResponse returnme;
-        AdminDAO dao = new AdminDAO();
-
-        if (u.getId() == 1)
-        {
-            returnme = ajax.errorResponse(20);
-        }
-        else
-        {
-            boolean borrado = dao.delUser2(u);
+            boolean borrado = dao.delUser(u);
 
             if (borrado == true)
             {
@@ -363,11 +326,13 @@ public class AdminServicios
         return dao.getAllCursos();
     }
 
-    public AjaxResponse addCurso(Curso c)
+    public AjaxResponse addCurso(String nombre)
     {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
 
+        Curso c = new Curso();
+        c.setNombre(nombre);
         c = dao.addCurso(c);
 
         if (c != null)
@@ -384,11 +349,14 @@ public class AdminServicios
         return returnme;
     }
 
-    public AjaxResponse modCurso(Curso c)
+    public AjaxResponse modCurso(int id, String nombre)
     {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
 
+        Curso c = new Curso();
+        c.setId(id);
+        c.setNombre(nombre);
         c = dao.modCurso(c);
 
         if (c != null)

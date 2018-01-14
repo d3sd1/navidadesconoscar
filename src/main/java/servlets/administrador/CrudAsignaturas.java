@@ -7,6 +7,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import static java.lang.Integer.parseInt;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +20,8 @@ import model.Asignatura;
 import servicios.AdminServicios;
 import servlets.Conectar;
 import utils.Constantes;
+import utils.Parametros;
+import utils.Utils;
 
 @WebServlet(name = "CrudAsignaturas", urlPatterns
         = {
@@ -29,69 +32,38 @@ public class CrudAsignaturas extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/administrador/crud_asignaturas.ftl");
-        HashMap root = new HashMap();
-        root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
-
         AdminServicios as = new AdminServicios();
         AjaxMaker ajax = new AjaxMaker();
+        Utils helper = new Utils();
 
-        String accion = request.getParameter("accion");
-        Asignatura a = new Asignatura();
-        String objeto_json;
-
-        if (accion == null) {
-            accion = "";
-        }
-
+        /* Ajax */
+        AjaxResponse resp;
+        String accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
+        String nombre = helper.depurarParametroString(request.getParameter(Parametros.NOMBRE));
+        int id_curso = helper.depurarParametroInt(request.getParameter(Parametros.ID_CURSO));
+        int id = helper.depurarParametroInt(request.getParameter(Parametros.ID));
+        
         switch (accion) {
-            case "insertar":
-                AjaxResponse addAsig;
-                try {
-                    a.setNombre(request.getParameter("nombre"));
-                    a.setId_curso(parseInt(request.getParameter("id_curso")));
-                    addAsig = as.addAsig(a);
-                } catch (Exception ex) {
-                    addAsig = ajax.errorResponse(0);
-                }
-                objeto_json = ajax.parseResponse(addAsig);
-                response.getWriter().print(objeto_json);
+            case Parametros.ACCION_INSERTAR:
+                resp = as.addAsig(id_curso,nombre);
+                response.getWriter().print(ajax.parseResponse(resp));
                 break;
 
-            case "modificar":
-                AjaxResponse modAsig;
-                try {
-                    a.setId(parseInt(request.getParameter("id")));
-                    a.setNombre(request.getParameter("nombre"));
-                    a.setId_curso(parseInt(request.getParameter("id_curso")));
-                    modAsig = as.modAsig(a);
-                } catch (Exception ex) {
-                    modAsig = ajax.errorResponse(0);
-                }
-                objeto_json = ajax.parseResponse(modAsig);
-                response.getWriter().print(objeto_json);
+            case Parametros.ACCION_MODIFICAR:
+                resp = as.modAsig(id,nombre,id_curso);
+                response.getWriter().print(ajax.parseResponse(resp));
                 break;
 
-            case "borrar":
-                AjaxResponse delAsig2;
-                try {
-                    a.setId(parseInt(request.getParameter("id")));
-                    delAsig2 = as.delAsig2(a);
-                } catch (Exception ex) {
-                    delAsig2 = ajax.errorResponse(0);
-                }
-                objeto_json = ajax.parseResponse(delAsig2);
-                response.getWriter().print(objeto_json);
+            case Parametros.ACCION_BORRAR:
+                resp = as.delAsig(id);
+                response.getWriter().print(ajax.parseResponse(resp));
                 break;
 
             default:
-                root.put("asignaturas", as.getAllAsignaturas());
-                root.put("cursos", as.getAllCursos());
-                try {
-                    temp.process(root, response.getWriter());
-                } catch (TemplateException ex) {
-                    Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                helper.mostrarPlantilla("/panel/administrador/crud_asignaturas.ftl", response.getWriter(),
+                    new AbstractMap.SimpleEntry<>("asignaturas", as.getAllAsignaturas()),
+                    new AbstractMap.SimpleEntry<>("cursos", as.getAllCursos())
+                );
         }
 
     }

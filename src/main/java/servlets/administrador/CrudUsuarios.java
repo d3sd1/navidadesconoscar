@@ -2,15 +2,8 @@ package servlets.administrador;
 
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
-import config.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import java.io.IOException;
-import static java.lang.Integer.parseInt;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.AbstractMap;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,8 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.User;
 import servicios.AdminServicios;
-import servlets.Conectar;
-import utils.Constantes;
+import utils.Parametros;
+import utils.Utils;
 
 @WebServlet(name = "CrudUsuarios", urlPatterns
         =
@@ -32,86 +25,40 @@ public class CrudUsuarios extends HttpServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        Template temp = Configuration.getInstance().getFreeMarker().getTemplate("/panel/administrador/crud_usuarios.ftl");
-        HashMap root = new HashMap();
-        root.put("rango", request.getSession().getAttribute(Constantes.SESSION_RANGO_USUARIO));
 
         AdminServicios as = new AdminServicios();
         AjaxMaker ajax = new AjaxMaker();
-        User u = new User();
+        Utils helper = new Utils();
 
-        String accion = request.getParameter("accion");
-        String objeto_json;
-
-        if (accion == null)
-        {
-            accion = "";
-        }
-        String email = Objects.toString(request.getParameter("email"),"");
-        String nombre = Objects.toString(request.getParameter("nombre"),"");
-        int id;
-        try
-        {
-            id = parseInt(Objects.toString(request.getParameter("id"),"1"));
-        }
-        catch(NumberFormatException ex)
-        {
-            id = 0;
-        }
-        int idPermiso;
-        try
-        {
-            idPermiso = parseInt(Objects.toString(request.getParameter("tipo"),"1"));
-        }
-        catch(NumberFormatException ex)
-        {
-            idPermiso = 0;
-        }
+        /* Ajax */
+        AjaxResponse resp;
+        String accion = helper.depurarParametroString(request.getParameter(Parametros.ACCION));
+        String nombre = helper.depurarParametroString(request.getParameter(Parametros.NOMBRE));
+        String email = helper.depurarParametroString(request.getParameter(Parametros.EMAIL));
+        int id = helper.depurarParametroInt(request.getParameter(Parametros.ID));
+        int id_permiso = helper.depurarParametroInt(request.getParameter(Parametros.TIPO));
+        
         switch (accion)
         {
-            case "insertar":
-                u.setEmail(email);
-                u.setNombre(nombre);
-                u.setId_permiso(idPermiso);
-                AjaxResponse insertarUser = as.addUser(u);
-                objeto_json = ajax.parseResponse(insertarUser);
-                response.getWriter().print(objeto_json);
+            case Parametros.ACCION_INSERTAR:
+                resp = as.addUser(email,nombre,id_permiso);
+                response.getWriter().print(ajax.parseResponse(resp));
                 break;
 
-            case "modificar":
-                u.setId(id);
-                u.setEmail(email);
-                u.setNombre(nombre);
-                u.setId_permiso(idPermiso);
-                AjaxResponse modificarUser = as.modUser(u);
-                objeto_json = ajax.parseResponse(modificarUser);
-                response.getWriter().print(objeto_json);
+            case Parametros.ACCION_MODIFICAR:
+                resp = as.modUser(id,email,nombre,id_permiso);
+                response.getWriter().print(ajax.parseResponse(resp));
                 break;
 
-            case "borrar":
-                u.setId(id);
-                AjaxResponse delUser = as.delUser(u);
-                objeto_json = ajax.parseResponse(delUser);
-                response.getWriter().print(objeto_json);
-                break;
-
-            case "borrar2":
-                u.setId(id);
-                AjaxResponse delUser2 = as.delUser2(u);
-                objeto_json = ajax.parseResponse(delUser2);
-                response.getWriter().print(objeto_json);
+            case Parametros.ACCION_BORRAR:
+                resp = as.delUser(id);
+                response.getWriter().print(ajax.parseResponse(resp));
                 break;
 
             default:
-                try
-                {
-                    root.put("users", as.getAllUsers());
-                    temp.process(root, response.getWriter());
-                }
-                catch (TemplateException ex)
-                {
-                    Logger.getLogger(Conectar.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                helper.mostrarPlantilla("/panel/administrador/crud_usuarios.ftl", response.getWriter(),
+                    new AbstractMap.SimpleEntry<>("users", as.getAllUsers())
+                );
         }
 
     }
