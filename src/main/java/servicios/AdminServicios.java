@@ -221,8 +221,7 @@ public class AdminServicios
 
                 if (u != null)
                 {
-                    MailServicios nuevoMail = new MailServicios();
-                    nuevoMail.mandarMail(u.getEmail(), Constantes.EMAIL_CONTENT_ACTIVAR_1
+                    helper.mandarMail(u.getEmail(), Constantes.EMAIL_CONTENT_ACTIVAR_1
                             + Constantes.LINK_EMAIL_ACTIVAR + u.getCodigoActivacion()
                             + Constantes.EMAIL_CONTENT_ACTIVAR_2 + clave
                             + Constantes.EMAIL_CONTENT_ACTIVAR_3,

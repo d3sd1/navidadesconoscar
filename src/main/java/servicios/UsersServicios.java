@@ -88,8 +88,7 @@ public class UsersServicios
             u.setCodigoActivacion(helper.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
             if (dao.updateCodigo(u))
             {
-                MailServicios nuevoMail = new MailServicios();
-                nuevoMail.mandarMail(email, Constantes.EMAIL_CONTENT_NUEVA_PASS_1
+                helper.mandarMail(email, Constantes.EMAIL_CONTENT_NUEVA_PASS_1
                         + Constantes.LINK_EMAIL_NUEVA_PASS
                         + u.getCodigoActivacion()
                         + Constantes.EMAIL_CONTENT_NUEVA_PASS_2,
