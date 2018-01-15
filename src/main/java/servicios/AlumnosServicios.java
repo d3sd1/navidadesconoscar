@@ -8,46 +8,52 @@ import java.util.HashMap;
 import java.util.List;
 import model.Nota;
 import model.Tarea;
+import model.User;
 import utils.Parametros;
 
-public class AlumnosServicios {
+public class AlumnosServicios
+{
 
     private final AjaxMaker ajax = new AjaxMaker();
 
-    public List<Nota> getAllNotas(String email) {
+    public List<Nota> getAllNotas(String email)
+    {
         AlumnosDAO dao = new AlumnosDAO();
-        return dao.getAllNotas(email);
+        User alumno = new User();
+        alumno.setEmail(email);
+        return dao.getAllNotas(alumno);
     }
 
-    public List<Tarea> getAllTareas(String email) {
+    public List<Tarea> getAllTareas(String email)
+    {
         AlumnosDAO dao = new AlumnosDAO();
-        return dao.getAllTareas(email);
+        User alumno = new User();
+        alumno.setEmail(email);
+        return dao.getAllTareas(alumno);
     }
 
-    public AjaxResponse completarTarea(int id_tarea, String email) {
-        Tarea t = new Tarea();
-        t.setId_tarea(id_tarea);
-        
-        AjaxResponse returnme;
+    public AjaxResponse completarTarea(int id_tarea, String email)
+    {
+        Tarea tarea = new Tarea();
+        tarea.setId_tarea(id_tarea);
+        User alumno = new User();
+        alumno.setEmail(email);
         AlumnosDAO dao = new AlumnosDAO();
         Date fecha_actual = new Date();
-        Tarea tareaDB = dao.getTareaById(t.getId_tarea(), email);
-        if (tareaDB == null) {
-            returnme = ajax.errorResponse(24);
-        } else {
-            if (fecha_actual.compareTo(tareaDB.getFecha_entrega()) > 0) {
-                returnme = ajax.errorResponse(25);
-            } else {
-                boolean completado = dao.completarTarea(t, email);
 
-                if (completado == true) {
-                    HashMap<String, String> datos = new HashMap<>();
-                    datos.put(Parametros.COMPLETADO, String.valueOf(completado));
-                    returnme = ajax.successResponse(datos);
-                } else {
-                    returnme = ajax.errorResponse(24);
-                }
-            }
+        AjaxResponse returnme = ajax.errorResponse(24);
+        
+        Tarea tareaDB = dao.getTareaById(tarea, alumno);
+        boolean fechaLimiteSuperada = fecha_actual.compareTo(tareaDB.getFecha_entrega()) > 0;
+        if (fechaLimiteSuperada)
+        {
+            returnme = ajax.errorResponse(25);
+        }
+        else if (dao.completarTarea(tarea, alumno))
+        {
+            HashMap<String, String> datos = new HashMap<>();
+            datos.put(Parametros.COMPLETADO, "true");
+            returnme = ajax.successResponse(datos);
         }
         return returnme;
     }

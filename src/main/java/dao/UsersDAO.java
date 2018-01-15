@@ -122,7 +122,7 @@ public class UsersDAO
         }
         catch (DataAccessException ex)
         {
-            
+
         }
         return permiso;
     }

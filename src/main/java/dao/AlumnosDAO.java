@@ -6,11 +6,12 @@ import model.Asignatura;
 import model.Nota;
 import model.Tarea;
 import model.User;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class AlumnosDAO {
+public class AlumnosDAO
+{
+
     private final String queryGetAllNotas = "SELECT u.id, u.nombre, a.id, a.nombre, aa.nota "
             + "FROM alumnos_asignaturas aa "
             + "JOIN users u ON aa.id_alumno = u.id "
@@ -28,19 +29,20 @@ public class AlumnosDAO {
             + "JOIN tareas_alumnos ta ON t.id_tarea = ta.id_tarea "
             + "WHERE ta.id_tarea = ? AND id_alumno = "
             + "(SELECT id FROM users WHERE email = ?)";
-    
-    public List<Nota> getAllNotas(String email) {
+
+    public List<Nota> getAllNotas(User alumno)
+    {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<Nota> alumnos = jtm.query(queryGetAllNotas, (ResultSet rs, int rowNum)
-                -> {
+        List<Nota> alumnos = jtm.query(queryGetAllNotas, (ResultSet rs, int rowNum) ->
+        {
             Nota nota = new Nota();
 
             nota.setNota(rs.getDouble(5));
 
-            User alumno = new User();
-            alumno.setId(rs.getInt(1));
-            alumno.setNombre(rs.getString(2));
-            nota.setAlumno(alumno);
+            User alum = new User();
+            alum.setId(rs.getInt(1));
+            alum.setNombre(rs.getString(2));
+            nota.setAlumno(alum);
 
             Asignatura asignatura = new Asignatura();
 
@@ -49,14 +51,16 @@ public class AlumnosDAO {
             nota.setAsignatura(asignatura);
 
             return nota;
-        }, email);
+        }, alumno.getEmail());
 
         return alumnos;
     }
-    
-    public List<Tarea> getAllTareas(String email) {
+
+    public List<Tarea> getAllTareas(User alumno)
+    {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<Tarea> tareas = jtm.query(queryGetAllTareas, (ResultSet rs, int rowNum)-> {
+        List<Tarea> tareas = jtm.query(queryGetAllTareas, (ResultSet rs, int rowNum) ->
+        {
             Tarea tarea = new Tarea();
             tarea.setId_tarea(rs.getInt(1));
             tarea.setNombre_tarea(rs.getString(2));
@@ -69,29 +73,26 @@ public class AlumnosDAO {
             tarea.setAsignatura(asignatura);
 
             return tarea;
-        }, email);
+        }, alumno.getEmail());
         return tareas;
     }
-    
-    public boolean completarTarea (Tarea t, String email){
-        boolean completado;
-        try {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            completado = jtm.update(queryCompletarTarea, t.getId_tarea(), email) > 0;
-        } catch (DataAccessException ex) {
-            completado = false;
-        }
+
+    public boolean completarTarea(Tarea tarea, User alumno)
+    {
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        boolean completado = jtm.update(queryCompletarTarea, tarea.getId_tarea(), alumno.getEmail()) > 0;
         return completado;
     }
-    
-    public Tarea getTareaById(int id, String email) {
-        Tarea t;
-        try {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            t =(Tarea) jtm.queryForObject(queryGetTareaById, new Object[]{id, email}, new BeanPropertyRowMapper(Tarea.class));
-        } catch (DataAccessException ex) {
-            t = null;
-        }
-        return t;
+
+    public Tarea getTareaById(Tarea tarea, User alumno)
+    {
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        tarea = (Tarea) jtm.queryForObject(queryGetTareaById, new Object[]
+        {
+            tarea.getId_tarea(),
+            alumno.getEmail()
+        }, new BeanPropertyRowMapper(Tarea.class));
+        
+        return tarea;
     }
 }

@@ -92,7 +92,6 @@ public class ProfeDAO {
     }
     
     public String getNombreAsignatura(int id) {
-        System.out.println("ID: " + id);
         String nombre = "";
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());

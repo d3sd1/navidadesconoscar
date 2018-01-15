@@ -91,7 +91,6 @@ public class AdminDAO
         {
             con = DBConnection.getInstance().getConnection();
             PreparedStatement stmt = con.prepareStatement(queryAddAsig, Statement.RETURN_GENERATED_KEYS);
-            System.out.println("NOMBRE " + a.getNombre() + " curso " + a.getId_curso());
             stmt.setString(1, a.getNombre());
             stmt.setInt(2, a.getId_curso());
             stmt.executeUpdate();

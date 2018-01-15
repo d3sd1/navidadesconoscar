@@ -132,7 +132,6 @@ public class ProfeServicios
             datos.put(Parametros.ID_ASIGNATURA, String.valueOf(t.getAsignatura().getId()));
             datos.put(Parametros.NOMBRE_TAREA, t.getNombre_tarea());
             datos.put(Parametros.FECHA_ENTREGA, df.format(t.getFecha_entrega()));
-            System.out.println("ID ASIG: " + t.getAsignatura().getId());
             datos.put(Parametros.NOMBRE_ASIGNATURA, dao.getNombreAsignatura(t.getAsignatura().getId()));
             returnme = ajax.successResponse(datos);
         }
