@@ -33,12 +33,12 @@ public class AdminServicios
     {
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
-        
+
         Asignatura a = new Asignatura();
-        
+
         a.setNombre(nombre);
         a.setId_curso(id_curso);
-        
+
         a = dao.addAsig(a);
 
         if (a != null)
@@ -61,11 +61,11 @@ public class AdminServicios
         AjaxResponse returnme;
         AdminDAO dao = new AdminDAO();
         Asignatura a = new Asignatura();
-        
+
         a.setId(id);
         a.setNombre(nombre);
         a.setId_curso(id_curso);
-        
+
         a = dao.modAsig(a);
 
         if (a != null)
@@ -141,11 +141,13 @@ public class AdminServicios
         AdminDAO dao = new AdminDAO();
         return dao.getAllAlumnos();
     }
+
     public ArrayList<ArrayList<String>> getAlumnos(int start, int length)
     {
         AdminDAO dao = new AdminDAO();
-        return dao.getAlumnos(start,length);
+        return dao.getAlumnos(start, length);
     }
+
     public int getTotalAlumnos()
     {
         AdminDAO dao = new AdminDAO();
@@ -287,7 +289,6 @@ public class AdminServicios
         return returnme;
     }
 
-
     public AjaxResponse delUser(int id)
     {
         AjaxResponse returnme;
@@ -295,7 +296,7 @@ public class AdminServicios
 
         User u = new User();
         u.setId(id);
-        
+
         if (u.getId() == 1)
         {
             returnme = ajax.errorResponse(20);

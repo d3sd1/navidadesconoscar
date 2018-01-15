@@ -51,22 +51,17 @@ public class Conectar extends HttpServlet
 
             case Parametros.ACCION_ACTIVARUSER:
                 String codigo = helper.depurarParametroString(request.getParameter(Parametros.CODIGO));
-                int userActivado = us.activar(codigo);
-                String mensaje = "",mensaje2 = "";
-                switch (userActivado)
+                boolean userActivado = us.activar(codigo);
+                String mensaje,mensaje2;
+                if(userActivado)
                 {
-                    case 1:
-                        mensaje = Language.CUENTA_ACTIVADA;
-                        mensaje2 = Language.CUENTA_ACTIVADA_2;
-                        break;
-                    case 2:
-                        mensaje = Language.YA_ACTIVADA;
-                        mensaje2 = Language.CUENTA_ACTIVADA_2;
-                        break;
-                    case -1:
-                        mensaje = Language.ERROR_ACTIVAR;
-                        mensaje2 = Language.ERROR_ACTIVAR_2;
-                        break;
+                    mensaje = Language.CUENTA_ACTIVADA;
+                    mensaje2 = Language.CUENTA_ACTIVADA_2;
+                }
+                else
+                {
+                    mensaje = Language.YA_ACTIVADA;
+                    mensaje2 = Language.CUENTA_ACTIVADA_2;
                 }
                 helper.mostrarPlantilla("/conectar.ftl", response.getWriter(),
                     new AbstractMap.SimpleEntry<>("mensaje", mensaje),

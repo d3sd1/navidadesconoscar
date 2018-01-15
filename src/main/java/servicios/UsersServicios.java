@@ -22,75 +22,58 @@ public class UsersServicios
         AjaxResponse returnme = ajax.errorResponse(1);
         UsersDAO dao = new UsersDAO();
         User user = new User();
-        try
-        {
-            user.setEmail(mail);
-            user.setClave(pass);
+        user.setEmail(mail);
+        user.setClave(pass);
 
-            User foundUser = dao.getUserByEmail(user);
-            if (foundUser != null)
-            {
-                boolean validPass = PasswordHash.getInstance().validatePassword(user.getClave(), foundUser.getClave());
-                if (validPass)
-                {
-                    if (foundUser.getActivo())
-                    {
-                        returnme = ajax.successResponse();
-                    }
-                    else
-                    {
-                        returnme = ajax.errorResponse(2);
-                    }
-                }
-            }
-
-        }
-        catch (NoSuchAlgorithmException | InvalidKeySpecException ex)
+        User usuarioEncontrado = dao.getUserByEmail(user);
+        boolean validPass = PasswordHash.getInstance().validatePassword(user.getClave(), usuarioEncontrado.getClave()),
+                usuarioActivo = usuarioEncontrado.getActivo();
+        if (validPass && usuarioActivo)
         {
-            returnme = ajax.errorResponse(0);
+            returnme = ajax.successResponse();
         }
+        else if(!usuarioActivo)
+        {
+            returnme = ajax.errorResponse(2);
+        }
+
         return returnme;
     }
 
-    public int activar(String codigo)
+    public boolean activar(String codigo)
     {
         UsersDAO dao = new UsersDAO();
-        User u = dao.getUserByCodigoActivacion(codigo);
+        User user = new User();
+        user.setCodigoActivacion(codigo);
+        User usuarioEncontrado = dao.getUserByCodigoActivacion(user);
 
-        int activar;
+        boolean activado = false;
 
-        if (u == null)
+        if (usuarioEncontrado.getActivo() == false)
         {
-            activar = -1;
+            activado = dao.activarUser(usuarioEncontrado);
         }
-        else if (u.getActivo() == false)
-        {
-            activar = dao.activarUser(u);
-        }
-        else
-        {
-            activar = 2;
-        }
-        return activar;
+        return activado;
     }
 
-    public AjaxResponse mandarMail(String email)
+    public AjaxResponse reenviarMailActivacion(String email)
     {
-        AjaxResponse returnme;
         UsersDAO dao = new UsersDAO();
-        User u = new User();
-        u.setEmail(email);
-        u = dao.getUserByEmail(u);
+        User user = new User();
+        user.setEmail(email);
+        user = dao.getUserByEmail(user);
+        
+        AjaxResponse returnme = ajax.errorResponse(4);
 
-        if (u != null && u.getEmail() != "")
+        if (!user.getEmail().equals(""))
         {
             Utils helper = new Utils();
-            u.setCodigoActivacion(helper.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
-            if (dao.updateCodigo(u))
+            user.setCodigoActivacion(helper.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
+            if (dao.updateCodigo(user))
             {
                 helper.mandarMail(email, Constantes.EMAIL_CONTENT_NUEVA_PASS_1
                         + Constantes.LINK_EMAIL_NUEVA_PASS
-                        + u.getCodigoActivacion()
+                        + user.getCodigoActivacion()
                         + Constantes.EMAIL_CONTENT_NUEVA_PASS_2,
                         Language.ASUNTO_EMAIL_NUEVA_PASS);
 
@@ -101,42 +84,27 @@ public class UsersServicios
                 returnme = ajax.errorResponse(5);
             }
         }
-        else
-        {
-            returnme = ajax.errorResponse(4);
-        }
         return returnme;
     }
 
     public AjaxResponse restaurarPass(String pass, String codigo)
     {
-        AjaxResponse returnme;
+        AjaxResponse returnme = ajax.errorResponse(0);
         if (codigo != null && !codigo.equals(""))
         {
-            try
-            {
-                UsersDAO dao = new UsersDAO();
-                User u = new User();
-                u.setClave(PasswordHash.getInstance().createHash(pass));
-                u.setCodigoActivacion(codigo);
+            UsersDAO dao = new UsersDAO();
+            User user = new User();
+            user.setClave(PasswordHash.getInstance().createHash(pass));
+            user.setCodigoActivacion(codigo);
 
-                if (dao.updatePassByCodigo(u))
-                {
-                    returnme = ajax.successResponse();
-                }
-                else
-                {
-                    returnme = ajax.errorResponse(6);
-                }
-            }
-            catch (NoSuchAlgorithmException | InvalidKeySpecException ex)
+            if (dao.updatePassByCodigo(user))
             {
-                returnme = ajax.errorResponse(0);
+                returnme = ajax.successResponse();
             }
-        }
-        else
-        {
-            returnme = ajax.errorResponse(0);
+            else
+            {
+                returnme = ajax.errorResponse(6);
+            }
         }
         return returnme;
     }
@@ -144,56 +112,45 @@ public class UsersServicios
     public String getRango(String email)
     {
         UsersDAO dao = new UsersDAO();
-        int idPermiso = dao.getPermiso(email);
+        User user = new User();
+        user.setEmail(email);
         String rango = "";
-        switch (idPermiso)
+        switch (dao.getPermiso(user))
         {
             case 1:
                 rango = "administrador";
-                break;
+            break;
             case 2:
                 rango = "profesor";
-                break;
+            break;
             case 3:
                 rango = "usuario";
-                break;
+            break;
         }
         return rango;
     }
 
     public AjaxResponse cambiarPass(String passActual, String nuevaPass, String email)
     {
-        AjaxResponse returnme;
+        AjaxResponse returnme = ajax.errorResponse(0);
         UsersDAO dao = new UsersDAO();
-        User u = new User();
-        u.setEmail(email);
+        User user = new User();
+        user.setEmail(email);
 
-        try
+        user = dao.getUserByEmail(user);
+        
+        boolean validPass = PasswordHash.getInstance().validatePassword(passActual, user.getClave());
+        if (validPass)
         {
-            u = dao.getUserByEmail(u);
-            boolean validPass
-                    = PasswordHash.getInstance().validatePassword(passActual, u.getClave());
-
-            if (validPass)
+            user.setClave(PasswordHash.getInstance().createHash(nuevaPass));
+            if (dao.updatePassByEmail(user))
             {
-                u.setClave(PasswordHash.getInstance().createHash(nuevaPass));
-                if (dao.updatePassByEmail(u))
-                {
-                    returnme = ajax.successResponse();
-                }
-                else
-                {
-                    returnme = ajax.errorResponse(0);
-                }
-            }
-            else
-            {
-                returnme = ajax.errorResponse(7);
+                returnme = ajax.successResponse();
             }
         }
-        catch (NoSuchAlgorithmException | InvalidKeySpecException | NullPointerException ex)
+        else
         {
-            returnme = ajax.errorResponse(0);
+            returnme = ajax.errorResponse(7);
         }
         return returnme;
     }

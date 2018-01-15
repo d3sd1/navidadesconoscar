@@ -31,7 +31,7 @@ public class RecuperarClavePaso1 extends HttpServlet
         switch (accion)
         {
             case Parametros.ACCION_MANDARMAIL:
-                AjaxResponse mandarMail = us.mandarMail(request.getParameter(Parametros.EMAIL));
+                AjaxResponse mandarMail = us.reenviarMailActivacion(helper.depurarParametroString(request.getParameter(Parametros.EMAIL)));
                 String objeto_json = ajax.parseResponse(mandarMail);
                 response.getWriter().print(objeto_json);
                 break;

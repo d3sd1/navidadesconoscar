@@ -1,7 +1,6 @@
 package dao;
 
 import model.User;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -18,132 +17,53 @@ public class UsersDAO
 
     public User getUserByEmail(User usr)
     {
-        User foundUsr;
-        try
+        User foundUsr = new User();
+        JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        foundUsr = (User) jdbcTemplateObject.queryForObject(queryGetUserByMail, new Object[]
         {
-            JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            foundUsr = (User) jdbcTemplateObject.queryForObject(queryGetUserByMail, new Object[]
-            {
-                usr.getEmail()
-            }, new BeanPropertyRowMapper(User.class));
-        }
-        catch (DataAccessException ex)
-        {
-            foundUsr = null;
-        }
+            usr.getEmail()
+        }, new BeanPropertyRowMapper(User.class));
         return foundUsr;
     }
 
-    public User getUserByCodigoActivacion(String codigoActivacion)
+    public User getUserByCodigoActivacion(User usr)
     {
-        User u;
-        try
+        User u = new User();
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        u = (User) jtm.queryForObject(queryUserByCodigoActivacion, new Object[]
         {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            u = (User) jtm.queryForObject(queryUserByCodigoActivacion, new Object[]
-            {
-                codigoActivacion
-            }, new BeanPropertyRowMapper(User.class));
-        }
-        catch (DataAccessException ex)
-        {
-            u = null;
-        }
+            usr.getCodigoActivacion()
+        }, new BeanPropertyRowMapper(User.class));
         return u;
     }
 
-    public int activarUser(User user)
+    public boolean activarUser(User user)
     {
-        int valido = -1;
-        try
-        {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryActivar, user.getCodigoActivacion()) > 0)
-            {
-                valido = 1;
-            }
-        }
-        catch (DataAccessException ex)
-        {
-            valido = -1;
-        }
-
-        return valido;
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        return jtm.update(queryActivar, user.getCodigoActivacion()) > 0;
     }
 
     public boolean updateCodigo(User u)
     {
-        boolean valido = false;
-
-        try
-        {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryUpdateCodigo, u.getCodigoActivacion(), u.getEmail()) > 0)
-            {
-                valido = true;
-            }
-        }
-        catch (DataAccessException ex)
-        {
-            valido = false;
-        }
-
-        return valido;
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        return jtm.update(queryUpdateCodigo, u.getCodigoActivacion(), u.getEmail()) > 0;
     }
 
     public boolean updatePassByCodigo(User u)
     {
-        boolean valido = false;
-
-        try
-        {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryUpdatePassByCodigo, u.getClave(), u.getCodigoActivacion()) > 0)
-            {
-                valido = true;
-            }
-        }
-        catch (DataAccessException ex)
-        {
-            valido = false;
-        }
-
-        return valido;
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        return jtm.update(queryUpdatePassByCodigo, u.getClave(), u.getCodigoActivacion()) > 0;
     }
 
-    public int getPermiso(String email)
+    public int getPermiso(User user)
     {
-        int permiso = 0;
-        try
-        {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            permiso = jtm.queryForObject(queryGetPermiso, int.class, email);
-
-        }
-        catch (DataAccessException ex)
-        {
-
-        }
-        return permiso;
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        return jtm.queryForObject(queryGetPermiso, int.class, user.getEmail());
     }
 
     public boolean updatePassByEmail(User u)
     {
-        boolean valido = false;
-
-        try
-        {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryUpdatePassByEmail, u.getClave(), u.getEmail()) > 0)
-            {
-                valido = true;
-            }
-        }
-        catch (DataAccessException ex)
-        {
-            valido = false;
-        }
-
-        return valido;
+        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        return jtm.update(queryUpdatePassByEmail, u.getClave(), u.getEmail()) > 0;
     }
 }
