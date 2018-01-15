@@ -1,69 +1,43 @@
 package dao;
 
 import model.User;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
+import utils.Queries;
 
 public class UsersDAO
 {
-
-    private final String queryGetUserByMail = "SELECT * FROM users WHERE email = ?";
-    private final String queryGetPermiso = "SELECT up.id_permiso FROM users_permisos up JOIN users u ON up.id_user = u.id WHERE u.email = ?";
-    private final String queryUserByCodigoActivacion = "SELECT * FROM users WHERE codigo_activacion = ?";
-    private final String queryActivar = "UPDATE users SET activo = TRUE, codigo_activacion = NULL WHERE codigo_activacion = ?";
-    private final String queryUpdateCodigo = "UPDATE users SET codigo_activacion = ? WHERE email = ?";
-    private final String queryUpdatePassByCodigo = "UPDATE users SET clave = ?, codigo_activacion = NULL WHERE codigo_activacion = ?";
-    private final String queryUpdatePassByEmail = "UPDATE users SET clave = ? WHERE email = ?";
-
+    private final DBManager manager = new DBManager();
     public User getUserByEmail(User usr)
     {
-        User foundUsr = new User();
-        JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        foundUsr = (User) jdbcTemplateObject.queryForObject(queryGetUserByMail, new Object[]
-        {
-            usr.getEmail()
-        }, new BeanPropertyRowMapper(User.class));
-        return foundUsr;
+        return (User) this.manager.queryForObject(Queries.queryGetUserByMail,User.class,usr.getEmail());
     }
 
-    public User getUserByCodigoActivacion(User usr)
+    public User getUserByCodigoActivacion(User user)
     {
-        User u = new User();
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        u = (User) jtm.queryForObject(queryUserByCodigoActivacion, new Object[]
-        {
-            usr.getCodigoActivacion()
-        }, new BeanPropertyRowMapper(User.class));
-        return u;
+        return (User) this.manager.queryForObject(Queries.queryUserByCodigoActivacion,User.class,user.getCodigoActivacion());
     }
 
     public boolean activarUser(User user)
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        return jtm.update(queryActivar, user.getCodigoActivacion()) > 0;
+        return this.manager.update(Queries.queryActivar, user.getCodigoActivacion());
     }
 
-    public boolean updateCodigo(User u)
+    public boolean updateCodigo(User user)
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        return jtm.update(queryUpdateCodigo, u.getCodigoActivacion(), u.getEmail()) > 0;
+        return this.manager.update(Queries.queryUpdateCodigo, user.getCodigoActivacion(),user.getEmail());
     }
 
-    public boolean updatePassByCodigo(User u)
+    public boolean updatePassByCodigo(User user)
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        return jtm.update(queryUpdatePassByCodigo, u.getClave(), u.getCodigoActivacion()) > 0;
+        return this.manager.update(Queries.queryUpdateCodigo, user.getClave(),user.getCodigoActivacion());
     }
 
     public int getPermiso(User user)
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        return jtm.queryForObject(queryGetPermiso, int.class, user.getEmail());
+        return this.manager.queryForInt(Queries.queryGetPermiso,user.getEmail());
     }
 
-    public boolean updatePassByEmail(User u)
+    public boolean updatePassByEmail(User user)
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        return jtm.update(queryUpdatePassByEmail, u.getClave(), u.getEmail()) > 0;
+        return this.manager.update(Queries.queryUpdatePassByEmail, user.getClave(), user.getEmail());
     }
 }

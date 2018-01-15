@@ -4,8 +4,6 @@ import ajax.AjaxMaker;
 import ajax.AjaxResponse;
 import config.Configuration;
 import dao.UsersDAO;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import model.User;
 import utils.Constantes;
 import utils.Language;
@@ -32,7 +30,7 @@ public class UsersServicios
         {
             returnme = ajax.successResponse();
         }
-        else if(!usuarioActivo)
+        else if(validPass && !usuarioActivo)
         {
             returnme = ajax.errorResponse(2);
         }

@@ -85,16 +85,8 @@ public class PasswordHash {
      * @return true if the password is correct, false if not
      */
     public boolean validatePassword(String password, String correctHash) {
-        boolean success = false;
-        try
-        {
-            success = validatePassword(password.toCharArray(), correctHash);
-        }
-        catch(NoSuchAlgorithmException | InvalidKeySpecException e)
-        {
-            success = false;
-        }
-        return success;
+            
+        return validatePassword(password.toCharArray(), correctHash);
     }
 
     /**
@@ -104,19 +96,27 @@ public class PasswordHash {
      * @param correctHash the hash of the valid password
      * @return true if the password is correct, false if not
      */
-    public boolean validatePassword(char[] password, String correctHash)
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public boolean validatePassword(char[] password, String correctHash) {
         // Decode the hash into its parameters
-        String[] params = correctHash.split(":");
-        int iterations = Integer.parseInt(params[ITERATION_INDEX]);
-        byte[] salt = fromHex(params[SALT_INDEX]);
-        byte[] hash = fromHex(params[PBKDF2_INDEX]);
-        // Compute the hash of the provided password, using the same salt, 
-        // iteration count, and hash length
-        byte[] testHash = pbkdf2(password, salt, iterations, hash.length);
-        // Compare the hashes in constant time. The password is correct if
-        // both hashes match.
-        return slowEquals(hash, testHash);
+        boolean success;
+        try
+        {
+            String[] params = correctHash.split(":");
+            int iterations = Integer.parseInt(params[ITERATION_INDEX]);
+            byte[] salt = fromHex(params[SALT_INDEX]);
+            byte[] hash = fromHex(params[PBKDF2_INDEX]);
+            // Compute the hash of the provided password, using the same salt, 
+            // iteration count, and hash length
+            byte[] testHash = pbkdf2(password, salt, iterations, hash.length);
+            // Compare the hashes in constant time. The password is correct if
+            // both hashes match.
+            success = slowEquals(hash, testHash);
+        }
+        catch(NoSuchAlgorithmException | InvalidKeySpecException | NumberFormatException e)
+        {
+            success = false;
+        }
+        return success;
     }
 
     /**

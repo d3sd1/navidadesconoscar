@@ -241,7 +241,7 @@ public class AdminServicios
                     returnme = ajax.errorResponse(12);
                 }
             }
-            catch (NoSuchAlgorithmException | InvalidKeySpecException ex)
+            catch (Exception ex)
             {
                 returnme = ajax.errorResponse(0);
             }

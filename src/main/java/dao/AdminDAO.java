@@ -47,9 +47,7 @@ public class AdminDAO
     private final String queryModCurso = "UPDATE cursos SET nombre = ? WHERE id = ?";
     private final String queryGetAllCursos = "SELECT * FROM cursos";
     private final String queryDelTarea = "DELETE FROM tareas WHERE id_asignatura = ?";
-    private final String queryDelTareaAlumno = "DELETE FROM tareas_alumnos "
-            + "WHERE id_tarea IN "
-            + "(SELECT id_tarea FROM tareas WHERE id_asignatura = ?)";
+    private final String queryDelTareaAlumno = "DELETE FROM tareas_alumnos WHERE id_tarea IN (SELECT id_tarea FROM tareas WHERE id_asignatura = ?)";
 
     public List<Asignatura> getAllAsignaturas()
     {

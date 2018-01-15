@@ -45,6 +45,7 @@ public class Configuration
     private int minutosParaValidar;
     private int longitudCodigo;
     private int longitudPass;
+    private boolean debug;
 
     private freemarker.template.Configuration freeMarker;
 
@@ -147,5 +148,16 @@ public class Configuration
     {
         this.longitudPass = longitudPass;
     }
+
+    public boolean isDebug()
+    {
+        return debug;
+    }
+
+    public void setDebug(boolean debug)
+    {
+        this.debug = debug;
+    }
+    
 
 }
