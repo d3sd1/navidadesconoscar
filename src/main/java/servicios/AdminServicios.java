@@ -205,7 +205,7 @@ public class AdminServicios
 
         boolean existe = dao.comprobarEmail(u);
 
-        if (existe == false)
+        if (!existe)
         {
             try
             {
