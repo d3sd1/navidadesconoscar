@@ -1,6 +1,10 @@
 package dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +13,8 @@ import model.Curso;
 import model.Nota;
 import model.Tarea;
 import model.User;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import utils.Queries;
 
 public class ProfeDAO {
@@ -46,7 +52,8 @@ public class ProfeDAO {
     }
     
     public String getNombreAsignatura(Asignatura asignatura) {
-        return (String) this.manager.queryForObject(Queries.queryGetAsignaturaNombre,String.class,asignatura.getId());
+        Asignatura asig = (Asignatura) this.manager.queryForObject(Queries.queryGetAsignaturaNombre,Asignatura.class,asignatura.getId());
+        return asig.getNombre();
     }
 
     public boolean modificarNota(Nota nota) {
@@ -105,28 +112,64 @@ public class ProfeDAO {
 
     /* por aqui */
     public boolean addTarea(Tarea tarea, List<Integer> idAlumnos, String email) {
-        ArrayList inserts = new ArrayList<>();
-        /* Añadir tarea */
-        inserts.add(new AbstractMap.SimpleEntry<>(Queries.queryAddTarea, new Object[]{
-            tarea.getAsignatura().getId(),
-            tarea.getNombre_tarea(),
-            new java.sql.Date(tarea.getFecha_entrega().getTime()),
-            email
-        }));
-        /* Añadir tareas a los alumnos */
-        for (int i = 0; i < idAlumnos.size(); i++) {
-            inserts.add(new AbstractMap.SimpleEntry<>(Queries.queryAddTareaAlumno, new Object[]{
-                tarea.getId_tarea(),
-                idAlumnos.get(i)
-            }));
+        Connection con = null;
+        boolean success = false;
+        try {
+            con = DBConnection.getInstance().getConnection();
+            con.setAutoCommit(false);
+
+            PreparedStatement stmt = con.prepareStatement(Queries.queryAddTarea, Statement.RETURN_GENERATED_KEYS);
+
+            stmt.setInt(1, tarea.getAsignatura().getId());
+            stmt.setString(2, tarea.getNombre_tarea());
+            stmt.setDate(3, new java.sql.Date(tarea.getFecha_entrega().getTime()));
+            stmt.setString(4, email);
+
+            stmt.executeUpdate();
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                tarea.setId_tarea(rs.getInt(1));
+            }
+
+            for (int i = 0; i < idAlumnos.size(); i++) {
+                stmt = con.prepareStatement(Queries.queryAddTareaAlumno);
+
+                stmt.setInt(1, tarea.getId_tarea());
+                stmt.setInt(2, idAlumnos.get(i));
+                
+                stmt.executeUpdate();
+            }
+
+            con.commit();
+            stmt.close();
+            success = true;
+        } catch (Exception ex) {
+            tarea = null;
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (SQLException ex1) {
+                
+            }
+        } finally {
+            DBConnection.getInstance().cerrarConexion(con);
         }
-        return this.manager.insertAllList(
-            inserts
-        );
+
+        return success;
     }
 
     public List<Integer> getIdAlumnos(Asignatura asignatura) {
-        return (List<Integer>) this.manager.queryAll(Queries.queryGetIdAlumnos,Integer.class, asignatura.getId());
+        List<Integer> idAlumnos = null;
+        try {
+            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+            idAlumnos =(List<Integer>) jtm.queryForList(Queries.queryGetIdAlumnos, Integer.class, asignatura.getId());
+
+        } catch (DataAccessException ex) {
+            
+        }
+        return idAlumnos;
     }
 
     public boolean modTarea(Tarea tarea) {
