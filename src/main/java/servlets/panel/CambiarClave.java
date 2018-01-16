@@ -36,12 +36,11 @@ public class CambiarClave extends HttpServlet
         switch (accion)
         {
             case Parametros.CAMBIARPASS:
-                String passActual = request.getParameter(Parametros.CAMBIARPASS_ACTUAL);
-                String nuevaPass = request.getParameter(Parametros.CAMBIARPASS_NUEVA);
+                String passActual = helper.depurarParametroString(request.getParameter(Parametros.CAMBIARPASS_ACTUAL));
+                String nuevaPass = helper.depurarParametroString( request.getParameter(Parametros.CAMBIARPASS_NUEVA));
                 String email = (String) request.getSession().getAttribute(Constantes.SESSION_NOMBRE_USUARIO);
                 AjaxResponse cambiarPass = us.cambiarPass(passActual, nuevaPass, email);
-                String objeto_json = ajax.parseResponse(cambiarPass);
-                response.getWriter().print(objeto_json);
+                response.getWriter().print(ajax.parseResponse(cambiarPass));
                 break;
 
             default:

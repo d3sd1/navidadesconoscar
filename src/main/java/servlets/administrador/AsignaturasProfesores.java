@@ -3,7 +3,6 @@ package servlets.administrador;
 import ajax.AjaxMaker;
 import ajax.AjaxResponse;
 import java.io.IOException;
-import static java.lang.Integer.parseInt;
 import java.util.AbstractMap;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,8 +29,8 @@ public class AsignaturasProfesores extends HttpServlet {
 
         switch (accion) {
             case Parametros.ACCION_ASIGNAR:
-                int id_profesor = parseInt(request.getParameter(Parametros.ID));
-                String asignaturas = request.getParameter(Parametros.ASIGNATURAS);
+                int id_profesor = helper.depurarParametroInt(request.getParameter(Parametros.ID));
+                String asignaturas = helper.depurarParametroString(request.getParameter(Parametros.ASIGNATURAS));
                 AjaxResponse asignarProfeAsig = as.asignarProfeAsig(id_profesor, asignaturas);
                 
                 response.getWriter().print(ajax.parseResponse(asignarProfeAsig));
