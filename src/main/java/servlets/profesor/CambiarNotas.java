@@ -9,7 +9,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.Nota;
 import servicios.ProfeServicios;
 import utils.Constantes;
 import utils.Parametros;
@@ -32,18 +31,13 @@ public class CambiarNotas extends HttpServlet {
         
         switch (accion) {
             case Parametros.ACCION_MODIFICAR:
-                Nota n = new Nota();
-                AjaxResponse modNota;
                 
+                AjaxResponse modNota;
                 int id_alumno = helper.depurarParametroInt(request.getParameter(Parametros.ID_ALUMNO));
                 int id_asignatura = helper.depurarParametroInt(request.getParameter(Parametros.ID_ASIGNATURA));
                 double nota = helper.depurarParametroDouble(request.getParameter(Parametros.NOTA));
                 
-                n.getAlumno().setId(id_alumno);
-                n.getAsignatura().setId(id_asignatura);
-                n.setNota(nota);
-                
-                modNota = ps.modNota(n);
+                modNota = ps.modNota(id_alumno,id_asignatura,nota);
                 
                 response.getWriter().print(ajax.parseResponse(modNota));
                 break;

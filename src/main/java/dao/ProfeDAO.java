@@ -17,10 +17,11 @@ import utils.Queries;
 
 public class ProfeDAO {
 
-    public List<Nota> getAllNotas(int id) {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<Nota> notas = jtm.query(Queries.queryGetAllNotasProfe, (ResultSet rs, int rowNum)
-                -> {
+    private final DBManager manager = new DBManager();
+    public List<Nota> getAllNotas(User profe) {
+        /* Con RowMapper personalizado para rellenar campos de objetos del modelo */
+        return (List<Nota>) this.manager.queryRunnable(Queries.queryGetAllNotasProfe,(ResultSet rs, int rowNum) ->
+        {
             Nota nota = new Nota();
 
             nota.setNota(rs.getDouble(7));
@@ -41,20 +42,11 @@ public class ProfeDAO {
             curso.setNombre(rs.getString(6));
             nota.setCurso(curso);
             return nota;
-        }, id);
-
-        return notas;
+        },profe.getId());
     }
 
-    public int getId(String email) {
-        int id = 0;
-        try {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            id = jtm.queryForObject(Queries.queryGetId, int.class, email);
-
-        } catch (DataAccessException ex) {
-        }
-        return id;
+    public int getId(User profe) {
+        return (int) this.manager.queryForInt(Queries.queryGetId,profe.getEmail());
     }
     
     public String getNombreAsignatura(int id) {
@@ -69,24 +61,14 @@ public class ProfeDAO {
         return nombre;
     }
 
-    public boolean modNota(Nota n) {
-        boolean modificado = false;
-        try {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(Queries.queryModNota, n.getNota(), n.getAlumno().getId(), n.getAsignatura().getId()) > 0) {
-                modificado = true;
-            }
-        } catch (DataAccessException ex) {
-            modificado = false;
-        }
-        return modificado;
+    public boolean modificarNota(Nota nota) {
+        return this.manager.update(Queries.queryModNota, nota.getNota(), nota.getAlumno().getId(), nota.getAsignatura().getId());
     }
 
-    public List<Nota> getAllNotasCursos(int id) {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-
-        List<Nota> notas = jtm.query(Queries.queryGetAllNotasCurso, (ResultSet rs, int rowNum)
-                -> {
+    public List<Nota> getAllNotasCursos(User profe) {
+        /* Con RowMapper personalizado para rellenar campos de objetos del modelo */
+        return (List<Nota>) this.manager.queryRunnable(Queries.queryGetAllNotasCurso,(ResultSet rs, int rowNum) ->
+        {
             Nota nota = new Nota();
 
             nota.setNota(rs.getDouble(5));
@@ -102,15 +84,13 @@ public class ProfeDAO {
             curso.setId(rs.getInt(2));
             nota.setCurso(curso);
             return nota;
-        }, id);
-        return notas;
+        },profe.getId());
     }
 
-    public List<Nota> getAllNotasCursosAlumnos(int id) {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-
-        List<Nota> notas = jtm.query(Queries.queryGetAllNotasCursoAlumnos, (ResultSet rs, int rowNum)
-                -> {
+    public List<Nota> getAllNotasCursosAlumnos(User alumno) {
+        
+        return (List<Nota>) this.manager.queryRunnable(Queries.queryGetAllNotasCursoAlumnos,(ResultSet rs, int rowNum) ->
+        {
             Nota nota = new Nota();
 
             nota.setNota(rs.getDouble(7));
@@ -121,21 +101,21 @@ public class ProfeDAO {
             asignatura.setNombre(rs.getString(4));
             nota.setAsignatura(asignatura);
 
-            User alumno = new User();
+            User alum = new User();
 
-            alumno.setId(rs.getInt(5));
-            alumno.setNombre(rs.getString(6));
-            nota.setAlumno(alumno);
+            alum.setId(rs.getInt(5));
+            alum.setNombre(rs.getString(6));
+            nota.setAlumno(alum);
 
             Curso curso = new Curso();
             curso.setNombre(rs.getString(1));
             curso.setId(rs.getInt(2));
             nota.setCurso(curso);
             return nota;
-        }, id);
-        return notas;
+        },alumno.getId());
     }
 
+    /* por aqui */
     public Tarea addTarea(Tarea t, List<Integer> idAlumnos, String email) {
         Connection con = null;
         try {
@@ -183,16 +163,8 @@ public class ProfeDAO {
         return t;
     }
 
-    public List<Integer> getIdAlumnos(int idAsignatura) {
-        List<Integer> idAlumnos = null;
-        try {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            idAlumnos =(List<Integer>) jtm.queryForList(Queries.queryGetIdAlumnos, Integer.class, idAsignatura);
-
-        } catch (DataAccessException ex) {
-            
-        }
-        return idAlumnos;
+    public List<Integer> getIdAlumnos(Asignatura asignatura) {
+        return (List<Integer>) this.manager.queryAll(Queries.queryGetIdAlumnos,Integer.class, asignatura.getId());
     }
 
     public Tarea modTarea(Tarea t) {
@@ -207,9 +179,10 @@ public class ProfeDAO {
         return t;
     }
     
-    public List<Tarea> getAllTareas(String email) {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<Tarea> tareas = jtm.query(Queries.queryGetAllTareasProfe, (ResultSet rs, int rowNum) -> {
+    public List<Tarea> getAllTareas(User profe) {
+        /* Con RowMapper personalizado para rellenar campos de objetos del modelo */
+        return (List<Tarea>) this.manager.queryRunnable(Queries.queryGetAllTareasProfe,(ResultSet rs, int rowNum) ->
+        {
             Tarea tarea = new Tarea();
             tarea.setNombre_tarea(rs.getString(1));
             tarea.setFecha_entrega(new java.util.Date(rs.getTimestamp(2).getTime()));
@@ -219,25 +192,17 @@ public class ProfeDAO {
             tarea.setId_tarea(rs.getInt(6));
 
             return tarea;
-        }, email);
-
-        return tareas;
+        },profe.getEmail());
     }
     
-    public boolean delTarea (Tarea t){
-        Connection con = null;
-        boolean eliminado;
+    public boolean delTarea (Tarea tarea){
+        boolean delTareaSuccess = this.manager.delete(Queries.queryDelTareaProfeAlumno,false,tarea.getId_tarea());
+        boolean delTareaProfeSuccess = this.manager.delete(Queries.queryDelTareaProfe,false,tarea.getId_tarea());
+        return ;
         try {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
             
-            PreparedStatement stmt = con.prepareStatement(Queries.queryDelTareaProfeAlumno);
-            stmt.setInt(1, t.getId_tarea());
-            stmt.executeUpdate();
-            
-            stmt = con.prepareStatement(Queries.queryDelTareaProfe);
-            stmt.setInt(1, t.getId_tarea());
-            stmt.executeUpdate();
             
             con.commit();
             stmt.close();

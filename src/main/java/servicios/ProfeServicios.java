@@ -14,6 +14,7 @@ import java.util.List;
 import model.Asignatura;
 import model.Nota;
 import model.Tarea;
+import model.User;
 import utils.Constantes;
 import utils.Parametros;
 
@@ -25,32 +26,42 @@ public class ProfeServicios
     public List<Nota> getAllNotas(String email)
     {
         ProfeDAO dao = new ProfeDAO();
-        int id = dao.getId(email);
-        return dao.getAllNotas(id);
+        User profe = new User();
+        profe.setEmail(email);
+        
+        int id = dao.getId(profe);
+        profe.setId(id);
+        
+        return dao.getAllNotas(profe);
     }
 
     public List<Nota> getAllNotasCursosAlumnos(String email)
     {
         ProfeDAO dao = new ProfeDAO();
-        int id = dao.getId(email);
-        return dao.getAllNotasCursosAlumnos(id);
+        User profe = new User();
+        profe.setEmail(email);
+        
+        int id = dao.getId(profe);
+        profe.setId(id);
+        
+        return dao.getAllNotasCursosAlumnos(profe);
     }
 
-    public AjaxResponse modNota(Nota n)
+    public AjaxResponse modNota(int id_alumno,int id_asignatura,double notaNumber)
     {
         ProfeDAO dao = new ProfeDAO();
-        AjaxResponse returnme;
-        boolean notaCambiada = dao.modNota(n);
+        AjaxResponse returnme = ajax.errorResponse(16);
+        
+        Nota nota = new Nota();
+        nota.getAlumno().setId(id_alumno);
+        nota.getAsignatura().setId(id_asignatura);
+        nota.setNota(notaNumber);
 
-        if (notaCambiada)
+        if (dao.modificarNota(nota))
         {
             HashMap<String, String> datos = new HashMap<>();
-            datos.put(Parametros.NOTA, String.valueOf(n.getNota()));
+            datos.put(Parametros.NOTA, String.valueOf(nota.getNota()));
             returnme = ajax.successResponse(datos);
-        }
-        else
-        {
-            returnme = ajax.errorResponse(16);
         }
 
         return returnme;
@@ -59,8 +70,14 @@ public class ProfeServicios
     public List<Nota> getAllNotasCursos(String email)
     {
         ProfeDAO dao = new ProfeDAO();
-        int id = dao.getId(email);
-        return dao.getAllNotasCursos(id);
+        
+        User profe = new User();
+        profe.setEmail(email);
+        
+        int id = dao.getId(profe);
+        profe.setId(id);
+        
+        return dao.getAllNotasCursos(profe);
     }
 
     public List<Asignatura> getAllAsignaturas()
@@ -69,34 +86,34 @@ public class ProfeServicios
         return dao.getAllAsignaturas();
     }
 
+    /* por aqui */
     /* TAREAS */
     public AjaxResponse agregarTarea(int id_asignatura, LocalDate fecha_entrega, String nombre_tarea, int id_tarea, String email)
     {
-        Tarea t = new Tarea();
-        t.getAsignatura().setId(id_asignatura);
-        t.setId_tarea(id_tarea);
-        t.setNombre_tarea(nombre_tarea);
-        t.setFecha_entrega(Date.from(fecha_entrega.atStartOfDay().toInstant(ZoneOffset.UTC)));
-        t.setId_tarea(id_tarea);
-        //t.getAsignatura().setNombre();
+        Tarea tarea = new Tarea();
+        tarea.getAsignatura().setId(id_asignatura);
+        tarea.setId_tarea(id_tarea);
+        tarea.setNombre_tarea(nombre_tarea);
+        tarea.setFecha_entrega(Date.from(fecha_entrega.atStartOfDay().toInstant(ZoneOffset.UTC)));
+        tarea.setId_tarea(id_tarea);
 
         ProfeDAO dao = new ProfeDAO();
         AjaxResponse returnme;
-        List<Integer> idAlumnos = dao.getIdAlumnos(t.getAsignatura().getId());
+        List<Integer> idAlumnos = dao.getIdAlumnos(tarea.getAsignatura());
 
         if (idAlumnos.size() > 0)
         {
-            t = dao.addTarea(t, idAlumnos, email);
+            tarea = dao.addTarea(tarea, idAlumnos, email);
 
-            if (t != null)
+            if (tarea != null)
             {
                 DateFormat df = new SimpleDateFormat(Constantes.FORMATO_FECHA);
                 HashMap<String, String> datos = new HashMap<>();
-                datos.put(Parametros.ID_TAREA, String.valueOf(t.getId_tarea()));
-                datos.put(Parametros.ID_ASIGNATURA, String.valueOf(t.getAsignatura().getId()));
-                datos.put(Parametros.NOMBRE_TAREA, t.getNombre_tarea());
-                datos.put(Parametros.NOMBRE_ASIGNATURA, dao.getNombreAsignatura(t.getAsignatura().getId()));
-                datos.put(Parametros.FECHA_ENTREGA, df.format(t.getFecha_entrega()));
+                datos.put(Parametros.ID_TAREA, String.valueOf(tarea.getId_tarea()));
+                datos.put(Parametros.ID_ASIGNATURA, String.valueOf(tarea.getAsignatura().getId()));
+                datos.put(Parametros.NOMBRE_TAREA, tarea.getNombre_tarea());
+                datos.put(Parametros.NOMBRE_ASIGNATURA, dao.getNombreAsignatura(tarea.getAsignatura().getId()));
+                datos.put(Parametros.FECHA_ENTREGA, df.format(tarea.getFecha_entrega()));
                 returnme = ajax.successResponse(datos);
             }
             else
@@ -164,6 +181,8 @@ public class ProfeServicios
     public List<Tarea> getAllTareas(String email)
     {
         ProfeDAO dao = new ProfeDAO();
-        return dao.getAllTareas(email);
+        User profe = new User();
+        profe.setEmail(email);
+        return dao.getAllTareas(profe);
     }
 }

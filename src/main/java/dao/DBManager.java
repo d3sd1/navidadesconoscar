@@ -134,6 +134,16 @@ public class DBManager
         }
         return result;
     }
+    public boolean delete(String query, Object... parametros)
+    {
+        return this.delete(query,true,parametros);
+    }
+    public boolean delete(String query, boolean autoCommit, Object... parametros)
+    {
+        JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        Object[] params = new ArrayList<>(Arrays.asList(parametros)).toArray();
+        return jdbcTemplateObject.update(query, params) > 0;
+    }
     /* queryForObject de spring JDBC sin RowMapper 
     public Object queryForObject(String query, Object... parametros)
     {
