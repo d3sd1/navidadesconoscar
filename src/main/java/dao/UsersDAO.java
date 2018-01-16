@@ -28,7 +28,7 @@ public class UsersDAO
 
     public boolean updatePassByCodigo(User user)
     {
-        return this.manager.update(Queries.queryUpdateCodigo, user.getClave(),user.getCodigoActivacion());
+        return this.manager.update(Queries.queryUpdatePassByCodigo, user.getClave(), user.getCodigoActivacion());
     }
 
     public int getPermiso(User user)

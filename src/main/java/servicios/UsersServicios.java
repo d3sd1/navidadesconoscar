@@ -63,7 +63,7 @@ public class UsersServicios
         
         AjaxResponse returnme = ajax.errorResponse(4);
 
-        if (!user.getEmail().equals(""))
+        if (user.getEmail() != null && !user.getEmail().equals(""))
         {
             Utils helper = new Utils();
             user.setCodigoActivacion(helper.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));

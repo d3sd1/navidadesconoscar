@@ -1,5 +1,10 @@
 package dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -150,17 +155,42 @@ public class AdminDAO
         return this.manager.queryForBoolean(Queries.queryComprobarEmail,user.getEmail());
     }
 
-    public int addUser(User u)
-    {
-        return this.manager.insertRetKey(
-            Queries.queryRegistrarUser,
-                u.getEmail(),
-                u.getClave(),
-                u.getCodigoActivacion(),
-                u.getNombre(),
-                1
-        );
-    }
+     public int addUser(User u)
+     {
+         System.out.println("adduser");
+         Connection con = null;
+         int id = 0;
+         try
+         {
+              con = DBConnection.getInstance().getConnection();
+              con.setAutoCommit(false);
+  
+             PreparedStatement stmt = con.prepareStatement(Queries.queryRegistrarUser, Statement.RETURN_GENERATED_KEYS);
+              stmt.setString(1, u.getEmail());
+              stmt.setString(2, u.getClave());
+              stmt.setString(3, u.getCodigoActivacion());
+             stmt.setString(4, u.getNombre());
+             stmt.setInt(5, u.getId_permiso());
+             stmt.executeUpdate();
+ 
+             ResultSet rs = stmt.getGeneratedKeys();
+             if (rs.next())
+             {
+                  id = rs.getInt(1);
+              }
+  
+        }
+
+        catch (Exception ex1)
+        {
+            System.out.println("EXXXXXXXXXXX: " + ex1);
+        }
+        finally
+        {
+            DBConnection.getInstance().cerrarConexion(con);
+        }
+        return id;
+     }
 
     public boolean modUser(User u, int tipo)
     {
