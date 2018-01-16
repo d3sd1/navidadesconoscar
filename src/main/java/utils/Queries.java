@@ -3,7 +3,7 @@ package utils;
 
 public class Queries {
     public final static String queryGetUserByMail = "SELECT * FROM users WHERE email = ?";
-    public final static String queryGetPermiso = "SELECT up.id_permiso FROM users_permisos up JOIN users u ON up.id_user = u.id WHERE u.email = ?";
+    public final static String queryGetPermiso = "SELECT id_permiso FROM users WHERE email = ?";
     public final static String queryUserByCodigoActivacion = "SELECT * FROM users WHERE codigo_activacion = ?";
     public final static String queryActivar = "UPDATE users SET activo = TRUE, codigo_activacion = NULL WHERE codigo_activacion = ?";
     public final static String queryUpdateCodigo = "UPDATE users SET codigo_activacion = ? WHERE email = ?";
@@ -28,16 +28,16 @@ public class Queries {
             + "(SELECT id FROM users WHERE email = ?)";
     
     public final static String queryGetAllAsignaturas = "SELECT * FROM asignaturas";
-    public final static String queryGetAllUsers = "SELECT u.id, u.email, u.nombre, up.id_permiso FROM users u JOIN users_permisos up ON u.id = up.id_user";
+    public final static String queryGetAllUsers = "SELECT id, email, nombre, id_permiso FROM users";
     public final static String queryAddAsig = "INSERT INTO asignaturas (nombre,id_curso) VALUES (?,?)";
     public final static String queryModAsig = "UPDATE asignaturas SET nombre = ?, id_curso = ? WHERE id = ?";
     public final static String queryDelAsig = "DELETE FROM asignaturas WHERE id = ?";
     public final static String queryDelNota = "DELETE FROM alumnos_asignaturas WHERE id_asignatura = ?";
     public final static String queryDelAsigProfe = "DELETE FROM profesores_asignaturas WHERE id_asignatura = ?";
-    public final static String queryGetAllAlumnos = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 3";
-    public final static String queryGetTotalAlumnos = "SELECT COUNT(*) FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 3";
-    public final static String queryGetAlumnosPaginados = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 3 LIMIT ?,?";
-    public final static String queryGetAllProfes = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 2";
+    public final static String queryGetAllAlumnos = "SELECT * FROM users u WHERE id_permiso = 3";
+    public final static String queryGetTotalAlumnos = "SELECT COUNT(*) FROM users u WHERE id_permiso = 3";
+    public final static String queryGetAlumnosPaginados = "SELECT * FROM users u WHERE id_permiso = 3 LIMIT ?,?";
+    public final static String queryGetAllProfes = "SELECT * FROM users u WHERE id_permiso = 2";
     public final static String queryAsignarProfeAsig = "INSERT INTO profesores_asignaturas (id_profesor, id_asignatura) VALUES (?,?)";
     public final static String queryEliminarProfeAsig = "DELETE FROM profesores_asignaturas WHERE id_profesor = ?";
     public final static String queryAsignarAlumAsig = "INSERT INTO alumnos_asignaturas (id_alumno, id_asignatura) VALUES (?,?)";
@@ -45,13 +45,11 @@ public class Queries {
     public final static String queryGetAllAlumAsig = "SELECT * FROM alumnos_asignaturas";
     public final static String queryGetAllProfeAsig = "SELECT * FROM profesores_asignaturas";
     public final static String queryComprobarEmail = "SELECT email FROM users WHERE email = ?";
-    public final static String queryRegistrarUser = "INSERT INTO users (email,clave,activo,codigo_activacion,nombre) VALUES (?,?,0,?,?)";
-    public final static String queryRegistrarUserPermisos = "INSERT INTO users_permisos (id_user,id_permiso) VALUES (?,?)";
+    public final static String queryRegistrarUser = "INSERT INTO users (email,clave,activo,codigo_activacion,nombre,id_permiso) VALUES (?,?,0,?,?,?)";
     public final static String queryModificarUser = "UPDATE users SET email = ?, nombre = ? WHERE id = ?";
-    public final static String queryModificarUserPermisos = "UPDATE users_permisos SET id_permiso = ? WHERE id_user = ?";
-    public final static String queryGetPermisoAdmin = "SELECT id_permiso FROM users_permisos WHERE id_user = ?";
+    public final static String queryModificarUserPermisos = "UPDATE users SET id_permiso = ? WHERE id = ?";
+    public final static String queryGetPermisoAdmin = "SELECT id_permiso FROM users WHERE id = ?";
     public final static String queryDelUser = "DELETE FROM users WHERE id = ?";
-    public final static String queryDelUserPermiso = "DELETE FROM users_permisos WHERE id_user = ?";
     public final static String queryAddCurso = "INSERT INTO cursos (nombre) VALUES (?)";
     public final static String queryModCurso = "UPDATE cursos SET nombre = ? WHERE id = ?";
     public final static String queryGetAllCursos = "SELECT * FROM cursos";

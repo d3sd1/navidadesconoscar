@@ -68,8 +68,15 @@ public class Utils
 
     public int depurarParametroInt(String param)
     {
-        String number = depuradorParametros(param).toString();
-        return number.equals("") ? 0 : Integer.parseInt(number);
+        try
+        {
+            String number = depuradorParametros(param).toString();
+            return number.equals("") ? 0 : Integer.parseInt(number);
+        }
+        catch (NumberFormatException ex)
+        {
+            return 0;
+        }
     }
 
     public double depurarParametroDouble(String param)

@@ -150,19 +150,15 @@ public class AdminDAO
         return this.manager.queryForBoolean(Queries.queryComprobarEmail,user.getEmail());
     }
 
-    public boolean addUser(User u)
+    public int addUser(User u)
     {
-        return this.manager.insertAll(
-            new AbstractMap.SimpleEntry<>(Queries.queryRegistrarUser, new Object[]{
+        return this.manager.insertRetKey(
+            Queries.queryRegistrarUser,
                 u.getEmail(),
                 u.getClave(),
                 u.getCodigoActivacion(),
-                u.getNombre()
-            }),
-            new AbstractMap.SimpleEntry<>(Queries.queryRegistrarUserPermisos, new Object[]{
-                u.getId(),
-                u.getId_permiso()
-            })
+                u.getNombre(),
+                1
         );
     }
 
@@ -184,7 +180,6 @@ public class AdminDAO
         return this.manager.deleteAll(
             new AbstractMap.SimpleEntry<>(Queries.queryEliminarAlumAsig, new Object[]{user.getId()}),
             new AbstractMap.SimpleEntry<>(Queries.queryEliminarProfeAsig, new Object[]{user.getId()}),
-            new AbstractMap.SimpleEntry<>(Queries.queryDelUserPermiso, new Object[]{user.getId()}),
             new AbstractMap.SimpleEntry<>(Queries.queryDelUser, new Object[]{user.getId()})
         );
     }

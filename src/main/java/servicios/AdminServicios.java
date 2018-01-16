@@ -213,8 +213,8 @@ public class AdminServicios
                 String clave = helper.randomAlphaNumeric(Configuration.getInstance().getLongitudPass());
                 u.setClave(PasswordHash.getInstance().createHash(clave));
                 u.setCodigoActivacion(helper.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
-
-                if (dao.addUser(u))
+                u.setId(dao.addUser(u));
+                if (u.getId() != 0)
                 {
                     helper.mandarMail(u.getEmail(), Constantes.EMAIL_CONTENT_ACTIVAR_1
                             + Constantes.LINK_EMAIL_ACTIVAR + u.getCodigoActivacion()

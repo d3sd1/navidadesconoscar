@@ -1,6 +1,8 @@
 package dao;
 
 import config.Configuration;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -10,8 +12,10 @@ import java.util.logging.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 /*
@@ -124,7 +128,7 @@ public class DBManager
         {
             if(debug)
             {
-                Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
+                //Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
             }
         }
         return result > 0;
