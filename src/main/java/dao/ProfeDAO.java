@@ -13,47 +13,13 @@ import model.Tarea;
 import model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import utils.Queries;
 
 public class ProfeDAO {
 
-    private final String queryGetAllNotasCurso = "SELECT c.nombre, c.id, a.id, a.nombre, AVG(aa.nota) "
-            + "FROM users u "
-            + "JOIN alumnos_asignaturas aa ON u.id = aa.id_alumno "
-            + "JOIN profesores_asignaturas pa ON pa.id_asignatura = aa.id_asignatura "
-            + "JOIN asignaturas a ON a.id = aa.id_asignatura "
-            + "JOIN cursos c ON c.id = a.id_curso  "
-            + "WHERE pa.id_profesor=? "
-            + "GROUP BY aa.id_asignatura";
-    private final String queryGetAllNotasCursoAlumnos = "SELECT c.nombre, c.id, a.id, a.nombre, u.id, u.nombre, aa.nota "
-            + "FROM users u "
-            + "JOIN alumnos_asignaturas aa ON u.id = aa.id_alumno "
-            + "JOIN profesores_asignaturas pa ON pa.id_asignatura = aa.id_asignatura "
-            + "JOIN asignaturas a ON a.id = aa.id_asignatura "
-            + "JOIN cursos c ON c.id = a.id_curso  "
-            + "WHERE pa.id_profesor=? ";
-    private final String queryGetAllNotas = "SELECT u.id, u.nombre, a.id, a.nombre, c.id, c.nombre, aa.nota "
-            + "FROM users u "
-            + "JOIN alumnos_asignaturas aa ON u.id = aa.id_alumno "
-            + "JOIN asignaturas a ON a.id = aa.id_asignatura "
-            + "JOIN profesores_asignaturas pa ON pa.id_asignatura = aa.id_asignatura "
-            + "JOIN cursos c ON c.id = a.id_curso "
-            + "WHERE pa.id_profesor = ? ";
-    private final String queryGetId = "SELECT id FROM users WHERE email = ?";
-    private final String queryGetAsignaturaNombre = "SELECT nombre FROM asignaturas WHERE id = ?";
-    private final String queryModNota = "UPDATE alumnos_asignaturas SET nota = ? WHERE id_alumno = ? AND id_asignatura = ?";
-    private final String queryAddTarea = "INSERT INTO tareas (id_asignatura, nombre_tarea, fecha_entrega, email_profesor) VALUES (?,?,?,?)";
-    private final String queryAddTareaAlumno = "INSERT INTO tareas_alumnos (id_tarea, id_alumno, completado) VALUES (?,?,0)";
-    private final String queryModTarea = "UPDATE tareas SET nombre_tarea = ?, fecha_entrega = ? WHERE id_tarea = ?";
-    private final String queryGetIdAlumnos = "SELECT id_alumno FROM alumnos_asignaturas WHERE id_asignatura = ?";
-    private final String queryGetAllTareas = "SELECT t.nombre_tarea, t.fecha_entrega, t.email_profesor, a.id, a.nombre, t.id_tarea FROM tareas t "
-            + "JOIN asignaturas a ON a.id=t.id_asignatura"
-            + " WHERE email_profesor = ?";
-    private final String queryDelTarea = "DELETE FROM tareas WHERE id_tarea = ?";
-    private final String queryDelTareaAlumno = "DELETE FROM tareas_alumnos WHERE id_tarea = ?";
-
     public List<Nota> getAllNotas(int id) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<Nota> notas = jtm.query(queryGetAllNotas, (ResultSet rs, int rowNum)
+        List<Nota> notas = jtm.query(Queries.queryGetAllNotasProfe, (ResultSet rs, int rowNum)
                 -> {
             Nota nota = new Nota();
 
@@ -84,7 +50,7 @@ public class ProfeDAO {
         int id = 0;
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            id = jtm.queryForObject(queryGetId, int.class, email);
+            id = jtm.queryForObject(Queries.queryGetId, int.class, email);
 
         } catch (DataAccessException ex) {
         }
@@ -95,7 +61,7 @@ public class ProfeDAO {
         String nombre = "";
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            nombre = jtm.queryForObject(queryGetAsignaturaNombre, String.class, id);
+            nombre = jtm.queryForObject(Queries.queryGetAsignaturaNombre, String.class, id);
 
         } catch (DataAccessException ex) {
             
@@ -107,7 +73,7 @@ public class ProfeDAO {
         boolean modificado = false;
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (jtm.update(queryModNota, n.getNota(), n.getAlumno().getId(), n.getAsignatura().getId()) > 0) {
+            if (jtm.update(Queries.queryModNota, n.getNota(), n.getAlumno().getId(), n.getAsignatura().getId()) > 0) {
                 modificado = true;
             }
         } catch (DataAccessException ex) {
@@ -119,7 +85,7 @@ public class ProfeDAO {
     public List<Nota> getAllNotasCursos(int id) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
 
-        List<Nota> notas = jtm.query(queryGetAllNotasCurso, (ResultSet rs, int rowNum)
+        List<Nota> notas = jtm.query(Queries.queryGetAllNotasCurso, (ResultSet rs, int rowNum)
                 -> {
             Nota nota = new Nota();
 
@@ -143,7 +109,7 @@ public class ProfeDAO {
     public List<Nota> getAllNotasCursosAlumnos(int id) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
 
-        List<Nota> notas = jtm.query(queryGetAllNotasCursoAlumnos, (ResultSet rs, int rowNum)
+        List<Nota> notas = jtm.query(Queries.queryGetAllNotasCursoAlumnos, (ResultSet rs, int rowNum)
                 -> {
             Nota nota = new Nota();
 
@@ -176,7 +142,7 @@ public class ProfeDAO {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
-            PreparedStatement stmt = con.prepareStatement(queryAddTarea, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryAddTarea, Statement.RETURN_GENERATED_KEYS);
 
             stmt.setInt(1, t.getAsignatura().getId());
             stmt.setString(2, t.getNombre_tarea());
@@ -191,7 +157,7 @@ public class ProfeDAO {
             }
 
             for (int i = 0; i < idAlumnos.size(); i++) {
-                stmt = con.prepareStatement(queryAddTareaAlumno);
+                stmt = con.prepareStatement(Queries.queryAddTareaAlumno);
 
                 stmt.setInt(1, t.getId_tarea());
                 stmt.setInt(2, idAlumnos.get(i));
@@ -221,7 +187,7 @@ public class ProfeDAO {
         List<Integer> idAlumnos = null;
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            idAlumnos =(List<Integer>) jtm.queryForList(queryGetIdAlumnos, Integer.class, idAsignatura);
+            idAlumnos =(List<Integer>) jtm.queryForList(Queries.queryGetIdAlumnos, Integer.class, idAsignatura);
 
         } catch (DataAccessException ex) {
             
@@ -232,7 +198,7 @@ public class ProfeDAO {
     public Tarea modTarea(Tarea t) {
         try {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (!(jtm.update(queryModTarea, t.getNombre_tarea(), t.getFecha_entrega(), t.getId_tarea()) > 0)) {
+            if (!(jtm.update(Queries.queryModTarea, t.getNombre_tarea(), t.getFecha_entrega(), t.getId_tarea()) > 0)) {
                 t = null;
             }
         } catch (DataAccessException ex) {
@@ -243,7 +209,7 @@ public class ProfeDAO {
     
     public List<Tarea> getAllTareas(String email) {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<Tarea> tareas = jtm.query(queryGetAllTareas, (ResultSet rs, int rowNum) -> {
+        List<Tarea> tareas = jtm.query(Queries.queryGetAllTareasProfe, (ResultSet rs, int rowNum) -> {
             Tarea tarea = new Tarea();
             tarea.setNombre_tarea(rs.getString(1));
             tarea.setFecha_entrega(new java.util.Date(rs.getTimestamp(2).getTime()));
@@ -265,11 +231,11 @@ public class ProfeDAO {
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
             
-            PreparedStatement stmt = con.prepareStatement(queryDelTareaAlumno);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryDelTareaProfeAlumno);
             stmt.setInt(1, t.getId_tarea());
             stmt.executeUpdate();
             
-            stmt = con.prepareStatement(queryDelTarea);
+            stmt = con.prepareStatement(Queries.queryDelTareaProfe);
             stmt.setInt(1, t.getId_tarea());
             stmt.executeUpdate();
             

@@ -29,7 +29,7 @@ public class Configuration
             config = (Configuration) yaml.loadAs(file, Configuration.class);
             config.setFreeMarker(new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_23));
             config.getFreeMarker().setServletContextForTemplateLoading(sc, "/WEB-INF/templates");
-            config.getFreeMarker().setDefaultEncoding("ISO-8859-1");
+            config.getFreeMarker().setDefaultEncoding("UTF-8");
             config.getFreeMarker().setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
 
             config.getFreeMarker().setLogTemplateExceptions(false);

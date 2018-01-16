@@ -3,6 +3,7 @@ package dao;
 import config.Configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.dao.DataAccessException;
@@ -66,6 +67,27 @@ public class DBManager
                 {
                     Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
+        }
+        return result;
+    }
+    public Object queryAll(String query, Class<?> clase, Object... parametros)
+    {
+        /* Abrimos conexión */
+        JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        /* Parseamos los parámetros introducidos en los argumentos en un objeto para pasarlo a spring JDBC */
+        Object[] params = new ArrayList<>(Arrays.asList(parametros)).toArray();
+        List<Object> result = null;
+        try
+        {
+            /* Intentamos la query */
+            result = jdbcTemplateObject.query(query, params, new BeanPropertyRowMapper(clase));
+        }
+        catch(DataAccessException e)
+        {
+            if(debug)
+            {
+                Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
             }
         }
         return result;

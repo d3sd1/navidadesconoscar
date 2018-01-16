@@ -4,8 +4,6 @@ import ajax.AjaxMaker;
 import ajax.AjaxResponse;
 import config.Configuration;
 import dao.AdminDAO;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

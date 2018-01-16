@@ -14,71 +14,30 @@ import model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import utils.Queries;
 
 public class AdminDAO
 {
-
-    private final String queryGetAllAsignaturas = "SELECT * FROM asignaturas";
-    private final String queryGetAllUsers = "SELECT u.id, u.email, u.nombre, up.id_permiso FROM users u JOIN users_permisos up ON u.id = up.id_user";
-    private final String queryAddAsig = "INSERT INTO asignaturas (nombre,id_curso) VALUES (?,?)";
-    private final String queryModAsig = "UPDATE asignaturas SET nombre = ?, id_curso = ? WHERE id = ?";
-    private final String queryDelAsig = "DELETE FROM asignaturas WHERE id = ?";
-    private final String queryDelNota = "DELETE FROM alumnos_asignaturas WHERE id_asignatura = ?";
-    private final String queryDelAsigProfe = "DELETE FROM profesores_asignaturas WHERE id_asignatura = ?";
-    private final String queryGetAllAlumnos = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 3";
-    private final String queryGetTotalAlumnos = "SELECT COUNT(*) FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 3";
-    private final String queryGetAlumnosPaginados = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 3 LIMIT ?,?";
-    private final String queryGetAllProfes = "SELECT * FROM users u JOIN users_permisos up ON u.id = up.id_user WHERE id_permiso = 2";
-    private final String queryAsignarProfeAsig = "INSERT INTO profesores_asignaturas (id_profesor, id_asignatura) VALUES (?,?)";
-    private final String queryEliminarProfeAsig = "DELETE FROM profesores_asignaturas WHERE id_profesor = ?";
-    private final String queryAsignarAlumAsig = "INSERT INTO alumnos_asignaturas (id_alumno, id_asignatura) VALUES (?,?)";
-    private final String queryEliminarAlumAsig = "DELETE FROM alumnos_asignaturas WHERE id_alumno = ?";
-    private final String queryGetAllAlumAsig = "SELECT * FROM alumnos_asignaturas";
-    private final String queryGetAllProfeAsig = "SELECT * FROM profesores_asignaturas";
-    private final String queryComprobarEmail = "SELECT email FROM users WHERE email = ?";
-    private final String queryRegistrarUser = "INSERT INTO users (email,clave,activo,codigo_activacion,nombre) VALUES (?,?,0,?,?)";
-    private final String queryRegistrarUserPermisos = "INSERT INTO users_permisos (id_user,id_permiso) VALUES (?,?)";
-    private final String queryModificarUser = "UPDATE users SET email = ?, nombre = ? WHERE id = ?";
-    private final String queryModificarUserPermisos = "UPDATE users_permisos SET id_permiso = ? WHERE id_user = ?";
-    private final String queryGetPermiso = "SELECT id_permiso FROM users_permisos WHERE id_user = ?";
-    private final String queryDelUser = "DELETE FROM users WHERE id = ?";
-    private final String queryDelUserPermiso = "DELETE FROM users_permisos WHERE id_user = ?";
-    private final String queryAddCurso = "INSERT INTO cursos (nombre) VALUES (?)";
-    private final String queryModCurso = "UPDATE cursos SET nombre = ? WHERE id = ?";
-    private final String queryGetAllCursos = "SELECT * FROM cursos";
-    private final String queryDelTarea = "DELETE FROM tareas WHERE id_asignatura = ?";
-    private final String queryDelTareaAlumno = "DELETE FROM tareas_alumnos WHERE id_tarea IN (SELECT id_tarea FROM tareas WHERE id_asignatura = ?)";
+    private final DBManager manager = new DBManager();
 
     public List<Asignatura> getAllAsignaturas()
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<Asignatura> asignaturas = jtm.query(queryGetAllAsignaturas, new BeanPropertyRowMapper(Asignatura.class));
-
-        return asignaturas;
+        return (List<Asignatura>) this.manager.queryAll(Queries.queryGetAllAsignaturas,Asignatura.class);
     }
 
     public List<User> getAllUsers()
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<User> users = jtm.query(queryGetAllUsers, new BeanPropertyRowMapper(User.class));
-
-        return users;
+        return (List<User>) this.manager.queryAll(Queries.queryGetAllUsers,User.class);
     }
 
     public List<Asignatura> getAsignaturasAlumno()
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List asignaturas = jtm.queryForList(queryGetAllAlumAsig);
-
-        return asignaturas;
+        return (List<Asignatura>) this.manager.queryAll(Queries.queryGetAllAlumAsig,Asignatura.class);
     }
 
     public List<Asignatura> getAsignaturasProfesor()
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List asignaturas = jtm.queryForList(queryGetAllProfeAsig);
-
-        return asignaturas;
+        return (List<Asignatura>) this.manager.queryAll(Queries.queryGetAllProfeAsig,Asignatura.class);
     }
 
     public Asignatura addAsig(Asignatura a)
@@ -88,7 +47,7 @@ public class AdminDAO
         try
         {
             con = DBConnection.getInstance().getConnection();
-            PreparedStatement stmt = con.prepareStatement(queryAddAsig, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryAddAsig, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, a.getNombre());
             stmt.setInt(2, a.getId_curso());
             stmt.executeUpdate();
@@ -117,7 +76,7 @@ public class AdminDAO
         try
         {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (!(jtm.update(queryModAsig, a.getNombre(), a.getId_curso(), a.getId()) > 0))
+            if (!(jtm.update(Queries.queryModAsig, a.getNombre(), a.getId_curso(), a.getId()) > 0))
             {
                 a = null;
             }
@@ -138,23 +97,23 @@ public class AdminDAO
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
-            PreparedStatement stmt = con.prepareStatement(queryDelNota);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryDelNota);
             stmt.setInt(1, a.getId());
             stmt.executeUpdate();
 
-            stmt = con.prepareStatement(queryDelAsigProfe);
+            stmt = con.prepareStatement(Queries.queryDelAsigProfe);
             stmt.setInt(1, a.getId());
             stmt.executeUpdate();
 
-            stmt = con.prepareStatement(queryDelTareaAlumno);
+            stmt = con.prepareStatement(Queries.queryDelTareaAlumno);
             stmt.setInt(1, a.getId());
             stmt.executeUpdate();
 
-            stmt = con.prepareStatement(queryDelTarea);
+            stmt = con.prepareStatement(Queries.queryDelTarea);
             stmt.setInt(1, a.getId());
             stmt.executeUpdate();
 
-            stmt = con.prepareStatement(queryDelAsig);
+            stmt = con.prepareStatement(Queries.queryDelAsig);
             stmt.setInt(1, a.getId());
             stmt.executeUpdate();
 
@@ -186,21 +145,21 @@ public class AdminDAO
     public List<User> getAllAlumnos()
     {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<User> alumnos = jtm.query(queryGetAllAlumnos, new BeanPropertyRowMapper(User.class));
+        List<User> alumnos = jtm.query(Queries.queryGetAllAlumnos, new BeanPropertyRowMapper(User.class));
         return alumnos;
     }
 
     public int getTotalAlumnos()
     {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        int total = jtm.queryForObject(queryGetTotalAlumnos, Integer.class);
+        int total = jtm.queryForObject(Queries.queryGetTotalAlumnos, Integer.class);
         return total;
     }
 
     public ArrayList<ArrayList<String>> getAlumnos(int start, int length)
     {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<User> alumnos = jtm.query(queryGetAlumnosPaginados, new BeanPropertyRowMapper(User.class), start, length);
+        List<User> alumnos = jtm.query(Queries.queryGetAlumnosPaginados, new BeanPropertyRowMapper(User.class), start, length);
         ArrayList<ArrayList<String>> devolver = new ArrayList<>();
         for (User alumno : alumnos)
         {
@@ -217,7 +176,7 @@ public class AdminDAO
     public List<User> getAllProfes()
     {
         JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<User> profesores = jtm.query(queryGetAllProfes, new BeanPropertyRowMapper(User.class));
+        List<User> profesores = jtm.query(Queries.queryGetAllProfes, new BeanPropertyRowMapper(User.class));
 
         return profesores;
     }
@@ -231,7 +190,7 @@ public class AdminDAO
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
-            PreparedStatement stmt = con.prepareStatement(queryAsignarProfeAsig);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryAsignarProfeAsig);
 
             for (int i = 0; i < id_asignaturas.length; i++)
             {
@@ -275,7 +234,7 @@ public class AdminDAO
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
-            PreparedStatement stmt = con.prepareStatement(queryAsignarAlumAsig);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryAsignarAlumAsig);
             for (int i = 0; i < id_asignaturas.length; i++)
             {
                 stmt.setInt(1, id_alumno);
@@ -318,7 +277,7 @@ public class AdminDAO
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
-            PreparedStatement stmt = con.prepareStatement(queryAsignarProfeAsig);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryAsignarProfeAsig);
             for (int i = 0; i < id_asignaturas.length; i++)
             {
                 stmt.setInt(1, id_profe);
@@ -361,7 +320,7 @@ public class AdminDAO
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
-            PreparedStatement stmt = con.prepareStatement(queryEliminarAlumAsig);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryEliminarAlumAsig);
 
             stmt.setInt(1, id_alumno);
             stmt.executeUpdate();
@@ -400,7 +359,7 @@ public class AdminDAO
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
-            PreparedStatement stmt = con.prepareStatement(queryEliminarProfeAsig);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryEliminarProfeAsig);
 
             stmt.setInt(1, id_profe);
             stmt.executeUpdate();
@@ -436,7 +395,7 @@ public class AdminDAO
         try
         {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            String emailDB = jtm.queryForObject(queryComprobarEmail, String.class, email);
+            String emailDB = jtm.queryForObject(Queries.queryComprobarEmail, String.class, email);
 
             if (emailDB != null)
             {
@@ -458,7 +417,7 @@ public class AdminDAO
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
-            PreparedStatement stmt = con.prepareStatement(queryRegistrarUser, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryRegistrarUser, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, u.getEmail());
             stmt.setString(2, u.getClave());
             stmt.setString(3, u.getCodigoActivacion());
@@ -471,7 +430,7 @@ public class AdminDAO
                 u.setId(rs.getInt(1));
             }
 
-            stmt = con.prepareStatement(queryRegistrarUserPermisos);
+            stmt = con.prepareStatement(Queries.queryRegistrarUserPermisos);
             stmt.setInt(1, u.getId());
             stmt.setInt(2, u.getId_permiso());
             stmt.executeUpdate();
@@ -511,13 +470,13 @@ public class AdminDAO
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
-            PreparedStatement stmt = con.prepareStatement(queryModificarUser);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryModificarUser);
             stmt.setString(1, u.getEmail());
             stmt.setString(2, u.getNombre());
             stmt.setInt(3, u.getId());
             stmt.executeUpdate();
 
-            stmt = con.prepareStatement(queryModificarUserPermisos);
+            stmt = con.prepareStatement(Queries.queryModificarUserPermisos);
             stmt.setInt(1, u.getId_permiso());
             stmt.setInt(2, u.getId());
             stmt.executeUpdate();
@@ -556,7 +515,7 @@ public class AdminDAO
         try
         {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            permiso = jtm.queryForObject(queryGetPermiso, int.class, id);
+            permiso = jtm.queryForObject(Queries.queryGetPermisoAdmin, int.class, id);
 
         }
         catch (DataAccessException ex)
@@ -575,19 +534,19 @@ public class AdminDAO
             con = DBConnection.getInstance().getConnection();
             con.setAutoCommit(false);
 
-            PreparedStatement stmt = con.prepareStatement(queryEliminarAlumAsig);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryEliminarAlumAsig);
             stmt.setInt(1, u.getId());
             stmt.executeUpdate();
 
-            stmt = con.prepareStatement(queryEliminarProfeAsig);
+            stmt = con.prepareStatement(Queries.queryEliminarProfeAsig);
             stmt.setInt(1, u.getId());
             stmt.executeUpdate();
 
-            stmt = con.prepareStatement(queryDelUserPermiso);
+            stmt = con.prepareStatement(Queries.queryDelUserPermiso);
             stmt.setInt(1, u.getId());
             stmt.executeUpdate();
 
-            stmt = con.prepareStatement(queryDelUser);
+            stmt = con.prepareStatement(Queries.queryDelUser);
             stmt.setInt(1, u.getId());
             stmt.executeUpdate();
 
@@ -616,7 +575,7 @@ public class AdminDAO
         }
         return borrado;
     }
-
+    /* de aquui para abajo esta pendiente de preguntar a oscar */
     public Curso addCurso(Curso c)
     {
         Connection con = null;
@@ -624,7 +583,7 @@ public class AdminDAO
         try
         {
             con = DBConnection.getInstance().getConnection();
-            PreparedStatement stmt = con.prepareStatement(queryAddCurso, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = con.prepareStatement(Queries.queryAddCurso, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, c.getNombre());
             stmt.executeUpdate();
 
@@ -652,7 +611,7 @@ public class AdminDAO
         try
         {
             JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (!(jtm.update(queryModCurso, c.getNombre(), c.getId()) > 0))
+            if (!(jtm.update(Queries.queryModCurso, c.getNombre(), c.getId()) > 0))
             {
                 c = null;
             }
@@ -666,9 +625,6 @@ public class AdminDAO
 
     public List<Curso> getAllCursos()
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<Curso> cursos = jtm.query(queryGetAllCursos, new BeanPropertyRowMapper(Asignatura.class));
-
-        return cursos;
+        return (List<Curso>) this.manager.queryAll(Queries.queryGetAllCursos,Curso.class);
     }
 }
