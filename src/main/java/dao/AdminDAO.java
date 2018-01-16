@@ -575,54 +575,6 @@ public class AdminDAO
         }
         return borrado;
     }
-    /* de aquui para abajo esta pendiente de preguntar a oscar */
-    public Curso addCurso(Curso c)
-    {
-        Connection con = null;
-
-        try
-        {
-            con = DBConnection.getInstance().getConnection();
-            PreparedStatement stmt = con.prepareStatement(Queries.queryAddCurso, Statement.RETURN_GENERATED_KEYS);
-            stmt.setString(1, c.getNombre());
-            stmt.executeUpdate();
-
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next())
-            {
-                c.setId(rs.getInt(1));
-            }
-
-            stmt.close();
-        }
-        catch (Exception ex)
-        {
-            c = null;
-        }
-        finally
-        {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return c;
-    }
-
-    public Curso modCurso(Curso c)
-    {
-        try
-        {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (!(jtm.update(Queries.queryModCurso, c.getNombre(), c.getId()) > 0))
-            {
-                c = null;
-            }
-        }
-        catch (DataAccessException ex)
-        {
-            c = null;
-        }
-        return c;
-    }
-
     public List<Curso> getAllCursos()
     {
         return (List<Curso>) this.manager.queryAll(Queries.queryGetAllCursos,Curso.class);
