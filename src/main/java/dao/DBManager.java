@@ -1,11 +1,9 @@
 package dao;
 
 import config.Configuration;
-import java.sql.SQLException;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,7 +12,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 /*
 Esta clase es muy útil ya que unificas todas las excepciones de Spring JDBC
@@ -157,36 +155,20 @@ public class DBManager
         return jdbcTemplateObject.update(query, parametros) > 0;
     }
     /* eliminación multiple y transaccional */
+    @Transactional
     public boolean deleteAll(AbstractMap.SimpleEntry... deletes)
     {
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        Connection conn = DataSourceUtils.getConnection(jdbcTemplateObject.getDataSource());
         boolean success;
         try
         {
-            conn.setAutoCommit(false);
             for (AbstractMap.SimpleEntry<String, Object[]> delete : deletes)
             {
-                System.out.println("KEY: " + delete.getKey());
-                System.out.println("VAL: " + Arrays.toString(delete.getValue()));
                 jdbcTemplateObject.update(delete.getKey(), delete.getValue());
             }
-            conn.commit();
             success = true;
-            conn.setAutoCommit(true);
         }
-        catch (SQLException e) {
-            try
-            {
-                conn.rollback();
-            }
-            catch(SQLException ex)
-            {
-                if(debug)
-                {
-                    Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
+        catch (DataAccessException e) {
             if(debug)
             {
                 Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
@@ -196,35 +178,20 @@ public class DBManager
         return success;
     }
     
+    @Transactional
     public boolean updateAll(AbstractMap.SimpleEntry... deletes)
     {
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        Connection conn = DataSourceUtils.getConnection(jdbcTemplateObject.getDataSource());
         boolean success;
         try
         {
-            conn.setAutoCommit(false);
-            for (AbstractMap.SimpleEntry<String, String> delete : deletes)
+            for (AbstractMap.SimpleEntry<String, Object[]> delete : deletes)
             {
-                System.out.println("QUERY: " + delete.getKey() + "// PARAMETRO " +  delete.getValue());
                 jdbcTemplateObject.update(delete.getKey(), delete.getValue());
             }
-            conn.commit();
             success = true;
-            conn.setAutoCommit(true);
         }
-        catch (SQLException e) {
-            try
-            {
-                conn.rollback();
-            }
-            catch(SQLException ex)
-            {
-                if(debug)
-                {
-                    Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
+        catch (DataAccessException e) {
             if(debug)
             {
                 Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
@@ -234,37 +201,21 @@ public class DBManager
         return success;
     }
     /* inserción múltiple y transaccional devolviendo estado */
+    @Transactional
     public boolean insertAll(AbstractMap.SimpleEntry... inserts)
     {
 
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        Connection conn = DataSourceUtils.getConnection(jdbcTemplateObject.getDataSource());
         boolean success;
         try
         {
-            conn.setAutoCommit(false);
-            for (AbstractMap.SimpleEntry<Object, String> insert : inserts)
+            for (AbstractMap.SimpleEntry<String, Object[]> insert : inserts)
             {
-                String query = insert.getKey().toString();
-                Object[] params = new ArrayList<>(Arrays.asList(insert.getValue())).toArray();
-                jdbcTemplateObject.update(query, params);
+                jdbcTemplateObject.update(insert.getKey(), insert.getValue());
             }
-            conn.commit();
             success = true;
-            conn.setAutoCommit(true);
         }
-        catch (SQLException e) {
-            try
-            {
-                conn.rollback();
-            }
-            catch(SQLException ex)
-            {
-                if(debug)
-                {
-                    Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
+        catch (DataAccessException e) {
             if(debug)
             {
                 Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
@@ -274,37 +225,21 @@ public class DBManager
         return success;
     }
     /* inserción múltiple y transaccional devolviendo estado */
+    @Transactional
     public boolean insertAllList(ArrayList<SimpleEntry> inserts)
     {
 
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        Connection conn = DataSourceUtils.getConnection(jdbcTemplateObject.getDataSource());
         boolean success;
         try
         {
-            conn.setAutoCommit(false);
-            for (AbstractMap.SimpleEntry<Object, String> insert : inserts)
+            for (AbstractMap.SimpleEntry<String, Object[]> insert : inserts)
             {
-                String query = insert.getKey().toString();
-                Object[] params = new ArrayList<>(Arrays.asList(insert.getValue())).toArray();
-                jdbcTemplateObject.update(query, params);
+                jdbcTemplateObject.update(insert.getKey(), insert.getValue());
             }
-            conn.commit();
             success = true;
-            conn.setAutoCommit(true);
         }
-        catch (SQLException e) {
-            try
-            {
-                conn.rollback();
-            }
-            catch(SQLException ex)
-            {
-                if(debug)
-                {
-                    Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
+        catch (DataAccessException e) {
             if(debug)
             {
                 Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
@@ -313,37 +248,21 @@ public class DBManager
         }
         return success;
     }
+    @Transactional
     public boolean updateAllList(ArrayList<SimpleEntry> updates)
     {
 
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        Connection conn = DataSourceUtils.getConnection(jdbcTemplateObject.getDataSource());
         boolean success;
         try
         {
-            conn.setAutoCommit(false);
-            for (AbstractMap.SimpleEntry<Object, String> update : updates)
+            for (AbstractMap.SimpleEntry<String, Object[]> update : updates)
             {
-                String query = update.getKey().toString();
-                Object[] params = new ArrayList<>(Arrays.asList(update.getValue())).toArray();
-                jdbcTemplateObject.update(query, params);
+                jdbcTemplateObject.update(update.getKey(), update.getValue());
             }
-            conn.commit();
             success = true;
-            conn.setAutoCommit(true);
         }
-        catch (SQLException e) {
-            try
-            {
-                conn.rollback();
-            }
-            catch(SQLException ex)
-            {
-                if(debug)
-                {
-                    Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
+        catch (DataAccessException e) {
             if(debug)
             {
                 Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
