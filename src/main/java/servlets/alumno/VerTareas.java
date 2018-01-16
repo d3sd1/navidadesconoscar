@@ -37,8 +37,7 @@ public class VerTareas extends HttpServlet
         switch (accion)
         {
             case Parametros.ACCION_COMPLETAR:
-                AjaxResponse resp;
-                resp = as.completarTarea(id_tarea, alumno);
+                AjaxResponse resp = as.completarTarea(id_tarea, alumno);
                 response.getWriter().print(ajax.parseResponse(resp));
                 break;
 
