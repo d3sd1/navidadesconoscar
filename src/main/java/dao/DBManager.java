@@ -1,7 +1,6 @@
 package dao;
 
 import config.Configuration;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
@@ -31,7 +30,7 @@ public class DBManager
         boolean querySuccess = false;
         try
         {
-            querySuccess = jtm.update(query, new ArrayList<>(Arrays.asList(parametros))) > 0;
+            querySuccess = jtm.update(query, parametros) > 0;
         }
         catch(DataAccessException e)
         {
@@ -47,13 +46,11 @@ public class DBManager
     {
         /* Abrimos conexión */
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        /* Parseamos los parámetros introducidos en los argumentos en un objeto para pasarlo a spring JDBC */
-        Object[] params = new ArrayList<>(Arrays.asList(parametros)).toArray();
         Object result = null;
         try
         {
             /* Intentamos la query */
-            result = jdbcTemplateObject.queryForObject(query, params, new BeanPropertyRowMapper(clase));
+            result = jdbcTemplateObject.queryForObject(query, parametros, new BeanPropertyRowMapper(clase));
         }
         catch(DataAccessException e)
         {
@@ -80,13 +77,11 @@ public class DBManager
     {
         /* Abrimos conexión */
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        /* Parseamos los parámetros introducidos en los argumentos en un objeto para pasarlo a spring JDBC */
-        Object[] params = new ArrayList<>(Arrays.asList(parametros)).toArray();
         List<Object> result = null;
         try
         {
             /* Intentamos la query */
-            result = jdbcTemplateObject.query(query, params, new BeanPropertyRowMapper(clase));
+            result = jdbcTemplateObject.query(query, parametros, new BeanPropertyRowMapper(clase));
         }
         catch(DataAccessException e)
         {
@@ -102,12 +97,11 @@ public class DBManager
         /* Abrimos conexión */
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
         /* Parseamos los parámetros introducidos en los argumentos en un objeto para pasarlo a spring JDBC */
-        Object[] params = new ArrayList<>(Arrays.asList(parametros)).toArray();
         int result = 0;
         try
         {
             /* Intentamos la query */
-            result = jdbcTemplateObject.queryForObject(query, params,Integer.class);
+            result = jdbcTemplateObject.queryForObject(query, parametros,Integer.class);
         }
         catch(DataAccessException e)
         {
@@ -122,13 +116,11 @@ public class DBManager
     {
         /* Abrimos conexión */
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        /* Parseamos los parámetros introducidos en los argumentos en un objeto para pasarlo a spring JDBC */
-        Object[] params = new ArrayList<>(Arrays.asList(parametros)).toArray();
         int result = 0;
         try
         {
             /* Intentamos la query */
-            result = jdbcTemplateObject.queryForObject(query, params,Integer.class);
+            result = jdbcTemplateObject.queryForObject(query, parametros,Integer.class);
         }
         catch(DataAccessException e)
         {
@@ -143,13 +135,11 @@ public class DBManager
     {
         /* Abrimos conexión */
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        /* Parseamos los parámetros introducidos en los argumentos en un objeto para pasarlo a spring JDBC */
-        Object[] params = new ArrayList<>(Arrays.asList(parametros)).toArray();
         Object result = null;
         try
         {
             /* Intentamos la query */
-            result = jdbcTemplateObject.query(query, params, new RowMapperResultSetExtractor<>(rowMapper));
+            result = jdbcTemplateObject.query(query, parametros, new RowMapperResultSetExtractor<>(rowMapper));
         }
         catch(DataAccessException e)
         {
@@ -164,8 +154,7 @@ public class DBManager
     public boolean delete(String query, Object... parametros)
     {
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        Object[] params = new ArrayList<>(Arrays.asList(parametros)).toArray();
-        return jdbcTemplateObject.update(query, params) > 0;
+        return jdbcTemplateObject.update(query, parametros) > 0;
     }
     /* eliminación multiple y transaccional */
     public boolean deleteAll(AbstractMap.SimpleEntry... deletes)
@@ -176,11 +165,11 @@ public class DBManager
         try
         {
             conn.setAutoCommit(false);
-            for (AbstractMap.SimpleEntry<Object, String> delete : deletes)
+            for (AbstractMap.SimpleEntry<String, Object[]> delete : deletes)
             {
-                String query = delete.getKey().toString();
-                Object[] params = new ArrayList<>(Arrays.asList(delete.getValue())).toArray();
-                jdbcTemplateObject.update(query, params);
+                System.out.println("KEY: " + delete.getKey());
+                System.out.println("VAL: " + Arrays.toString(delete.getValue()));
+                jdbcTemplateObject.update(delete.getKey(), delete.getValue());
             }
             conn.commit();
             success = true;
@@ -217,6 +206,7 @@ public class DBManager
             conn.setAutoCommit(false);
             for (AbstractMap.SimpleEntry<String, String> delete : deletes)
             {
+                System.out.println("QUERY: " + delete.getKey() + "// PARAMETRO " +  delete.getValue());
                 jdbcTemplateObject.update(delete.getKey(), delete.getValue());
             }
             conn.commit();

@@ -135,9 +135,9 @@ public class UsersServicios
         User user = new User();
         user.setEmail(email);
 
-        user = dao.getUserByEmail(user);
+        User userEncontrado = dao.getUserByEmail(user);
         
-        boolean validPass = PasswordHash.getInstance().validatePassword(passActual, user.getClave());
+        boolean validPass = PasswordHash.getInstance().validatePassword(passActual, userEncontrado.getClave());
         if (validPass)
         {
             user.setClave(PasswordHash.getInstance().createHash(nuevaPass));
