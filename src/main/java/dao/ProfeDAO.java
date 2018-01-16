@@ -1,18 +1,14 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.List;
 import model.Asignatura;
 import model.Curso;
 import model.Nota;
 import model.Tarea;
 import model.User;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import utils.Queries;
 
 public class ProfeDAO {
@@ -49,16 +45,8 @@ public class ProfeDAO {
         return (int) this.manager.queryForInt(Queries.queryGetId,profe.getEmail());
     }
     
-    public String getNombreAsignatura(int id) {
-        String nombre = "";
-        try {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            nombre = jtm.queryForObject(Queries.queryGetAsignaturaNombre, String.class, id);
-
-        } catch (DataAccessException ex) {
-            
-        }
-        return nombre;
+    public String getNombreAsignatura(Asignatura asignatura) {
+        return (String) this.manager.queryForObject(Queries.queryGetAsignaturaNombre,String.class,asignatura.getId());
     }
 
     public boolean modificarNota(Nota nota) {
@@ -116,67 +104,33 @@ public class ProfeDAO {
     }
 
     /* por aqui */
-    public Tarea addTarea(Tarea t, List<Integer> idAlumnos, String email) {
-        Connection con = null;
-        try {
-            con = DBConnection.getInstance().getConnection();
-            con.setAutoCommit(false);
-
-            PreparedStatement stmt = con.prepareStatement(Queries.queryAddTarea, Statement.RETURN_GENERATED_KEYS);
-
-            stmt.setInt(1, t.getAsignatura().getId());
-            stmt.setString(2, t.getNombre_tarea());
-            stmt.setDate(3, new java.sql.Date(t.getFecha_entrega().getTime()));
-            stmt.setString(4, email);
-
-            stmt.executeUpdate();
-
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                t.setId_tarea(rs.getInt(1));
-            }
-
-            for (int i = 0; i < idAlumnos.size(); i++) {
-                stmt = con.prepareStatement(Queries.queryAddTareaAlumno);
-
-                stmt.setInt(1, t.getId_tarea());
-                stmt.setInt(2, idAlumnos.get(i));
-                
-                stmt.executeUpdate();
-            }
-
-            con.commit();
-            stmt.close();
-        } catch (Exception ex) {
-            t = null;
-            try {
-                if (con != null) {
-                    con.rollback();
-                }
-            } catch (SQLException ex1) {
-                
-            }
-        } finally {
-            DBConnection.getInstance().cerrarConexion(con);
+    public boolean addTarea(Tarea tarea, List<Integer> idAlumnos, String email) {
+        ArrayList inserts = new ArrayList<>();
+        /* Añadir tarea */
+        inserts.add(new AbstractMap.SimpleEntry<>(Queries.queryAddTarea, new Object[]{
+            tarea.getAsignatura().getId(),
+            tarea.getNombre_tarea(),
+            new java.sql.Date(tarea.getFecha_entrega().getTime()),
+            email
+        }));
+        /* Añadir tareas a los alumnos */
+        for (int i = 0; i < idAlumnos.size(); i++) {
+            inserts.add(new AbstractMap.SimpleEntry<>(Queries.queryAddTareaAlumno, new Object[]{
+                tarea.getId_tarea(),
+                idAlumnos.get(i)
+            }));
         }
-
-        return t;
+        return this.manager.insertAllList(
+            inserts
+        );
     }
 
     public List<Integer> getIdAlumnos(Asignatura asignatura) {
         return (List<Integer>) this.manager.queryAll(Queries.queryGetIdAlumnos,Integer.class, asignatura.getId());
     }
 
-    public Tarea modTarea(Tarea t) {
-        try {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (!(jtm.update(Queries.queryModTarea, t.getNombre_tarea(), t.getFecha_entrega(), t.getId_tarea()) > 0)) {
-                t = null;
-            }
-        } catch (DataAccessException ex) {
-            t = null;
-        }
-        return t;
+    public boolean modTarea(Tarea tarea) {
+        return this.manager.update(Queries.queryModTarea, tarea.getNombre_tarea(), tarea.getFecha_entrega(), tarea.getId_tarea());
     }
     
     public List<Tarea> getAllTareas(User profe) {
@@ -196,29 +150,9 @@ public class ProfeDAO {
     }
     
     public boolean delTarea (Tarea tarea){
-        boolean delTareaSuccess = this.manager.delete(Queries.queryDelTareaProfeAlumno,false,tarea.getId_tarea());
-        boolean delTareaProfeSuccess = this.manager.delete(Queries.queryDelTareaProfe,false,tarea.getId_tarea());
-        return ;
-        try {
-            con = DBConnection.getInstance().getConnection();
-            con.setAutoCommit(false);
-            
-            
-            con.commit();
-            stmt.close();
-            eliminado = true;
-        } catch (Exception ex) {
-            eliminado = false;
-            try {
-                if (con != null) {
-                    con.rollback();
-                }
-            } catch (SQLException ex1) {
-                
-            }
-        } finally {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return eliminado;
+        return this.manager.deleteAll(
+            new AbstractMap.SimpleEntry<>(Queries.queryDelTareaProfeAlumno, new Object[]{tarea.getId_tarea()}),
+            new AbstractMap.SimpleEntry<>(Queries.queryDelTareaProfe, new Object[]{tarea.getId_tarea()})
+        );
     }
 }

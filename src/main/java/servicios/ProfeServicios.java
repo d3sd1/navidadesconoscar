@@ -86,7 +86,6 @@ public class ProfeServicios
         return dao.getAllAsignaturas();
     }
 
-    /* por aqui */
     /* TAREAS */
     public AjaxResponse agregarTarea(int id_asignatura, LocalDate fecha_entrega, String nombre_tarea, int id_tarea, String email)
     {
@@ -103,16 +102,14 @@ public class ProfeServicios
 
         if (idAlumnos.size() > 0)
         {
-            tarea = dao.addTarea(tarea, idAlumnos, email);
-
-            if (tarea != null)
+            if (dao.addTarea(tarea, idAlumnos, email))
             {
                 DateFormat df = new SimpleDateFormat(Constantes.FORMATO_FECHA);
                 HashMap<String, String> datos = new HashMap<>();
                 datos.put(Parametros.ID_TAREA, String.valueOf(tarea.getId_tarea()));
                 datos.put(Parametros.ID_ASIGNATURA, String.valueOf(tarea.getAsignatura().getId()));
                 datos.put(Parametros.NOMBRE_TAREA, tarea.getNombre_tarea());
-                datos.put(Parametros.NOMBRE_ASIGNATURA, dao.getNombreAsignatura(tarea.getAsignatura().getId()));
+                datos.put(Parametros.NOMBRE_ASIGNATURA, dao.getNombreAsignatura(tarea.getAsignatura()));
                 datos.put(Parametros.FECHA_ENTREGA, df.format(tarea.getFecha_entrega()));
                 returnme = ajax.successResponse(datos);
             }
@@ -134,22 +131,21 @@ public class ProfeServicios
         ProfeDAO dao = new ProfeDAO();
         AjaxResponse returnme;
 
-        Tarea t = new Tarea();
-        t.setNombre_tarea(nombre_tarea);
-        t.setFecha_entrega(fecha_entrega);
-        t.setId_tarea(id_tarea);
-        t.getAsignatura().setId(id_asignatura);
-        t = dao.modTarea(t);
+        Tarea tarea = new Tarea();
+        tarea.setNombre_tarea(nombre_tarea);
+        tarea.setFecha_entrega(fecha_entrega);
+        tarea.setId_tarea(id_tarea);
+        tarea.getAsignatura().setId(id_asignatura);
 
-        if (t != null)
+        if (dao.modTarea(tarea))
         {
             DateFormat df = new SimpleDateFormat(Constantes.FORMATO_FECHA);
             HashMap<String, String> datos = new HashMap<>();
-            datos.put(Parametros.ID_TAREA, String.valueOf(t.getId_tarea()));
-            datos.put(Parametros.ID_ASIGNATURA, String.valueOf(t.getAsignatura().getId()));
-            datos.put(Parametros.NOMBRE_TAREA, t.getNombre_tarea());
-            datos.put(Parametros.FECHA_ENTREGA, df.format(t.getFecha_entrega()));
-            datos.put(Parametros.NOMBRE_ASIGNATURA, dao.getNombreAsignatura(t.getAsignatura().getId()));
+            datos.put(Parametros.ID_TAREA, String.valueOf(tarea.getId_tarea()));
+            datos.put(Parametros.ID_ASIGNATURA, String.valueOf(tarea.getAsignatura().getId()));
+            datos.put(Parametros.NOMBRE_TAREA, tarea.getNombre_tarea());
+            datos.put(Parametros.FECHA_ENTREGA, df.format(tarea.getFecha_entrega()));
+            datos.put(Parametros.NOMBRE_ASIGNATURA, dao.getNombreAsignatura(tarea.getAsignatura()));
             returnme = ajax.successResponse(datos);
         }
         else
@@ -162,18 +158,14 @@ public class ProfeServicios
     public AjaxResponse delTarea(int id_tarea)
     {
         ProfeDAO dao = new ProfeDAO();
-        AjaxResponse returnme;
-        Tarea t = new Tarea();
-        t.setId_tarea(id_tarea);
-        boolean eliminado = dao.delTarea(t);
+        AjaxResponse returnme = ajax.errorResponse(26);;
+        Tarea tarea = new Tarea();
+        tarea.setId_tarea(id_tarea);
+        boolean eliminado = dao.delTarea(tarea);
 
         if (eliminado)
         {
             returnme = ajax.successResponse();
-        }
-        else
-        {
-            returnme = ajax.errorResponse(26);
         }
         return returnme;
     }

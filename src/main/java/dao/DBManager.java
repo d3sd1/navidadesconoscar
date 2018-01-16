@@ -1,6 +1,10 @@
 package dao;
 
 import config.Configuration;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +15,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
 /*
 Esta clase es muy útil ya que unificas todas las excepciones de Spring JDBC
@@ -134,21 +139,130 @@ public class DBManager
         }
         return result;
     }
+    /* eliminación simple */
     public boolean delete(String query, Object... parametros)
-    {
-        return this.delete(query,true,parametros);
-    }
-    public boolean delete(String query, boolean autoCommit, Object... parametros)
     {
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
         Object[] params = new ArrayList<>(Arrays.asList(parametros)).toArray();
         return jdbcTemplateObject.update(query, params) > 0;
     }
-    /* queryForObject de spring JDBC sin RowMapper 
-    public Object queryForObject(String query, Object... parametros)
+    /* eliminación multiple y transaccional */
+    public boolean deleteAll(AbstractMap.SimpleEntry... deletes)
     {
         JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        Object[] params = new ArrayList<>(Arrays.asList(parametros)).toArray();
-        return jdbcTemplateObject.queryForObject(query, params);
-    }*/
+        Connection conn = DataSourceUtils.getConnection(jdbcTemplateObject.getDataSource());
+        boolean success;
+        try
+        {
+            conn.setAutoCommit(false);
+            for (AbstractMap.SimpleEntry<Object, String> delete : deletes)
+            {
+                String query = delete.getKey().toString();
+                Object[] params = new ArrayList<>(Arrays.asList(delete.getValue())).toArray();
+                jdbcTemplateObject.update(query, params);
+            }
+            conn.commit();
+            success = true;
+            conn.setAutoCommit(true);
+        }
+        catch (SQLException e) {
+            try
+            {
+                conn.rollback();
+            }
+            catch(SQLException ex)
+            {
+                if(debug)
+                {
+                    Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
+                }
+            }
+            if(debug)
+            {
+                Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
+            }
+            success = false;
+        }
+        return success;
+    }
+    /* inserción múltiple y transaccional devolviendo estado */
+    public boolean insertAll(AbstractMap.SimpleEntry... inserts)
+    {
+
+        JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        Connection conn = DataSourceUtils.getConnection(jdbcTemplateObject.getDataSource());
+        boolean success;
+        try
+        {
+            conn.setAutoCommit(false);
+            for (AbstractMap.SimpleEntry<Object, String> insert : inserts)
+            {
+                String query = insert.getKey().toString();
+                Object[] params = new ArrayList<>(Arrays.asList(insert.getValue())).toArray();
+                jdbcTemplateObject.update(query, params);
+            }
+            conn.commit();
+            success = true;
+            conn.setAutoCommit(true);
+        }
+        catch (SQLException e) {
+            try
+            {
+                conn.rollback();
+            }
+            catch(SQLException ex)
+            {
+                if(debug)
+                {
+                    Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
+                }
+            }
+            if(debug)
+            {
+                Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
+            }
+            success = false;
+        }
+        return success;
+    }
+    /* inserción múltiple y transaccional devolviendo estado */
+    public boolean insertAllList(ArrayList<SimpleEntry> inserts)
+    {
+
+        JdbcTemplate jdbcTemplateObject = new JdbcTemplate(DBConnection.getInstance().getDataSource());
+        Connection conn = DataSourceUtils.getConnection(jdbcTemplateObject.getDataSource());
+        boolean success;
+        try
+        {
+            conn.setAutoCommit(false);
+            for (AbstractMap.SimpleEntry<Object, String> insert : inserts)
+            {
+                String query = insert.getKey().toString();
+                Object[] params = new ArrayList<>(Arrays.asList(insert.getValue())).toArray();
+                jdbcTemplateObject.update(query, params);
+            }
+            conn.commit();
+            success = true;
+            conn.setAutoCommit(true);
+        }
+        catch (SQLException e) {
+            try
+            {
+                conn.rollback();
+            }
+            catch(SQLException ex)
+            {
+                if(debug)
+                {
+                    Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
+                }
+            }
+            if(debug)
+            {
+                Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
+            }
+            success = false;
+        }
+        return success;
+    }
 }
