@@ -215,9 +215,9 @@ public class DBManager
         try
         {
             conn.setAutoCommit(false);
-            for (AbstractMap.SimpleEntry<Object, String> delete : deletes)
+            for (AbstractMap.SimpleEntry<String, Object> delete : deletes)
             {
-                String query = delete.getKey().toString();
+                String query = delete.getKey();
                 Object[] params = new ArrayList<>(Arrays.asList(delete.getValue())).toArray();
                 jdbcTemplateObject.update(query, params);
             }
