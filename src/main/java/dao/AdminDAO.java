@@ -1,19 +1,11 @@
 package dao;
 
-import static java.lang.Integer.parseInt;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import model.Asignatura;
 import model.Curso;
 import model.User;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import utils.Queries;
 
 public class AdminDAO
@@ -40,126 +32,42 @@ public class AdminDAO
         return (List<Asignatura>) this.manager.queryAll(Queries.queryGetAllProfeAsig,Asignatura.class);
     }
 
-    public Asignatura addAsig(Asignatura a)
+    public boolean addAsig(Asignatura asignatura)
     {
-        Connection con = null;
-
-        try
-        {
-            con = DBConnection.getInstance().getConnection();
-            PreparedStatement stmt = con.prepareStatement(Queries.queryAddAsig, Statement.RETURN_GENERATED_KEYS);
-            stmt.setString(1, a.getNombre());
-            stmt.setInt(2, a.getId_curso());
-            stmt.executeUpdate();
-
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next())
-            {
-                a.setId(rs.getInt(1));
-            }
-
-            stmt.close();
-        }
-        catch (Exception ex)
-        {
-            a = null;
-        }
-        finally
-        {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return a;
+        return this.manager.insertAll(
+            new AbstractMap.SimpleEntry<>(Queries.queryAddAsig, new Object[]{asignatura.getNombre(),asignatura.getId_curso()})
+        );
     }
 
-    public Asignatura modAsig(Asignatura a)
+    public boolean modAsig(Asignatura asignatura)
     {
-        try
-        {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            if (!(jtm.update(Queries.queryModAsig, a.getNombre(), a.getId_curso(), a.getId()) > 0))
-            {
-                a = null;
-            }
-        }
-        catch (DataAccessException ex)
-        {
-            a = null;
-        }
-        return a;
+        return this.manager.update(Queries.queryModAsig, asignatura.getNombre(), asignatura.getId_curso(), asignatura.getId());
+
     }
 
-    public boolean delAsig(Asignatura a)
+    public boolean delAsig(Asignatura asignatura)
     {
-        Connection con = null;
-        boolean borrado = false;
-        try
-        {
-            con = DBConnection.getInstance().getConnection();
-            con.setAutoCommit(false);
-
-            PreparedStatement stmt = con.prepareStatement(Queries.queryDelNota);
-            stmt.setInt(1, a.getId());
-            stmt.executeUpdate();
-
-            stmt = con.prepareStatement(Queries.queryDelAsigProfe);
-            stmt.setInt(1, a.getId());
-            stmt.executeUpdate();
-
-            stmt = con.prepareStatement(Queries.queryDelTareaAlumno);
-            stmt.setInt(1, a.getId());
-            stmt.executeUpdate();
-
-            stmt = con.prepareStatement(Queries.queryDelTarea);
-            stmt.setInt(1, a.getId());
-            stmt.executeUpdate();
-
-            stmt = con.prepareStatement(Queries.queryDelAsig);
-            stmt.setInt(1, a.getId());
-            stmt.executeUpdate();
-
-            con.commit();
-            borrado = true;
-
-            stmt.close();
-        }
-        catch (Exception ex)
-        {
-            try
-            {
-                if (con != null)
-                {
-                    con.rollback();
-                }
-            }
-            catch (SQLException ex1)
-            {
-            }
-        }
-        finally
-        {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return borrado;
+        return this.manager.deleteAll(
+            new AbstractMap.SimpleEntry<>(Queries.queryDelNota, new Object[]{asignatura.getId()}),
+            new AbstractMap.SimpleEntry<>(Queries.queryDelAsigProfe, new Object[]{asignatura.getId()}),
+            new AbstractMap.SimpleEntry<>(Queries.queryDelTareaAlumno, new Object[]{asignatura.getId()}),
+            new AbstractMap.SimpleEntry<>(Queries.queryDelTarea, new Object[]{asignatura.getId()}),
+            new AbstractMap.SimpleEntry<>(Queries.queryDelAsig, new Object[]{asignatura.getId()})
+        );
     }
 
     public List<User> getAllAlumnos()
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<User> alumnos = jtm.query(Queries.queryGetAllAlumnos, new BeanPropertyRowMapper(User.class));
-        return alumnos;
+        return (List<User>) this.manager.queryAll(Queries.queryGetAllAlumnos,User.class);
     }
 
     public int getTotalAlumnos()
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        int total = jtm.queryForObject(Queries.queryGetTotalAlumnos, Integer.class);
-        return total;
+        return (int) this.manager.queryForInt(Queries.queryGetTotalAlumnos);
     }
-
     public ArrayList<ArrayList<String>> getAlumnos(int start, int length)
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<User> alumnos = jtm.query(Queries.queryGetAlumnosPaginados, new BeanPropertyRowMapper(User.class), start, length);
+        List<User> alumnos = (List<User>) this.manager.queryAll(Queries.queryGetAlumnosPaginados,User.class);
         ArrayList<ArrayList<String>> devolver = new ArrayList<>();
         for (User alumno : alumnos)
         {
@@ -175,405 +83,110 @@ public class AdminDAO
 
     public List<User> getAllProfes()
     {
-        JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-        List<User> profesores = jtm.query(Queries.queryGetAllProfes, new BeanPropertyRowMapper(User.class));
-
-        return profesores;
+        return (List<User>) this.manager.queryAll(Queries.queryGetAllProfes,User.class);
     }
 
     public boolean asignarProfeAsig(int id_profe, String[] id_asignaturas)
     {
-        boolean asignado = false;
-        Connection con = null;
-        try
-        {
-            con = DBConnection.getInstance().getConnection();
-            con.setAutoCommit(false);
-
-            PreparedStatement stmt = con.prepareStatement(Queries.queryAsignarProfeAsig);
-
-            for (int i = 0; i < id_asignaturas.length; i++)
-            {
-                stmt.setInt(1, id_profe);
-                stmt.setInt(2, parseInt(id_asignaturas[i]));
-                stmt.executeUpdate();
-            }
-
-            asignado = true;
-            con.commit();
-            stmt.close();
-
+        ArrayList updates = new ArrayList<>();
+        /* Añadir tareas a los alumnos */
+        for (int i = 0; i < id_asignaturas.length; i++) {
+            updates.add(new AbstractMap.SimpleEntry<>(Queries.queryAsignarProfeAsig, new Object[]{
+                id_profe,
+                id_asignaturas[i]
+            }));
         }
-        catch (Exception ex)
-        {
-            try
-            {
-                if (con != null)
-                {
-                    con.rollback();
-                }
-            }
-            catch (SQLException ex1)
-            {
-                
-            }
-        }
-        finally
-        {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return asignado;
+        return this.manager.updateAllList(
+            updates
+        );
     }
 
     public boolean asignarInsertandoAlumAsig(int id_alumno, String[] id_asignaturas)
     {
-        boolean asignado = false;
-        Connection con = null;
-        try
-        {
-            con = DBConnection.getInstance().getConnection();
-            con.setAutoCommit(false);
-
-            PreparedStatement stmt = con.prepareStatement(Queries.queryAsignarAlumAsig);
-            for (int i = 0; i < id_asignaturas.length; i++)
-            {
-                stmt.setInt(1, id_alumno);
-                stmt.setInt(2, parseInt(id_asignaturas[i]));
-                stmt.executeUpdate();
-            }
-
-            asignado = true;
-            con.commit();
-            stmt.close();
-
+        ArrayList updates = new ArrayList<>();
+        /* Añadir tareas a los alumnos */
+        for (int i = 0; i < id_asignaturas.length; i++) {
+            updates.add(new AbstractMap.SimpleEntry<>(Queries.queryAsignarAlumAsig, new Object[]{
+                id_alumno,
+                id_asignaturas[i]
+            }));
         }
-        catch (Exception ex)
-        {
-            try
-            {
-                if (con != null)
-                {
-                    con.rollback();
-                }
-            }
-            catch (SQLException ex1)
-            {
-                
-            }
-        }
-        finally
-        {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return asignado;
+        return this.manager.updateAllList(
+            updates
+        );
     }
 
     public boolean asignarInsertandoProfeAsig(int id_profe, String[] id_asignaturas)
     {
-        boolean asignado = false;
-        Connection con = null;
-        try
-        {
-            con = DBConnection.getInstance().getConnection();
-            con.setAutoCommit(false);
-
-            PreparedStatement stmt = con.prepareStatement(Queries.queryAsignarProfeAsig);
-            for (int i = 0; i < id_asignaturas.length; i++)
-            {
-                stmt.setInt(1, id_profe);
-                stmt.setInt(2, parseInt(id_asignaturas[i]));
-                stmt.executeUpdate();
-            }
-
-            asignado = true;
-            con.commit();
-            stmt.close();
-
+        ArrayList updates = new ArrayList<>();
+        /* Añadir tareas a los alumnos */
+        for (int i = 0; i < id_asignaturas.length; i++) {
+            updates.add(new AbstractMap.SimpleEntry<>(Queries.queryAsignarProfeAsig, new Object[]{
+                id_profe,
+                id_asignaturas[i]
+            }));
         }
-        catch (Exception ex)
-        {
-            try
-            {
-                if (con != null)
-                {
-                    con.rollback();
-                }
-            }
-            catch (SQLException ex1)
-            {
-                
-            }
-        }
-        finally
-        {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return asignado;
+        return this.manager.updateAllList(
+            updates
+        );
     }
 
-    public boolean eliminarAlumAsig(int id_alumno)
+    public boolean eliminarAlumAsig(User alumno)
     {
-        boolean eliminado = false;
-        Connection con = null;
-        try
-        {
-            con = DBConnection.getInstance().getConnection();
-            con.setAutoCommit(false);
-
-            PreparedStatement stmt = con.prepareStatement(Queries.queryEliminarAlumAsig);
-
-            stmt.setInt(1, id_alumno);
-            stmt.executeUpdate();
-
-            eliminado = true;
-            con.commit();
-            stmt.close();
-        }
-        catch (Exception ex)
-        {
-            try
-            {
-                if (con != null)
-                {
-                    con.rollback();
-                }
-            }
-            catch (SQLException ex1)
-            {
-                
-            }
-        }
-        finally
-        {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return eliminado;
+        return this.manager.deleteAll(
+            new AbstractMap.SimpleEntry<>(Queries.queryEliminarAlumAsig, new Object[]{alumno.getId()})
+        );
     }
 
-    public boolean eliminarProfeAsig(int id_profe)
+    public boolean eliminarProfeAsig(User profe)
     {
-        boolean eliminado = false;
-        Connection con = null;
-        try
-        {
-            con = DBConnection.getInstance().getConnection();
-            con.setAutoCommit(false);
-
-            PreparedStatement stmt = con.prepareStatement(Queries.queryEliminarProfeAsig);
-
-            stmt.setInt(1, id_profe);
-            stmt.executeUpdate();
-
-            eliminado = true;
-            con.commit();
-            stmt.close();
-        }
-        catch (Exception ex)
-        {
-            try
-            {
-                if (con != null)
-                {
-                    con.rollback();
-                }
-            }
-            catch (SQLException ex1)
-            {
-                
-            }
-        }
-        finally
-        {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return eliminado;
+        return this.manager.deleteAll(
+            new AbstractMap.SimpleEntry<>(Queries.queryEliminarProfeAsig, new Object[]{profe.getId()})
+        );
     }
 
-    public boolean comprobarEmail(String email)
+    public boolean comprobarEmail(User user)
     {
-        boolean existe = false;
-        try
-        {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            String emailDB = jtm.queryForObject(Queries.queryComprobarEmail, String.class, email);
-
-            if (emailDB != null)
-            {
-                existe = true;
-            }
-        }
-        catch (DataAccessException ex)
-        {
-        }
-        return existe;
+        return this.manager.queryForBoolean(Queries.queryComprobarEmail,user.getEmail());
     }
 
-    public User addUser(User u)
+    public boolean addUser(User u)
     {
-        Connection con = null;
-
-        try
-        {
-            con = DBConnection.getInstance().getConnection();
-            con.setAutoCommit(false);
-
-            PreparedStatement stmt = con.prepareStatement(Queries.queryRegistrarUser, Statement.RETURN_GENERATED_KEYS);
-            stmt.setString(1, u.getEmail());
-            stmt.setString(2, u.getClave());
-            stmt.setString(3, u.getCodigoActivacion());
-            stmt.setString(4, u.getNombre());
-            stmt.executeUpdate();
-
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next())
-            {
-                u.setId(rs.getInt(1));
-            }
-
-            stmt = con.prepareStatement(Queries.queryRegistrarUserPermisos);
-            stmt.setInt(1, u.getId());
-            stmt.setInt(2, u.getId_permiso());
-            stmt.executeUpdate();
-
-            con.commit();
-
-            stmt.close();
-        }
-        catch (Exception ex)
-        {
-            u = null;
-            try
-            {
-                if (con != null)
-                {
-                    con.rollback();
-                }
-            }
-            catch (SQLException ex1)
-            {
-                
-            }
-        }
-        finally
-        {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return u;
+        return this.manager.insertAll(
+            new AbstractMap.SimpleEntry<>(Queries.queryRegistrarUser, new Object[]{
+                u.getEmail(),
+                u.getClave(),
+                u.getCodigoActivacion(),
+                u.getNombre()
+            }),
+            new AbstractMap.SimpleEntry<>(Queries.queryRegistrarUserPermisos, new Object[]{
+                u.getId(),
+                u.getId_permiso()
+            })
+        );
     }
 
     public boolean modUser(User u, int tipo)
     {
-        Connection con = null;
-        boolean userModificado = false;
-        try
-        {
-            con = DBConnection.getInstance().getConnection();
-            con.setAutoCommit(false);
-
-            PreparedStatement stmt = con.prepareStatement(Queries.queryModificarUser);
-            stmt.setString(1, u.getEmail());
-            stmt.setString(2, u.getNombre());
-            stmt.setInt(3, u.getId());
-            stmt.executeUpdate();
-
-            stmt = con.prepareStatement(Queries.queryModificarUserPermisos);
-            stmt.setInt(1, u.getId_permiso());
-            stmt.setInt(2, u.getId());
-            stmt.executeUpdate();
-
-            stmt.executeUpdate();
-
-            con.commit();
-            userModificado = true;
-            stmt.close();
-        }
-        catch (Exception ex)
-        {
-            userModificado = false;
-            try
-            {
-                if (con != null)
-                {
-                    con.rollback();
-                }
-            }
-            catch (SQLException ex1)
-            {
-                
-            }
-        }
-        finally
-        {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return userModificado;
+        return this.manager.updateAll(
+            new AbstractMap.SimpleEntry<>(Queries.queryModificarUser, new Object[]{u.getEmail(),u.getNombre(),u.getId()}),
+            new AbstractMap.SimpleEntry<>(Queries.queryModificarUserPermisos, new Object[]{u.getId_permiso(),u.getId()})
+        );
     }
 
-    public int getPermiso(int id)
+    public int getPermiso(User user)
     {
-        int permiso = 0;
-        try
-        {
-            JdbcTemplate jtm = new JdbcTemplate(DBConnection.getInstance().getDataSource());
-            permiso = jtm.queryForObject(Queries.queryGetPermisoAdmin, int.class, id);
-
-        }
-        catch (DataAccessException ex)
-        {
-            
-        }
-        return permiso;
+        return (int) this.manager.queryForInt(Queries.queryGetPermisoAdmin,user.getId());
     }
 
-    public boolean delUser(User u)
+    public boolean delUser(User user)
     {
-        Connection con = null;
-        boolean borrado = false;
-        try
-        {
-            con = DBConnection.getInstance().getConnection();
-            con.setAutoCommit(false);
-
-            PreparedStatement stmt = con.prepareStatement(Queries.queryEliminarAlumAsig);
-            stmt.setInt(1, u.getId());
-            stmt.executeUpdate();
-
-            stmt = con.prepareStatement(Queries.queryEliminarProfeAsig);
-            stmt.setInt(1, u.getId());
-            stmt.executeUpdate();
-
-            stmt = con.prepareStatement(Queries.queryDelUserPermiso);
-            stmt.setInt(1, u.getId());
-            stmt.executeUpdate();
-
-            stmt = con.prepareStatement(Queries.queryDelUser);
-            stmt.setInt(1, u.getId());
-            stmt.executeUpdate();
-
-            con.commit();
-            borrado = true;
-
-            stmt.close();
-        }
-        catch (Exception ex)
-        {
-            try
-            {
-                if (con != null)
-                {
-                    con.rollback();
-                }
-            }
-            catch (SQLException ex1)
-            {
-                
-            }
-        }
-        finally
-        {
-            DBConnection.getInstance().cerrarConexion(con);
-        }
-        return borrado;
+        return this.manager.deleteAll(
+            new AbstractMap.SimpleEntry<>(Queries.queryEliminarAlumAsig, new Object[]{user.getId()}),
+            new AbstractMap.SimpleEntry<>(Queries.queryEliminarProfeAsig, new Object[]{user.getId()}),
+            new AbstractMap.SimpleEntry<>(Queries.queryDelUserPermiso, new Object[]{user.getId()}),
+            new AbstractMap.SimpleEntry<>(Queries.queryDelUser, new Object[]{user.getId()})
+        );
     }
     public List<Curso> getAllCursos()
     {

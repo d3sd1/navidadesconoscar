@@ -9,4 +9,4 @@ mailPass: alumnodam2
 minutosParaValidar: 1
 longitudCodigo: 50
 longitudPass: 10
-debug: false
+debug: true

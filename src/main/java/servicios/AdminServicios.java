@@ -29,27 +29,21 @@ public class AdminServicios
 
     public AjaxResponse addAsig(int id_curso, String nombre)
     {
-        AjaxResponse returnme;
+        AjaxResponse returnme = ajax.errorResponse(0);
         AdminDAO dao = new AdminDAO();
 
-        Asignatura a = new Asignatura();
+        Asignatura asignatura = new Asignatura();
 
-        a.setNombre(nombre);
-        a.setId_curso(id_curso);
+        asignatura.setNombre(nombre);
+        asignatura.setId_curso(id_curso);
 
-        a = dao.addAsig(a);
-
-        if (a != null)
+        if (dao.addAsig(asignatura))
         {
             HashMap<String, String> datos = new HashMap<>();
-            datos.put(Parametros.ID, String.valueOf(a.getId()));
-            datos.put(Parametros.NOMBRE, a.getNombre());
-            datos.put(Parametros.ID_CURSO, String.valueOf(a.getId_curso()));
+            datos.put(Parametros.ID, String.valueOf(asignatura.getId()));
+            datos.put(Parametros.NOMBRE, asignatura.getNombre());
+            datos.put(Parametros.ID_CURSO, String.valueOf(asignatura.getId_curso()));
             returnme = ajax.successResponse(datos);
-        }
-        else
-        {
-            returnme = ajax.errorResponse(0);
         }
         return returnme;
     }
@@ -64,9 +58,7 @@ public class AdminServicios
         a.setNombre(nombre);
         a.setId_curso(id_curso);
 
-        a = dao.modAsig(a);
-
-        if (a != null)
+        if (dao.modAsig(a))
         {
             HashMap<String, String> datos = new HashMap<>();
             datos.put(Parametros.ID, String.valueOf(a.getId()));
@@ -117,8 +109,10 @@ public class AdminServicios
         Así se evita tener que ir fila por fila revisando si existe o no.
         De este modo... También se agiliza el proceso.
          */
+        User profe = new User();
+        profe.setId(id_profe);
         boolean errors = false;
-        if (dao.eliminarProfeAsig(id_profe))
+        if (dao.eliminarProfeAsig(profe))
         {
             if (!dao.asignarInsertandoProfeAsig(id_profe, id_asignaturas))
             {
@@ -176,7 +170,9 @@ public class AdminServicios
         De este modo... También se agiliza el proceso.
          */
         boolean errors = false;
-        if (dao.eliminarAlumAsig(id_alumno))
+        User alumno = new User();
+        alumno.setId(id_alumno);
+        if (dao.eliminarAlumAsig(alumno))
         {
             if (!dao.asignarInsertandoAlumAsig(id_alumno, id_asignaturas))
             {
@@ -207,7 +203,7 @@ public class AdminServicios
         u.setNombre(nombre);
         u.setId_permiso(id_permiso);
 
-        boolean existe = dao.comprobarEmail(u.getEmail());
+        boolean existe = dao.comprobarEmail(u);
 
         if (existe == false)
         {
@@ -217,9 +213,8 @@ public class AdminServicios
                 String clave = helper.randomAlphaNumeric(Configuration.getInstance().getLongitudPass());
                 u.setClave(PasswordHash.getInstance().createHash(clave));
                 u.setCodigoActivacion(helper.randomAlphaNumeric(Configuration.getInstance().getLongitudCodigo()));
-                u = dao.addUser(u);
 
-                if (u != null)
+                if (dao.addUser(u))
                 {
                     helper.mandarMail(u.getEmail(), Constantes.EMAIL_CONTENT_ACTIVAR_1
                             + Constantes.LINK_EMAIL_ACTIVAR + u.getCodigoActivacion()
@@ -261,7 +256,7 @@ public class AdminServicios
         u.setNombre(nombre);
         u.setId_permiso(id_permiso);
 
-        int permiso = dao.getPermiso(u.getId());
+        int permiso = dao.getPermiso(u);
         if (u.getId() == 1)
         {
             returnme = ajax.errorResponse(20);
